@@ -31,6 +31,7 @@ import "./kanban.js";
 import "./invoice.js";
 import "./report.js";
 import "./contract.js";
+import "./family-hero.js";
 import "./feature.js";
 import "./compare.js";
 import "./compliance.js";
