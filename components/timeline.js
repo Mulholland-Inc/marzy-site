@@ -12,8 +12,7 @@ const ENTRY = [
 const GATE = ["Checkpoint", "You're satisfied", "Happy with the pilot, we begin."];
 const TRAJ = [
   ["Week 0", "An engineer embeds", "A Mulholland engineer maps how work moves."],
-  ["Weeks 1–2", "We audit", "Every handoff documented, safe work flagged."],
-  ["Weeks 3–4", "We automate", "Agents shipped behind your approval."],
+  ["Weeks 1–4", "We audit & automate", "Each workflow documented, agents shipped behind approval."],
 ];
 const GATE2 = ["Checkpoint", "Review, then scale", "Measure impact, pick what's next."];
 
