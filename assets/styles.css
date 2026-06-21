@@ -2335,7 +2335,7 @@ mz-tab-panel:not([hidden]) {
 /* ─────────────────────────────────────────── Product family hero ── */
 .famhero {
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-columns: 1.1fr minmax(0, 420px);
   gap: clamp(var(--space-8), 5vw, 64px);
   align-items: center;
   padding-block: clamp(40px, 7vw, 88px);
@@ -2379,7 +2379,7 @@ mz-tab-panel:not([hidden]) {
   flex-direction: column;
   justify-content: flex-start;
   gap: var(--space-4);
-  height: 264px;
+  height: 230px;
   padding: var(--space-5);
   background: var(--color-surface);
   border: var(--border);
@@ -2394,6 +2394,7 @@ mz-tab-panel:not([hidden]) {
   animation: mz-msg-in 0.4s var(--ease) forwards;
 }
 .msg-body {
+  flex: 1;
   min-width: 0;
 }
 @keyframes mz-msg-in {

@@ -24,8 +24,8 @@ class MzFooter extends HTMLElement {
           </nav>
           <nav class="footer-col" aria-label="Legal">
             <p class="footer-h">Legal</p>
-            <a href="/privacy">Privacy</a>
-            <a href="/terms">Terms</a>
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
           </nav>
         </div>
       </div>`;
