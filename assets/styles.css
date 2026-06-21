@@ -2922,12 +2922,13 @@ mz-tab-panel:not([hidden]) {
   display: flex;
   align-items: center;
   gap: 0;
+  width: 100%;
   overflow-x: auto;
   padding-bottom: var(--space-3);
 }
 .tl-step {
-  flex: 0 0 auto;
-  width: 160px;
+  flex: 1 1 0;
+  min-width: 132px;
   padding: var(--space-4);
   background: var(--color-surface);
   border: var(--border);
@@ -2935,14 +2936,15 @@ mz-tab-panel:not([hidden]) {
 }
 /* two entry cards stacked on the left */
 .tl-entry {
-  flex: 0 0 auto;
+  flex: 1 1 0;
+  min-width: 132px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: var(--space-4);
 }
 .tl-entry .tl-step {
-  width: 176px;
+  width: 100%;
 }
 /* horizontal converging merge (drawn in JS to fit the cards) */
 .tl-merge-h {
