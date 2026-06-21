@@ -11,7 +11,7 @@ class MzAccordionItem extends HTMLElement {
     const q = this.getAttribute("q") || "";
     const a = this.innerHTML;
     this.classList.add("acc-item");
-    this.innerHTML = `<button type="button" class="acc-q">${q}<span class="acc-icon" aria-hidden="true"></span></button><div class="acc-a">${a}</div>`;
+    this.innerHTML = `<button type="button" class="acc-q">${q}<span class="acc-icon" aria-hidden="true"></span></button><div class="acc-a"><div class="acc-a-inner"><div class="acc-a-pad">${a}</div></div></div>`;
     this.querySelector(".acc-q").addEventListener("click", () => this.classList.toggle("is-open"));
   }
 }

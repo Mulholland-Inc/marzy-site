@@ -1347,6 +1347,19 @@ p {
 mz-tab-panel[hidden] {
   display: none;
 }
+mz-tab-panel:not([hidden]) {
+  animation: mz-fade-in var(--duration-slow) var(--ease);
+}
+@keyframes mz-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 
 /* ─────────────────────────────────────────── Switch ── */
 .switch-row {
@@ -1523,13 +1536,21 @@ mz-tab-panel[hidden] {
   opacity: 0;
 }
 .acc-a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration-slow) var(--ease);
+}
+.acc-item.is-open .acc-a {
+  grid-template-rows: 1fr;
+}
+.acc-a-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+.acc-a-pad {
   padding: 0 var(--space-5) var(--space-5);
   color: var(--color-ink-2);
   font-size: var(--text-small);
-  display: none;
-}
-.acc-item.is-open .acc-a {
-  display: block;
 }
 
 /* ─────────────────────────────────────────── Pricing ── */

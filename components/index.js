@@ -23,11 +23,38 @@ import "./pricing.js";
 import "./sidebar.js";
 import "./login.js";
 
+// Scroll-reveal: sections ease up as they enter the viewport (one-shot).
+function initReveal() {
+  const els = document.querySelectorAll(".preview, .gallery-head");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  els.forEach((el) => el.classList.add("reveal"));
+  if (reduce || !("IntersectionObserver" in window)) {
+    els.forEach((el) => el.classList.add("is-in"));
+    return;
+  }
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-in");
+          io.unobserve(e.target);
+        }
+      }
+    },
+    { threshold: 0.1, rootMargin: "0px 0px -8% 0px" }
+  );
+  els.forEach((el) => io.observe(el));
+}
+
 // Reveal the body once elements have upgraded (no FOUC).
 const reveal = () => document.body && document.body.classList.add("mz-ready");
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => requestAnimationFrame(reveal));
-} else {
+const boot = () => {
+  initReveal();
   requestAnimationFrame(reveal);
+};
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", boot);
+} else {
+  boot();
 }
 setTimeout(reveal, 1000);
