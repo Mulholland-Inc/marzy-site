@@ -2418,18 +2418,19 @@ mz-tab-panel:not([hidden]) {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: var(--space-4);
-  height: 230px;
+  gap: var(--space-3);
+  min-height: 230px;
   max-width: 460px;
-  padding: var(--space-5);
-  background: var(--color-surface);
-  border: var(--border);
-  border-radius: var(--radius-lg);
+  margin-inline: auto;
 }
 .msg {
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius);
   opacity: 0;
   transform: translateY(8px);
   animation: mz-msg-in 0.4s var(--ease) forwards;
