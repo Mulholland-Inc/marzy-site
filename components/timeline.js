@@ -13,8 +13,8 @@ const TRAJ = [
   ["Week 0", "An engineer embeds", "A Mulholland engineer sits with your operators and maps how work actually moves."],
   ["Weeks 1–2", "We audit every workflow", "They document each handoff and mark what is safe to automate."],
   ["Weeks 3–4", "We automate behind approval", "Agents are tested on real data, then shipped so nothing runs without sign-off."],
-  ["Ongoing", "We scale with you", "New workflows come online every week. You keep the audit trail and the controls."],
 ];
+const GATE2 = ["Checkpoint", "Review, then scale", "We measure the impact together and pick the next workflows to automate."];
 
 // Two routes that step inward (rounded 90° bends) into one evenly-spaced
 // bundle at the checkpoint.
@@ -55,6 +55,9 @@ class MzTimeline extends HTMLElement {
       this.appendChild(connector());
       this.appendChild(cardEl(t));
     });
+
+    this.appendChild(connector());
+    this.appendChild(cardEl(GATE2, "tl-gate"));
   }
 }
 customElements.define("mz-timeline", MzTimeline);
