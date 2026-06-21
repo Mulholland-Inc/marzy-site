@@ -1,6 +1,9 @@
 // <mz-timeline></mz-timeline>, engagement timeline. Two lightweight entry paths
 // (a guided demo or a scoped pilot) converge at a checkpoint; if you're happy,
-// the full forward-deployed Mulholland engagement begins below.
+// the full forward-deployed Mulholland engagement runs down the trunk. All the
+// connectors use the shared buildPipes() bundle, so they match <mz-pipes>.
+import { buildPipes } from "./pipe.js";
+
 const ENTRY = [
   ["2–3 days", "Guided demo", "A walkthrough on sample data so you can see Marzy work end to end."],
   ["~1 week", "Scoped pilot", "A limited run on your real data. Length depends on the scope you pick."],
@@ -13,26 +16,45 @@ const TRAJ = [
   ["Ongoing", "We scale with you", "New workflows come online every week. You keep the audit trail and the controls."],
 ];
 
-const card = ([when, title, desc], cls = "") =>
-  `<div class="tl-step ${cls}"><span class="tl-when">${when}</span><h3 class="tl-title">${title}</h3><p class="tl-desc">${desc}</p></div>`;
-const PIPES = `<div class="tl-pipes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>`;
-// Orthogonal routes (straight runs + rounded 90° bends) that step inward and
-// converge into a tight bundle at the checkpoint — the pipes aesthetic.
-const MERGE = `<svg class="tl-merge" viewBox="0 0 520 64" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-    <path class="pn" d="M120 0 V26 Q120 38 132 38 H240 Q252 38 252 50 V64"/>
-    <path class="pv" d="M132 0 V26 Q132 38 144 38 H246 Q258 38 258 50 V64"/>
-    <path class="pv" d="M388 0 V26 Q388 38 376 38 H274 Q262 38 262 50 V64"/>
-    <path class="pn" d="M400 0 V26 Q400 38 388 38 H280 Q268 38 268 50 V64"/>
-  </svg>`;
+// Two routes that step inward (rounded 90° bends) into one evenly-spaced
+// bundle at the checkpoint.
+const MERGE = [
+  [[126, 0], [126, 32], [246, 32], [246, 72]],
+  [[394, 0], [394, 32], [282, 32], [282, 72]],
+];
+
+function cardEl([when, title, desc], cls) {
+  const d = document.createElement("div");
+  d.className = "tl-step" + (cls ? ` ${cls}` : "");
+  d.innerHTML = `<span class="tl-when">${when}</span><h3 class="tl-title">${title}</h3><p class="tl-desc">${desc}</p>`;
+  return d;
+}
+// A straight vertical pipe bundle joining one card to the next.
+function connector() {
+  const svg = buildPipes({ routes: [[[30, 0], [30, 40]]], width: 60, height: 40, n: 5, spacing: 7, radius: 0 });
+  svg.classList.add("tl-conn");
+  return svg;
+}
 
 class MzTimeline extends HTMLElement {
   connectedCallback() {
     this.classList.add("timeline");
-    this.innerHTML = `
-      <div class="tl-paths">${ENTRY.map((e) => card(e)).join("")}</div>
-      ${MERGE}
-      ${card(GATE, "tl-gate")}
-      <div class="tl-trunk">${TRAJ.map((t) => PIPES + card(t)).join("")}</div>`;
+
+    const paths = document.createElement("div");
+    paths.className = "tl-paths";
+    ENTRY.forEach((e) => paths.appendChild(cardEl(e)));
+    this.appendChild(paths);
+
+    const merge = buildPipes({ routes: MERGE, width: 520, height: 72, n: 5, spacing: 7, radius: 16 });
+    merge.classList.add("tl-merge");
+    this.appendChild(merge);
+
+    this.appendChild(cardEl(GATE, "tl-gate"));
+
+    TRAJ.forEach((t) => {
+      this.appendChild(connector());
+      this.appendChild(cardEl(t));
+    });
   }
 }
 customElements.define("mz-timeline", MzTimeline);
