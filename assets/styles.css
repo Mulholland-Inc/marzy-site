@@ -67,6 +67,13 @@ mz-alert,
 mz-accordion,
 mz-accordion-item,
 mz-pricing,
+mz-progress,
+mz-empty,
+mz-footer,
+mz-slider,
+mz-datepicker,
+mz-checkbox,
+mz-radio-group,
 mz-preview {
   display: block;
 }
@@ -214,6 +221,11 @@ p {
 .grid {
   display: grid;
   gap: var(--gap-grid);
+}
+/* Grid cells default to min-width:auto, which lets wide intrinsic content
+   (native date inputs, long strings) overflow. Let cells shrink instead. */
+.grid > * {
+  min-width: 0;
 }
 .grid-2 {
   grid-template-columns: repeat(2, 1fr);
@@ -519,30 +531,6 @@ p {
   }
 }
 
-/* ─────────────────────────────────────────── Steps (numbered) ── */
-.steps {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: clamp(var(--space-5), 3vw, var(--space-10));
-}
-.step {
-  border-top: 2px solid var(--color-ink);
-  padding-top: var(--space-4);
-}
-.step-n {
-  font-family: var(--font-mono);
-  font-size: var(--text-13);
-  color: var(--color-volt);
-  letter-spacing: var(--tracking-mono);
-}
-.step h3 {
-  margin: var(--space-3) 0 var(--space-2);
-}
-.step p {
-  font-size: var(--text-small);
-  color: var(--color-ink-2);
-}
-
 /* ─────────────────────────────────────────── Big statement ── */
 .big-statement {
   font-family: var(--font-display);
@@ -607,39 +595,6 @@ p {
 }
 .closing-cta .btn-ghost:hover {
   background: rgba(255, 255, 255, 0.08);
-}
-
-/* ─────────────────────────────────────────── Strip (logo cloud) ── */
-.strip {
-  background: var(--color-surface);
-  border-bottom: var(--border);
-}
-.strip-inner {
-  display: flex;
-  align-items: center;
-  gap: clamp(var(--space-4), 4vw, var(--space-12));
-  flex-wrap: wrap;
-  padding-block: var(--space-6);
-}
-.strip-label {
-  font-size: var(--text-small);
-  color: var(--color-muted);
-}
-.strip-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(var(--space-4), 3.5vw, var(--space-12));
-  font-family: var(--font-mono);
-  font-size: var(--text-15);
-  color: var(--color-ink);
-}
-.strip-list li {
-  opacity: 0.5;
-  transition: opacity var(--duration-base) var(--ease), color var(--duration-base) var(--ease);
-}
-.strip-list li:hover {
-  opacity: 1;
-  color: var(--color-volt);
 }
 
 /* ─────────────────────────────────────────── Footer ── */
@@ -755,6 +710,7 @@ p {
 }
 .input {
   width: 100%;
+  min-width: 0; /* let inputs (esp. native date) shrink inside grid/flex */
   font: inherit;
   font-size: var(--text-small);
   color: var(--color-ink);
@@ -774,6 +730,17 @@ p {
   outline: none;
   border-color: var(--color-volt);
   box-shadow: 0 0 0 3px var(--color-volt-soft);
+}
+textarea.input {
+  height: auto;
+  min-height: 96px;
+  padding: var(--space-3) var(--control-px);
+  line-height: var(--leading-relaxed);
+  resize: vertical;
+}
+.field-hint {
+  font-size: var(--text-13);
+  color: var(--color-muted);
 }
 
 /* ─────────────────────────────────────────── Auth / login ── */
@@ -1326,7 +1293,7 @@ p {
   padding: 0 var(--space-4);
   background: none;
   border: 0;
-  border-bottom: 2px solid transparent;
+  border-bottom: 3px solid transparent;
   margin-bottom: -1px;
   font: inherit;
   font-size: var(--text-small);
@@ -1379,7 +1346,7 @@ mz-tab-panel:not([hidden]) {
   border: 0;
   border-radius: var(--radius-pill);
   background: var(--color-surface-2);
-  transition: background var(--duration-base) var(--ease);
+  transition: background var(--duration-slow) var(--ease);
 }
 .switch[aria-checked="true"] {
   background: var(--color-volt);
@@ -1392,7 +1359,7 @@ mz-tab-panel:not([hidden]) {
   height: 16px;
   border-radius: 50%;
   background: #fff;
-  transition: transform var(--duration-base) var(--ease);
+  transition: transform var(--duration-slow) var(--ease);
 }
 .switch[aria-checked="true"] .switch-knob {
   transform: translateX(20px);
@@ -1620,6 +1587,168 @@ mz-tab-panel:not([hidden]) {
 .price-card .btn {
   margin-top: auto;
   width: 100%;
+}
+
+/* ─────────────────────────────────────────── Progress ── */
+.progress-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-13);
+  color: var(--color-muted);
+}
+.progress-row b {
+  color: var(--color-ink);
+  font-weight: var(--weight-semibold);
+}
+.progress {
+  height: 8px;
+  background: var(--color-surface-2);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--color-volt);
+  border-radius: var(--radius-pill);
+  transition: width var(--duration-slow) var(--ease);
+}
+
+/* ─────────────────────────────────────────── Empty state ── */
+.empty {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  padding: var(--space-12) var(--space-6);
+  border: 1px dashed var(--color-line-strong);
+  border-radius: var(--radius);
+}
+.empty .spark {
+  width: 28px;
+  color: var(--color-muted);
+  margin-bottom: var(--space-2);
+}
+.empty p {
+  max-width: 32rem;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+}
+.empty .btn {
+  margin-top: var(--space-4);
+}
+
+/* ─────────────────────────────────────────── Slider ── */
+.slider-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+  font-size: var(--text-13);
+  color: var(--color-muted);
+}
+.slider-row b {
+  color: var(--color-ink);
+  font-weight: var(--weight-semibold);
+}
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 16px;
+  background: transparent;
+  cursor: pointer;
+}
+.slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--track-bg, var(--color-surface-2));
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  margin-top: -5px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-volt);
+}
+.slider::-moz-range-track {
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+}
+.slider::-moz-range-progress {
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--color-volt);
+}
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-volt);
+}
+.slider:focus-visible {
+  outline: none;
+}
+.slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px var(--color-volt-soft);
+}
+.slider:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 4px var(--color-volt-soft);
+}
+
+/* ─────────────────────────────────────────── Date picker ── */
+.datepicker-wrap {
+  position: relative;
+}
+.datepicker {
+  cursor: pointer;
+}
+.datepicker::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.datepicker-wrap svg {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  fill: none;
+  stroke: var(--color-muted);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────── Checkbox / radio ── */
+.check-row,
+.radio-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-small);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+.check-row input,
+.radio-row input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-volt);
+  cursor: pointer;
+}
+.radio-group {
+  display: grid;
+  gap: var(--space-3);
 }
 
 /* ─────────────────────────────────────────── Gallery (this page) ── */

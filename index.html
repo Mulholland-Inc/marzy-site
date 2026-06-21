@@ -203,18 +203,54 @@
         </mz-card>
       </section>
 
-      <!-- ───────────────────── Form controls ───────────────────── -->
+      <!-- ───────────────────── Form ───────────────────── -->
       <section class="preview">
-        <div class="preview-cap"><b>Form controls</b><span>fields · select · switches</span></div>
+        <div class="preview-cap"><b>Form</b><span>profile &amp; preferences</span></div>
         <mz-card>
-          <mz-grid cols="2" style="align-items: start">
-            <mz-field label="Full name" placeholder="Jane Doe"></mz-field>
-            <mz-select label="Role"><option>Operations</option><option>Finance</option><option>Support</option><option>Warehouse</option></mz-select>
-          </mz-grid>
-          <div style="margin-top: var(--space-6); display: grid; gap: var(--space-4); max-width: 520px">
-            <mz-switch label="Auto-run trusted workflows" checked></mz-switch>
+          <h3 style="margin-bottom: var(--space-5)">Edit member</h3>
+          <div style="display: grid; gap: var(--space-4); max-width: 640px">
+            <mz-grid cols="2" style="align-items: start">
+              <mz-field label="First name" placeholder="Dana"></mz-field>
+              <mz-field label="Last name" placeholder="Reyes"></mz-field>
+            </mz-grid>
+            <mz-field label="Email" type="email" placeholder="dana@lazarco.com" hint="Used for sign-in and workflow notifications."></mz-field>
+            <mz-grid cols="2" style="align-items: start">
+              <mz-select label="Role"><option>Operations</option><option>Finance</option><option>Support</option><option>Warehouse</option></mz-select>
+              <mz-select label="Approval limit"><option>$1,000</option><option>$5,000</option><option>$10,000</option><option>No limit</option></mz-select>
+            </mz-grid>
+            <mz-field label="Notes" type="textarea" placeholder="Anything the team should know…"></mz-field>
             <mz-divider></mz-divider>
-            <mz-switch label="Require approval over $5,000" checked></mz-switch>
+            <mz-switch label="Auto-run trusted workflows" checked></mz-switch>
+            <mz-switch label="Require approval over the limit" checked></mz-switch>
+            <mz-switch label="Email me when review is needed"></mz-switch>
+            <mz-divider></mz-divider>
+            <mz-actions style="justify-content: flex-end">
+              <mz-btn variant="ghost">Cancel</mz-btn>
+              <mz-btn variant="primary">Save changes</mz-btn>
+            </mz-actions>
+          </div>
+        </mz-card>
+      </section>
+
+      <!-- ───────────────────── More controls ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>More controls</b><span>date · slider · choice</span></div>
+        <mz-card>
+          <div style="display: grid; gap: var(--space-6); max-width: 640px">
+            <mz-grid cols="2" style="align-items: start">
+              <mz-datepicker label="Pay date" value="2026-06-15"></mz-datepicker>
+              <mz-datepicker label="Cutoff" value="2026-06-12"></mz-datepicker>
+            </mz-grid>
+            <mz-slider label="Max concurrency" min="0" max="100" value="40" suffix="%"></mz-slider>
+            <mz-divider></mz-divider>
+            <mz-radio-group label="Run mode" name="mode" options="Manual, Review, Auto" value="Review"></mz-radio-group>
+            <mz-divider></mz-divider>
+            <div style="display: grid; gap: var(--space-3)">
+              <span class="field-label">Notify on</span>
+              <mz-checkbox label="New pay run drafted" checked></mz-checkbox>
+              <mz-checkbox label="Connection errors" checked></mz-checkbox>
+              <mz-checkbox label="Weekly summary"></mz-checkbox>
+            </div>
           </div>
         </mz-card>
       </section>
@@ -244,6 +280,28 @@
       <section class="preview">
         <div class="preview-cap"><b>Pricing</b><span>three tiers</span></div>
         <mz-pricing></mz-pricing>
+      </section>
+
+      <!-- ───────────────────── App states ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>App states</b><span>progress &amp; empty</span></div>
+        <mz-grid cols="2" style="align-items: start">
+          <mz-card>
+            <h3 style="margin-bottom: var(--space-5)">This month</h3>
+            <div style="display: grid; gap: var(--space-5)">
+              <mz-progress value="68" label="June payroll"></mz-progress>
+              <mz-progress value="42" label="Onboarding tasks"></mz-progress>
+              <mz-progress value="91" label="Synced records"></mz-progress>
+            </div>
+          </mz-card>
+          <mz-empty heading="No connections yet" cta="Add a connection">Connect Gusto, QuickBooks, or your inbox to let Marzy start handling the work.</mz-empty>
+        </mz-grid>
+      </section>
+
+      <!-- ───────────────────── Footer ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Footer</b><span>marketing</span></div>
+        <mz-footer></mz-footer>
       </section>
     </main>
   </body>
