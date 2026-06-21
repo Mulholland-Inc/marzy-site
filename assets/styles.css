@@ -2912,9 +2912,10 @@ mz-tab-panel:not([hidden]) {
 }
 
 /* ─────────────────────────────────────────── Engagement timeline ──
-   Centered stack of phase cards, each joined to the next by a short line. */
+   Two entry paths (demo or pilot) converge at a checkpoint, then the full
+   forward-deployed engagement runs down the trunk. Pipes flow between cards. */
 .timeline {
-  max-width: 480px;
+  max-width: 520px;
   margin-inline: auto;
   display: flex;
   flex-direction: column;
@@ -2927,6 +2928,57 @@ mz-tab-panel:not([hidden]) {
   background: var(--color-surface);
   border: var(--border);
   border-radius: var(--radius);
+}
+/* two converging entry paths */
+.tl-paths {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  align-items: stretch;
+}
+.tl-merge {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.tl-merge path {
+  fill: none;
+  stroke-width: 2;
+  stroke-dasharray: 16 10;
+  animation: tl-merge-flow 0.9s linear infinite;
+}
+.tl-merge .pv {
+  stroke: var(--color-volt);
+}
+.tl-merge .pn {
+  stroke: var(--color-line-strong);
+}
+.tl-merge path:nth-child(2) {
+  animation-duration: 0.8s;
+}
+.tl-merge path:nth-child(3) {
+  animation-duration: 1s;
+}
+.tl-merge path:nth-child(4) {
+  animation-duration: 1.15s;
+}
+@keyframes tl-merge-flow {
+  to {
+    stroke-dashoffset: -26;
+  }
+}
+/* checkpoint card where the paths meet */
+.tl-gate {
+  background: var(--color-volt-soft);
+  border-color: var(--color-volt-line);
+  text-align: center;
+}
+.tl-gate .tl-when {
+  color: var(--color-volt);
+}
+/* the trunk: trajectory cards joined by pipes */
+.tl-trunk {
+  display: block;
 }
 /* pipes connector between cards — inner strokes Volt, outer neutral */
 .tl-pipes {
@@ -3622,6 +3674,16 @@ mz-tab-panel:not([hidden]) {
   }
   .cl-meta {
     padding-top: 0;
+  }
+  .tl-paths {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  .tl-merge {
+    display: none;
+  }
+  .tl-gate {
+    margin-top: var(--space-3);
   }
   .signup-form {
     flex-direction: column;
