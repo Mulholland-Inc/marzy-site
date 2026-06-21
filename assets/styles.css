@@ -58,8 +58,12 @@ mz-field,
 mz-login,
 mz-sidebar,
 mz-appshell,
+mz-table,
 mz-preview {
   display: block;
+}
+mz-badge {
+  display: inline-flex;
 }
 mz-spark {
   display: inline-block;
@@ -304,16 +308,6 @@ p {
   border: var(--border);
   border-radius: var(--radius);
   padding: clamp(var(--space-6), 3vw, var(--space-10));
-  box-shadow: var(--shadow-sm);
-  transition:
-    transform var(--duration-base) var(--ease),
-    box-shadow var(--duration-base) var(--ease),
-    border-color var(--duration-base) var(--ease);
-}
-.card-hover:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow);
-  border-color: var(--color-volt-line);
 }
 .card .spark {
   margin-bottom: var(--space-5);
@@ -1029,6 +1023,274 @@ p {
 }
 .cta-panel .btn-ghost:hover {
   background: rgba(255, 255, 255, 0.08);
+}
+
+/* ─────────────────────────────────────────── Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--text-12);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+}
+.badge-success {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+.badge-warning {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+.badge-danger {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+.badge-neutral {
+  background: var(--color-surface-2);
+  color: var(--color-muted);
+}
+.badge-info {
+  background: var(--color-volt-soft);
+  color: var(--color-volt);
+}
+
+/* ─────────────────────────────────────────── Button sizes / icon ── */
+.btn-sm {
+  padding: 0.45rem 0.7rem;
+  font-size: var(--text-13);
+}
+.btn-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-ink-2);
+  transition:
+    border-color var(--duration-base) var(--ease),
+    color var(--duration-base) var(--ease);
+}
+.btn-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.btn-icon:hover {
+  border-color: var(--color-ink);
+  color: var(--color-ink);
+}
+.btn-icon:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.btn-icon:disabled:hover {
+  border-color: var(--color-line);
+  color: var(--color-ink-2);
+}
+
+/* ─────────────────────────────────────────── Avatar / checkbox ── */
+.avatar {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: var(--text-12);
+  font-weight: var(--weight-semibold);
+  background: var(--color-surface-2);
+  color: var(--color-ink-2);
+}
+.checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-volt);
+  cursor: pointer;
+}
+
+/* ─────────────────────────────────────────── Table ── */
+.table-card {
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-surface);
+}
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border);
+}
+.table-search {
+  position: relative;
+  flex: 0 1 300px;
+  min-width: 190px;
+}
+.table-search svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--color-muted);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+.table-search .input {
+  padding-left: 36px;
+}
+.seg {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--color-surface-2);
+  border-radius: var(--radius-sm);
+}
+.seg button {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--text-13);
+  font-weight: var(--weight-medium);
+  color: var(--color-muted);
+  padding: 5px 12px;
+  border-radius: 6px;
+  transition:
+    background var(--duration-base) var(--ease),
+    color var(--duration-base) var(--ease);
+}
+.seg button:hover {
+  color: var(--color-ink);
+}
+.seg button.is-active {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+.table-toolbar-spacer {
+  flex: 1;
+}
+.table-scroll {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-small);
+}
+.table th {
+  text-align: left;
+  font-weight: var(--weight-medium);
+  font-size: var(--text-12);
+  color: var(--color-muted);
+  background: var(--color-bg-soft);
+  padding: var(--space-3) var(--space-5);
+  border-bottom: var(--border);
+  white-space: nowrap;
+}
+.table th.is-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+.table th.is-sortable:hover {
+  color: var(--color-ink);
+}
+.table th .sort {
+  margin-left: 4px;
+  font-size: 10px;
+  opacity: 0.35;
+}
+.table th.is-sorted {
+  color: var(--color-ink);
+}
+.table th.is-sorted .sort {
+  opacity: 1;
+  color: var(--color-volt);
+}
+.table td {
+  padding: var(--space-3) var(--space-5);
+  border-bottom: var(--border);
+  vertical-align: middle;
+  color: var(--color-ink-2);
+  white-space: nowrap;
+}
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.table tbody tr:hover {
+  background: var(--color-bg-soft);
+}
+.table tbody tr.is-selected {
+  background: var(--color-volt-soft);
+}
+.col-check {
+  width: 44px;
+}
+.cell-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.cell-user b {
+  display: block;
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-small);
+  color: var(--color-ink);
+}
+.cell-user small {
+  font-size: var(--text-12);
+  color: var(--color-muted);
+}
+.cell-num {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-ink);
+  font-weight: var(--weight-medium);
+}
+.cell-muted {
+  color: var(--color-muted);
+}
+.row-actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+.table-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-3) var(--space-5);
+  border-top: var(--border);
+  font-size: var(--text-13);
+  color: var(--color-muted);
+}
+.pager {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.pager-btns {
+  display: flex;
+  gap: var(--space-2);
+}
+.table-empty {
+  padding: var(--space-12) var(--space-5);
+  text-align: center;
+  color: var(--color-muted);
 }
 
 /* ─────────────────────────────────────────── Gallery (this page) ── */

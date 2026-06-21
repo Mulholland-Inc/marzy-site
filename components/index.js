@@ -12,6 +12,8 @@ import "./link.js";
 import "./btn.js";
 import "./card.js";
 import "./field.js";
+import "./badge.js";
+import "./table.js";
 import "./sidebar.js";
 import "./login.js";
 
