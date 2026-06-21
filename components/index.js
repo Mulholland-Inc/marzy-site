@@ -34,6 +34,8 @@ import "./contract.js";
 import "./family-hero.js";
 import "./thread.js";
 import "./portal-preview.js";
+import "./data-control.js";
+import "./timeline.js";
 import "./pipes.js";
 import "./workcard.js";
 import "./compliance.js";
