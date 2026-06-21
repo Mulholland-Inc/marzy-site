@@ -2960,12 +2960,15 @@ mz-tab-panel:not([hidden]) {
   height: var(--space-8);
   margin-inline: auto;
 }
-/* shared pipe strokes — also used by the pipes divider (mz-pipes) */
+/* shared pipe strokes — also used by the pipes divider (mz-pipes).
+   Long dash + small gap reads as a near-solid line with a soft separation
+   flowing along it. */
 .mz-pipe {
   fill: none;
   stroke-width: 2;
-  stroke-dasharray: 18 12;
-  animation: mz-pipe-flow 1s linear infinite;
+  stroke-linecap: round;
+  stroke-dasharray: 120 16;
+  animation: mz-pipe-flow linear infinite;
 }
 .mz-pipe-v {
   stroke: var(--color-volt);
@@ -2975,7 +2978,7 @@ mz-tab-panel:not([hidden]) {
 }
 @keyframes mz-pipe-flow {
   to {
-    stroke-dashoffset: -30;
+    stroke-dashoffset: -136;
   }
 }
 .tl-when {

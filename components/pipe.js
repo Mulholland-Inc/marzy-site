@@ -52,7 +52,7 @@ export function buildPipes({ routes, width, height, n = 7, spacing = 9, radius =
       p.setAttribute("d", offsetRoute(route, (i - half) * spacing, radius));
       p.setAttribute("class", `mz-pipe ${inner ? "mz-pipe-v" : "mz-pipe-n"}`);
       p.style.opacity = inner ? 0.95 - dist * 0.15 : 0.4 + (half - dist) * 0.05;
-      p.style.animationDuration = 0.9 + (i % 5) * 0.09 + "s";
+      p.style.animationDuration = 2.6 + (i % 5) * 0.2 + "s";
       svg.appendChild(p);
     }
   }
