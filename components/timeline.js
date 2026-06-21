@@ -1,7 +1,7 @@
-// <mz-timeline></mz-timeline>, marketing timeline of a Marzy engagement: a
-// forward-deployed engineer embeds, audits the back office, automates it behind
-// your approval, then keeps scaling. Phases run left-to-right along a hairline
-// rail; only the ongoing phase carries the accent.
+// <mz-timeline></mz-timeline>, engagement timeline: a forward-deployed
+// Mulholland engineer embeds, audits the back office, automates it behind your
+// approval, then keeps scaling. A centered stack of phase cards, each joined
+// to the next by a short line.
 const STEPS = [
   [
     "Week 0",
@@ -30,7 +30,7 @@ class MzTimeline extends HTMLElement {
     this.classList.add("timeline");
     this.innerHTML = STEPS.map(
       ([when, title, desc]) =>
-        `<div class="tl-step"><span class="tl-node" aria-hidden="true"></span><span class="tl-when">${when}</span><h3 class="tl-title">${title}</h3><p class="tl-desc">${desc}</p></div>`
+        `<div class="tl-step"><span class="tl-when">${when}</span><h3 class="tl-title">${title}</h3><p class="tl-desc">${desc}</p></div>`
     ).join("");
   }
 }

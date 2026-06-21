@@ -2903,37 +2903,31 @@ mz-tab-panel:not([hidden]) {
 }
 
 /* ─────────────────────────────────────────── Engagement timeline ──
-   Phases run left-to-right along a hairline rail, one node each. Rail and
-   markers stay neutral; only the ongoing phase carries the Volt accent. */
+   Centered stack of phase cards, each joined to the next by a short line. */
 .timeline {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--gap-grid);
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-6);
 }
 .tl-step {
   position: relative;
-  padding-top: var(--space-6);
+  width: 100%;
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius);
 }
-/* rail segment between this node and the next (spans the column + the gap) */
-.tl-step:not(:last-child)::before {
+/* connecting line in the gap between consecutive cards */
+.tl-step:not(:last-child)::after {
   content: "";
   position: absolute;
-  top: 5px;
-  left: 6px;
-  width: calc(100% + var(--gap-grid));
-  height: 2px;
-  background: var(--color-line);
-}
-.tl-node {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--color-surface);
-  border: 2px solid var(--color-line-strong);
+  top: 100%;
+  left: var(--space-6);
+  width: 2px;
+  height: var(--space-6);
+  background: var(--color-volt);
 }
 .tl-when {
   display: block;
@@ -2942,28 +2936,19 @@ mz-tab-panel:not([hidden]) {
   color: var(--color-muted);
 }
 .tl-title {
-  margin-top: var(--space-2);
+  margin-top: var(--space-1);
   font-family: var(--font-display);
-  font-size: var(--text-18);
+  font-size: var(--text-20);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-tight);
   line-height: var(--leading-snug);
   color: var(--color-ink);
 }
 .tl-desc {
-  margin-top: var(--space-2);
+  margin-top: var(--space-3);
   font-size: var(--text-small);
   line-height: var(--leading-relaxed);
   color: var(--color-muted);
-}
-@media (max-width: 768px) {
-  .timeline {
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
-  }
-  .tl-step:not(:last-child)::before {
-    display: none;
-  }
 }
 
 /* ─────────────────────────────────────────── Gallery (this page) ── */
