@@ -12,8 +12,14 @@ import "./link.js";
 import "./btn.js";
 import "./card.js";
 import "./field.js";
+import "./select.js";
+import "./switch.js";
 import "./badge.js";
+import "./alert.js";
+import "./tabs.js";
+import "./accordion.js";
 import "./table.js";
+import "./pricing.js";
 import "./sidebar.js";
 import "./login.js";
 

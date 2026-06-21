@@ -54,7 +54,7 @@ class MzTable extends HTMLElement {
           <button data-status="inactive">Inactive</button>
         </div>
         <div class="table-toolbar-spacer"></div>
-        <button class="btn btn-primary btn-sm" type="button">Add employee</button>
+        <button class="btn btn-primary" type="button">Add employee</button>
       </div>
       <div class="table-scroll">
         <table class="table">

@@ -109,8 +109,10 @@
   --space-24: 96px;
   --space-32: 128px;
 
-  --section-gap: clamp(64px, 9vw, 128px);
-  --section-gap-sm: clamp(40px, 6vw, 72px);
+  --section-gap: clamp(48px, 6vw, 88px);
+  --section-gap-sm: clamp(32px, 4vw, 56px);
+  --card-pad: var(--space-5); /* 20 — uniform internal padding for cards */
+  --gap-grid: var(--space-4); /* 16 — uniform gap between grid cells */
 
   /* ─────────────────────────────────────────── Layout ── */
   --container: 1180px;
@@ -122,10 +124,21 @@
   /* ─────────────────────────────────────────── Borders & radius ── */
   --border: 1px solid var(--color-line);
   --border-strong: 1px solid var(--color-line-strong);
-  --radius-sm: 8px;
-  --radius: 14px;
-  --radius-lg: 22px;
+  /* Radius — concentric ladder, 4px steps: control → card → panel.
+     A panel (16) padded by 4 holds a control (8 + ... ) concentrically;
+     the segmented control encodes it literally: 12 = 8 + 4. */
+  --radius-sm: 8px; /* controls: buttons, inputs, icon buttons, menu items */
+  --radius: 12px; /* cards */
+  --radius-lg: 16px; /* panels: login, table, app shell */
   --radius-pill: 999px;
+
+  /* Controls — one height for every interactive control so they all align. */
+  --control-h: 40px;
+  --control-h-sm: 32px;
+  --control-px: 16px;
+  --control-px-sm: 12px;
+  --icon: 18px;
+  --icon-sm: 16px;
 
   /* ─────────────────────────────────────────── Shadows ── */
   --shadow-sm: none;

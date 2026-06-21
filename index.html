@@ -144,14 +144,14 @@
       <!-- ─────────────────── Environment: marketing ─────────────────── -->
       <section class="preview">
         <div class="preview-cap"><b>Marketing</b><span>hero · feature cards · call to action</span></div>
-        <div style="display: grid; gap: 40px; background: var(--color-surface); border: var(--border); border-radius: var(--radius-lg); padding: clamp(28px, 5vw, 56px)">
+        <div style="display: grid; gap: var(--space-8); background: var(--color-surface); border: var(--border); border-radius: var(--radius-lg); padding: var(--space-8)">
           <div>
             <h2 style="font-size: var(--text-h1)">Operations that<br />run themselves.</h2>
-            <mz-lead style="margin-top: 20px; max-width: 34rem"
+            <mz-lead style="margin-top: var(--space-5); max-width: 34rem"
               >Marzy plugs into the tools you already use, reads what arrives, and completes the
               work end to end.</mz-lead
             >
-            <mz-actions style="margin-top: 28px">
+            <mz-actions style="margin-top: var(--space-6)">
               <mz-btn variant="primary" href="#">Get a demo</mz-btn>
               <mz-btn variant="outline" href="#">See how it works</mz-btn>
             </mz-actions>
@@ -184,6 +184,66 @@
             </mz-actions>
           </div>
         </div>
+      </section>
+
+      <!-- ───────────────────── Tabs ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Tabs</b><span>switchable panels</span></div>
+        <mz-card>
+          <mz-tabs>
+            <mz-tab-panel label="Overview"><p>A summary of the workspace: connected systems, workflows run this week, and anything awaiting review.</p></mz-tab-panel>
+            <mz-tab-panel label="Activity"><p>A running log of every action Marzy took, each with its source and reasoning.</p></mz-tab-panel>
+            <mz-tab-panel label="Settings">
+              <div style="display: grid; gap: var(--space-4); max-width: 520px">
+                <mz-switch label="Auto-run trusted workflows" checked></mz-switch>
+                <mz-switch label="Email me when review is needed"></mz-switch>
+              </div>
+            </mz-tab-panel>
+          </mz-tabs>
+        </mz-card>
+      </section>
+
+      <!-- ───────────────────── Form controls ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Form controls</b><span>fields · select · switches</span></div>
+        <mz-card>
+          <mz-grid cols="2" style="align-items: start">
+            <mz-field label="Full name" placeholder="Jane Doe"></mz-field>
+            <mz-select label="Role"><option>Operations</option><option>Finance</option><option>Support</option><option>Warehouse</option></mz-select>
+          </mz-grid>
+          <div style="margin-top: var(--space-6); display: grid; gap: var(--space-4); max-width: 520px">
+            <mz-switch label="Auto-run trusted workflows" checked></mz-switch>
+            <mz-divider></mz-divider>
+            <mz-switch label="Require approval over $5,000" checked></mz-switch>
+          </div>
+        </mz-card>
+      </section>
+
+      <!-- ───────────────────── Alerts ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Alerts</b><span>status callouts</span></div>
+        <div style="display: grid; gap: var(--space-4)">
+          <mz-alert variant="info"><b>Heads up</b><p>Marzy drafted 7 pay instructions awaiting your review.</p></mz-alert>
+          <mz-alert variant="success"><b>Pay run filed</b><p>June payroll was submitted to Gusto successfully.</p></mz-alert>
+          <mz-alert variant="warning"><b>Connection expiring</b><p>Your QuickBooks token expires in 3 days — reconnect to avoid interruptions.</p></mz-alert>
+          <mz-alert variant="danger"><b>Sync failed</b><p>We couldn't reach Sikka. Last successful sync was 6 hours ago.</p></mz-alert>
+        </div>
+      </section>
+
+      <!-- ───────────────────── FAQ ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>FAQ</b><span>accordion</span></div>
+        <mz-accordion>
+          <mz-accordion-item q="How does Marzy connect to our tools?">Through scoped, revocable OAuth connections — never more access than a workflow needs.</mz-accordion-item>
+          <mz-accordion-item q="Does Marzy ever act without approval?">Only on workflows you've explicitly trusted. Everything else lands in a review queue first.</mz-accordion-item>
+          <mz-accordion-item q="Is our data isolated?">Yes — each workspace runs in its own scoped environment with a full, immutable audit trail.</mz-accordion-item>
+        </mz-accordion>
+      </section>
+
+      <!-- ───────────────────── Pricing ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Pricing</b><span>three tiers</span></div>
+        <mz-pricing></mz-pricing>
       </section>
     </main>
   </body>
