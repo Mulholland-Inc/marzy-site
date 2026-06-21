@@ -118,30 +118,7 @@
       <!-- ───────────────────── Environment: app ───────────────────── -->
       <section class="preview">
         <div class="preview-cap"><b>Application</b><span>dashboard, sidebar + content</span></div>
-        <div class="appshell">
-          <mz-sidebar></mz-sidebar>
-          <div class="appshell-main">
-            <div class="appshell-topbar">
-              <span class="appshell-title">Overview</span>
-              <mz-btn variant="primary" size="sm">New connection</mz-btn>
-            </div>
-            <div class="appshell-body">
-              <div class="stat-grid">
-                <div class="stat"><div class="stat-label">Workflows run</div><div class="stat-value">1,284</div></div>
-                <div class="stat"><div class="stat-label">Awaiting review</div><div class="stat-value">7</div></div>
-                <div class="stat"><div class="stat-label">Connected systems</div><div class="stat-value">12</div></div>
-              </div>
-              <mz-card>
-                <h3>Payroll, June run</h3>
-                <p>Drafted from 14 inbox items. Marzy matched hours to employees and prepared pay instructions for your review.</p>
-                <mz-actions style="margin-top: 16px">
-                  <mz-btn variant="primary">Approve run</mz-btn>
-                  <mz-btn variant="outline">Open</mz-btn>
-                </mz-actions>
-              </mz-card>
-            </div>
-          </div>
-        </div>
+        <mz-dashboard></mz-dashboard>
       </section>
 
       <!-- ───────────────────── Environment: data table ───────────────────── -->
@@ -325,6 +302,18 @@
         <mz-family-hero></mz-family-hero>
       </section>
 
+      <!-- ───────────────────── Conversation thread ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Conversation</b><span>animated Marzy thread</span></div>
+        <mz-thread></mz-thread>
+      </section>
+
+      <!-- ───────────────────── Client portal preview ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Portal preview</b><span>fake browser · client subdomain</span></div>
+        <mz-portal-preview slug="northwind"></mz-portal-preview>
+      </section>
+
       <!-- ───────────────────── Pipes divider ───────────────────── -->
       <section class="preview">
         <div class="preview-cap"><b>Pipes divider</b><span>animated flow</span></div>
@@ -335,12 +324,6 @@
       <section class="preview">
         <div class="preview-cap"><b>Work card</b><span>product item</span></div>
         <mz-workcard></mz-workcard>
-      </section>
-
-      <!-- ───────────────────── Comparison ───────────────────── -->
-      <section class="preview">
-        <div class="preview-cap"><b>Comparison</b><span>manual vs Marzy</span></div>
-        <mz-compare></mz-compare>
       </section>
 
       <!-- ───────────────────── Compliance ───────────────────── -->

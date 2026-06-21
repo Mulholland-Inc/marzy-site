@@ -32,15 +32,17 @@ import "./invoice.js";
 import "./report.js";
 import "./contract.js";
 import "./family-hero.js";
+import "./thread.js";
+import "./portal-preview.js";
 import "./pipes.js";
 import "./workcard.js";
-import "./compare.js";
 import "./compliance.js";
 import "./signup.js";
 import "./empty.js";
 import "./footer.js";
 import "./topnav.js";
 import "./sidebar.js";
+import "./dashboard.js";
 import "./login.js";
 
 // Scroll-reveal: sections ease up as they enter the viewport (one-shot).
