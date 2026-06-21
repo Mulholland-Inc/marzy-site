@@ -97,6 +97,10 @@ mz-embed-kanban,
 mz-bars,
 mz-steps,
 mz-quote,
+mz-changelog,
+mz-gallery,
+mz-logos,
+mz-cta,
 mz-pipes,
 mz-preview {
   display: block;
@@ -3400,6 +3404,182 @@ mz-tab-panel:not([hidden]) {
   color: var(--color-muted);
 }
 
+/* ─────────────────────────────────────────── Changelog ── */
+.changelog {
+  display: block;
+  max-width: 640px;
+}
+.cl-entry {
+  padding: var(--space-6) 0;
+  border-top: var(--border);
+}
+.cl-entry:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+.cl-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.cl-version {
+  font-family: var(--font-display);
+  font-size: var(--text-20);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-ink);
+}
+.cl-date {
+  font-size: var(--text-13);
+  color: var(--color-muted);
+}
+.cl-list {
+  display: grid;
+  gap: var(--space-3);
+}
+.cl-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.cl-tag {
+  flex: 0 0 auto;
+  min-width: 68px;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-12);
+  font-weight: var(--weight-medium);
+  text-align: center;
+}
+.cl-new {
+  background: var(--color-volt-soft);
+  color: var(--color-volt);
+}
+.cl-improved {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+.cl-fixed {
+  background: var(--color-surface-2);
+  color: var(--color-muted);
+}
+.cl-text {
+  padding-top: 1px;
+  font-size: var(--text-small);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-2);
+}
+
+/* ─────────────────────────────────────────── Media gallery ── */
+.shots {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--gap-grid);
+}
+.gal-item {
+  display: block;
+  margin: 0;
+}
+.gal-media {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 10;
+  border: var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--color-volt-soft), var(--color-surface-2));
+}
+.gal-mark {
+  width: 44px;
+  opacity: 0.18;
+  color: var(--color-volt);
+}
+.gal-tag {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  border: var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  color: var(--color-ink-2);
+}
+.gal-item figcaption {
+  margin-top: var(--space-3);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+/* ─────────────────────────────────────────── Logo cloud ── */
+.logos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  text-align: center;
+}
+.logos-cap {
+  font-size: var(--text-13);
+  color: var(--color-muted);
+}
+.logos-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6) var(--space-8);
+}
+.logos-item {
+  font-family: var(--font-display);
+  font-size: var(--text-20);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-muted);
+}
+
+/* ─────────────────────────────────────────── CTA band ── */
+.ctaband {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+  padding: clamp(var(--space-8), 5vw, var(--space-12));
+  background: var(--color-ink);
+  border-radius: var(--radius-lg);
+}
+.ctaband h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-heading);
+  line-height: var(--leading-snug);
+  color: #fff;
+}
+.ctaband p {
+  margin-top: var(--space-3);
+  max-width: 34rem;
+  font-size: var(--text-lead);
+  color: rgba(255, 255, 255, 0.72);
+}
+.ctaband-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.ctaband-ghost {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.ctaband-ghost:hover {
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
 /* ─────────────────────────────────────────── Gallery (this page) ── */
 .gallery {
   max-width: 1180px;
@@ -3524,6 +3704,9 @@ mz-tab-panel:not([hidden]) {
     grid-template-columns: 1fr;
   }
   .comp-cards {
+    grid-template-columns: 1fr;
+  }
+  .shots {
     grid-template-columns: 1fr;
   }
   .signup-form {
