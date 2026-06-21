@@ -3405,11 +3405,15 @@ mz-tab-panel:not([hidden]) {
 .gal-tag {
   position: absolute;
   top: var(--space-3);
-  left: var(--space-4);
+  left: var(--space-3);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  border: var(--border);
   font-family: var(--font-mono);
   font-size: var(--text-12);
   letter-spacing: var(--tracking-mono);
-  color: var(--color-ink);
+  color: var(--color-ink-2);
 }
 .gal-item figcaption {
   margin-top: var(--space-3);
