@@ -28,7 +28,6 @@ class MzFooter extends HTMLElement {
             <a href="/terms">Terms</a>
           </nav>
         </div>
-        <div class="footer-base"><span>© 2026 Marzy</span><span>marzy.com</span></div>
       </div>`;
   }
 }

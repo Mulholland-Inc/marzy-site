@@ -29,6 +29,23 @@
         >
       </header>
 
+      <!-- ───────────────────────── Floating nav ───────────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Floating nav</b><span>scroll inside the frame — it squeezes into a bar</span></div>
+        <div class="topnav-demo">
+          <mz-topnav></mz-topnav>
+          <div class="topnav-demo-body">
+            <h2>Operations that run themselves.</h2>
+            <p>Scroll this panel to watch the nav contract into a floating rounded bar.</p>
+            <p>Marzy plugs into the tools you already use — Gusto, QuickBooks, your inbox — reads what arrives, and completes the work end to end.</p>
+            <p>From a payroll email to a filed pay run, without the busywork. It drafts, you review, and trusted flows run on their own.</p>
+            <p>Every action lands in a queue with its reasoning, so an auditor can follow any decision end to end.</p>
+            <p>Connectors normalize every system into one ontology — a person, a paycheck, and a record all speak the same language.</p>
+            <p>Keep scrolling. The bar stays put while the content moves beneath it.</p>
+          </div>
+        </div>
+      </section>
+
       <!-- ───────────────────────── Tokens: color ───────────────────────── -->
       <section class="preview">
         <div class="preview-cap"><b>Color</b><span>neutrals + one accent (Volt)</span></div>
@@ -213,8 +230,9 @@
       <section class="preview">
         <div class="preview-cap"><b>Form</b><span>profile &amp; preferences</span></div>
         <mz-card>
+          <div style="max-width: 640px; margin-inline: auto">
           <h3 style="margin-bottom: var(--space-5)">Edit member</h3>
-          <div style="display: grid; gap: var(--space-4); max-width: 640px">
+          <div style="display: grid; gap: var(--space-4)">
             <mz-grid cols="2" style="align-items: start">
               <mz-field label="First name" placeholder="Dana"></mz-field>
               <mz-field label="Last name" placeholder="Reyes"></mz-field>
@@ -235,6 +253,7 @@
               <mz-btn variant="primary">Save changes</mz-btn>
             </mz-actions>
           </div>
+          </div>
         </mz-card>
       </section>
 
@@ -242,7 +261,7 @@
       <section class="preview">
         <div class="preview-cap"><b>More controls</b><span>date · slider · choice</span></div>
         <mz-card>
-          <div style="display: grid; gap: var(--space-6); max-width: 640px">
+          <div style="display: grid; gap: var(--space-6); max-width: 640px; margin-inline: auto">
             <mz-grid cols="2" style="align-items: start">
               <mz-datepicker label="Pay date" value="2026-06-15"></mz-datepicker>
               <mz-datepicker label="Cutoff" value="2026-06-12"></mz-datepicker>
@@ -266,8 +285,8 @@
         <div class="preview-cap"><b>Alerts</b><span>status callouts</span></div>
         <div style="display: grid; gap: var(--space-4)">
           <mz-alert variant="info"><b>Heads up</b><p>Marzy drafted 7 pay instructions awaiting your review.</p></mz-alert>
-          <mz-alert variant="success"><b>Pay run filed</b><p>June payroll was submitted to Gusto successfully.</p></mz-alert>
-          <mz-alert variant="warning"><b>Connection expiring</b><p>Your QuickBooks token expires in 3 days — reconnect to avoid interruptions.</p></mz-alert>
+          <mz-alert variant="neutral"><b>Pay run filed</b><p>June payroll was submitted to Gusto successfully.</p></mz-alert>
+          <mz-alert variant="neutral"><b>Connection expiring</b><p>Your QuickBooks token expires in 3 days — reconnect to avoid interruptions.</p></mz-alert>
           <mz-alert variant="danger"><b>Sync failed</b><p>We couldn't reach Sikka. Last successful sync was 6 hours ago.</p></mz-alert>
         </div>
       </section>
@@ -286,6 +305,30 @@
       <section class="preview">
         <div class="preview-cap"><b>Pricing</b><span>three tiers</span></div>
         <mz-pricing></mz-pricing>
+      </section>
+
+      <!-- ───────────────────── Feature split ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Feature split</b><span>marketing</span></div>
+        <mz-feature></mz-feature>
+      </section>
+
+      <!-- ───────────────────── Comparison ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Comparison</b><span>manual vs Marzy</span></div>
+        <mz-compare></mz-compare>
+      </section>
+
+      <!-- ───────────────────── Compliance ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Compliance</b><span>SOC 2 · HIPAA · ISO 27001</span></div>
+        <mz-compliance></mz-compliance>
+      </section>
+
+      <!-- ───────────────────── Waitlist ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Waitlist</b><span>email capture</span></div>
+        <mz-signup></mz-signup>
       </section>
 
       <!-- ───────────────────── App states ───────────────────── -->

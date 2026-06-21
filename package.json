@@ -2,12 +2,9 @@
   "name": "marzy-site",
   "version": "0.1.0",
   "private": true,
-  "description": "Marzy marketing site — pure HTML/CSS/JS, no build step.",
+  "description": "Marzy site — pure static HTML/CSS/JS, no build step. Wrangler (Cloudflare deploy) runs via npx.",
   "scripts": {
     "dev": "python3 -m http.server 8000",
-    "deploy": "wrangler deploy"
-  },
-  "devDependencies": {
-    "wrangler": "^4.97.0"
+    "deploy": "npx wrangler@4 deploy"
   }
 }

@@ -11,9 +11,9 @@ const ICON = {
 };
 
 const STATUS = {
-  active: ["Active", "success"],
-  pending: ["Pending", "warning"],
-  leave: ["On leave", "info"],
+  active: ["Active", "info"],
+  pending: ["Pending", "neutral"],
+  leave: ["On leave", "neutral"],
   inactive: ["Inactive", "neutral"],
 };
 
