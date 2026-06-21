@@ -1,0 +1,136 @@
+/* Marzy — design tokens.
+   The single source of truth for color, type, spacing, motion, and layout.
+   Component CSS in styles.css references these via var(--token). Change a
+   value here and the whole site updates. */
+
+:root {
+  /* ─────────────────────────────────────────── Color ── */
+  /* Neutrals — cool, near-black to near-white. */
+  --color-ink: #0b0d12; /* headlines, the mark */
+  --color-ink-2: #353a47; /* body text */
+  --color-muted: #6c7382; /* secondary / captions */
+  --color-line: #e4e7ee; /* hairlines */
+  --color-line-strong: #d2d7e0; /* control borders */
+  --color-paper: #f6f7f9; /* soft page bands */
+  --color-surface: #ffffff; /* cards / base */
+  --color-surface-2: #eef1f6; /* recessed panels */
+
+  /* Volt — the single accent. */
+  --color-volt: #1b43ff;
+  --color-volt-700: #1232d6;
+  --color-volt-300: #8fa3ff;
+  --color-volt-soft: rgba(27, 67, 255, 0.07);
+  --color-volt-line: rgba(27, 67, 255, 0.22);
+
+  /* Semantic aliases */
+  --color-text: var(--color-ink);
+  --color-text-muted: var(--color-muted);
+  --color-bg: var(--color-surface);
+  --color-bg-soft: var(--color-paper);
+  --color-bg-panel: var(--color-surface-2);
+  --color-border: var(--color-line);
+  --color-border-strong: var(--color-line-strong);
+  --color-accent: var(--color-volt);
+  --color-on-accent: #ffffff;
+  --color-on-volt-soft: rgba(255, 255, 255, 0.88);
+
+  /* ─────────────────────────────────────────── Type ── */
+  --font-display: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* px scale */
+  --text-12: 12px;
+  --text-13: 13px;
+  --text-14: 14px;
+  --text-15: 15px;
+  --text-16: 16px;
+  --text-18: 18px;
+  --text-20: 20px;
+  --text-24: 24px;
+  --text-28: 28px;
+  --text-32: 32px;
+  --text-40: 40px;
+  --text-48: 48px;
+  --text-56: 56px;
+  --text-64: 64px;
+  --text-72: 72px;
+  --text-88: 88px;
+
+  /* semantic type — fluid where it matters */
+  --text-meta: var(--text-13);
+  --text-small: var(--text-14);
+  --text-body: var(--text-16);
+  --text-lead: clamp(18px, 1rem + 0.5vw, 20px);
+  --text-h3: clamp(20px, 1rem + 0.9vw, 26px);
+  --text-h2: clamp(32px, 1.4rem + 2.8vw, 50px);
+  --text-h1: clamp(44px, 1.6rem + 5vw, 80px);
+
+  /* weights */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* line height */
+  --leading-none: 1;
+  --leading-tight: 1.05;
+  --leading-snug: 1.15;
+  --leading-body: 1.6;
+  --leading-relaxed: 1.55;
+
+  /* tracking */
+  --tracking-display: -0.03em;
+  --tracking-heading: -0.025em;
+  --tracking-tight: -0.015em;
+  --tracking-normal: 0;
+  --tracking-mono: 0.04em;
+
+  /* ─────────────────────────────────────────── Spacing (4pt) ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  --section-gap: clamp(64px, 9vw, 128px);
+  --section-gap-sm: clamp(40px, 6vw, 72px);
+
+  /* ─────────────────────────────────────────── Layout ── */
+  --container: 1180px;
+  --container-wide: 1320px;
+  --container-narrow: 760px;
+  --gutter: clamp(20px, 5vw, 48px);
+  --nav-height: 72px;
+
+  /* ─────────────────────────────────────────── Borders & radius ── */
+  --border: 1px solid var(--color-line);
+  --border-strong: 1px solid var(--color-line-strong);
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* ─────────────────────────────────────────── Shadows ── */
+  --shadow-sm: 0 1px 2px rgba(11, 13, 18, 0.06), 0 1px 1px rgba(11, 13, 18, 0.04);
+  --shadow: 0 18px 40px -24px rgba(11, 13, 18, 0.28);
+
+  /* ─────────────────────────────────────────── Motion ── */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 120ms;
+  --duration-base: 160ms;
+  --duration-slow: 240ms;
+
+  /* ─────────────────────────────────────────── Z-index ── */
+  --z-nav: 50;
+  --z-modal: 100;
+}

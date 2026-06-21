@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Marzy — design system</title>
+    <meta name="description" content="Marzy design system — tokens and components across app, auth, and marketing." />
+    <meta name="theme-color" content="#f6f7f9" />
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/assets/tokens.css" rel="stylesheet" />
+    <link href="/assets/styles.css" rel="stylesheet" />
+    <script src="/components/index.js" type="module"></script>
+  </head>
+  <body style="background: var(--color-bg-soft)">
+    <main class="gallery">
+      <header class="gallery-head">
+        <span class="logo"><mz-spark></mz-spark><span>Marzy</span></span>
+        <h1 style="margin-top: 24px">Design system</h1>
+        <mz-lead
+          >One set of tokens — type, color, radius, borders, spacing — shown across the
+          environments they have to work in: the dashboard, sign-in, and the marketing
+          site.</mz-lead
+        >
+      </header>
+
+      <!-- ───────────────────────── Tokens: color ───────────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Color</b><span>neutrals + one accent (Volt)</span></div>
+        <div class="fnd-swatches">
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #0b0d12"></div>
+            <div class="fnd-swatch-meta"><b>Ink</b>#0b0d12</div>
+          </div>
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #353a47"></div>
+            <div class="fnd-swatch-meta"><b>Ink 2</b>#353a47</div>
+          </div>
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #6c7382"></div>
+            <div class="fnd-swatch-meta"><b>Muted</b>#6c7382</div>
+          </div>
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #1b43ff"></div>
+            <div class="fnd-swatch-meta"><b>Volt</b>#1b43ff</div>
+          </div>
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #1232d6"></div>
+            <div class="fnd-swatch-meta"><b>Volt 700</b>#1232d6</div>
+          </div>
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #f6f7f9"></div>
+            <div class="fnd-swatch-meta"><b>Paper</b>#f6f7f9</div>
+          </div>
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #eef1f6"></div>
+            <div class="fnd-swatch-meta"><b>Surface 2</b>#eef1f6</div>
+          </div>
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #e4e7ee"></div>
+            <div class="fnd-swatch-meta"><b>Line</b>#e4e7ee</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────────────────── Tokens: type ───────────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Type</b><span>Space Grotesk display · Inter body · Space Mono labels</span></div>
+        <div class="fnd-specimen">
+          <div class="fnd-type-row"><mz-meta>Display / h1</mz-meta><h1>Operations that run themselves</h1></div>
+          <div class="fnd-type-row"><mz-meta>Heading / h2</mz-meta><h2>Built for the work that never stops</h2></div>
+          <div class="fnd-type-row"><mz-meta>Subhead / h3</mz-meta><h3>One model for everything</h3></div>
+          <div class="fnd-type-row"><mz-meta>Lead</mz-meta><mz-lead>Marzy reads what arrives and completes the work end to end.</mz-lead></div>
+          <div class="fnd-type-row"><mz-meta>Body</mz-meta><p>Connectors normalize every system into one ontology, so a person, a paycheck, and a record all speak the same language.</p></div>
+          <div class="fnd-type-row"><mz-meta>Mono / meta</mz-meta><mz-meta>SOC&nbsp;2 Type&nbsp;II · 40+ connected systems</mz-meta></div>
+        </div>
+      </section>
+
+      <!-- ─────────────────── Tokens: radius + buttons ─────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Radius &amp; controls</b><span>corner scale and button variants</span></div>
+        <div class="fnd-radius">
+          <div class="fnd-radius-box" style="border-radius: var(--radius-sm)">8</div>
+          <div class="fnd-radius-box" style="border-radius: var(--radius)">14</div>
+          <div class="fnd-radius-box" style="border-radius: var(--radius-lg)">22</div>
+          <div class="fnd-radius-box" style="border-radius: var(--radius-pill)">pill</div>
+        </div>
+        <div class="specimen-row" style="margin-top: 8px">
+          <mz-btn variant="primary">Get a demo</mz-btn>
+          <mz-btn variant="outline">Secondary</mz-btn>
+          <mz-btn variant="ghost">Ghost</mz-btn>
+          <mz-btn variant="primary" arrow>With arrow</mz-btn>
+        </div>
+      </section>
+
+      <!-- ───────────────────── Environment: app ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Application</b><span>dashboard — sidebar + content</span></div>
+        <div class="appshell">
+          <mz-sidebar></mz-sidebar>
+          <div class="appshell-main">
+            <div class="appshell-topbar">
+              <span class="appshell-title">Overview</span>
+              <mz-btn variant="primary">New connection</mz-btn>
+            </div>
+            <div class="appshell-body">
+              <div class="stat-grid">
+                <div class="stat"><div class="stat-label">Workflows run</div><div class="stat-value">1,284</div></div>
+                <div class="stat"><div class="stat-label">Awaiting review</div><div class="stat-value">7</div></div>
+                <div class="stat"><div class="stat-label">Connected systems</div><div class="stat-value">12</div></div>
+              </div>
+              <mz-card>
+                <h3>Payroll — June run</h3>
+                <p>Drafted from 14 inbox items. Marzy matched hours to employees and prepared pay instructions for your review.</p>
+                <mz-actions style="margin-top: 16px">
+                  <mz-btn variant="primary">Approve run</mz-btn>
+                  <mz-btn variant="outline">Open</mz-btn>
+                </mz-actions>
+              </mz-card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────────────── Environment: auth ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Authentication</b><span>sign in</span></div>
+        <div style="border: var(--border); border-radius: var(--radius-lg); overflow: hidden">
+          <mz-login></mz-login>
+        </div>
+      </section>
+
+      <!-- ─────────────────── Environment: marketing ─────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Marketing</b><span>hero · feature cards · call to action</span></div>
+        <div style="display: grid; gap: 40px; background: var(--color-surface); border: var(--border); border-radius: var(--radius-lg); padding: clamp(28px, 5vw, 56px)">
+          <div>
+            <h2 style="font-size: var(--text-h1)">Operations that<br />run themselves.</h2>
+            <mz-lead style="margin-top: 20px; max-width: 34rem"
+              >Marzy plugs into the tools you already use, reads what arrives, and completes the
+              work end to end.</mz-lead
+            >
+            <mz-actions style="margin-top: 28px">
+              <mz-btn variant="primary" href="#">Get a demo</mz-btn>
+              <mz-btn variant="outline" href="#">See how it works</mz-btn>
+            </mz-actions>
+          </div>
+
+          <mz-grid cols="3">
+            <mz-card hover>
+              <mz-spark></mz-spark>
+              <h3>One model for everything</h3>
+              <p>Connectors normalize every system into a single ontology your whole team shares.</p>
+            </mz-card>
+            <mz-card hover>
+              <mz-spark></mz-spark>
+              <h3>Agents that do the work</h3>
+              <p>Not a chatbot. Marzy takes the action and stops to ask only when it matters.</p>
+            </mz-card>
+            <mz-card hover>
+              <mz-spark></mz-spark>
+              <h3>Auditable by default</h3>
+              <p>Every decision keeps its trail: the source, the reasoning, and the exact change.</p>
+            </mz-card>
+          </mz-grid>
+
+          <div class="cta-panel">
+            <h2>Stop running the back office.</h2>
+            <p>Let Marzy run it. See your own workflows automated in a 30-minute demo.</p>
+            <mz-actions>
+              <mz-btn variant="primary" href="#">Get a demo</mz-btn>
+              <mz-btn variant="ghost" href="#">Talk to us</mz-btn>
+            </mz-actions>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,42 +1,60 @@
-# sv
+# marzy-site
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Marzy's design system + marketing site. Pure HTML/CSS/JS — no framework, no
+build step. Web-native custom elements styled by a single token layer.
 
-## Creating a project
+## Architecture
 
-If you're seeing this, you've probably already done this step. Congrats!
+Every component is a light-DOM custom element (`<mz-*>`). Pages are written as a
+tree of tags:
 
-```sh
-# create a new project
-npx sv create my-app
+```html
+<mz-card hover>
+  <mz-spark></mz-spark>
+  <h3>One model for everything</h3>
+  <p>Connectors normalize every system into a single ontology.</p>
+</mz-card>
 ```
 
-To recreate this project with the same configuration:
+- One JS file per component in [`/components`](./components/), registered via
+  `customElements.define()`. Light DOM — no shadow roots, so the global
+  stylesheet keeps applying.
+- Variants are attributes: `<mz-btn variant="outline" arrow>`,
+  `<mz-section bg="panel">`, `<mz-grid cols="3">`.
+- Entry point is [`/components/index.js`](./components/index.js) — pages just
+  include `<script type="module" src="/components/index.js">`.
+- Body stays at `opacity: 0` until components register (no FOUC).
+
+## Design tokens
+
+All color, type, spacing, radius, borders, and motion live in
+[`/assets/tokens.css`](./assets/tokens.css) as CSS variables.
+[`/assets/styles.css`](./assets/styles.css) only references tokens — change a
+value in `tokens.css` and the whole system updates.
+
+Language: ink + a single electric accent (**Volt**, `#1b43ff`); Space Grotesk
+display · Inter body · Space Mono labels; light surfaces, crisp hairlines.
+
+## Pages
+
+- `index.html` — the design-system gallery: token reference (color, type,
+  radius, controls) plus the same components shown across three environments —
+  **application** (dashboard sidebar), **authentication** (sign in), and
+  **marketing** (hero, cards, CTA).
+
+## Develop locally
 
 ```sh
-# recreate this project
-npx sv@0.16.1 create --template minimal --types ts --install npm .
+python3 -m http.server 8000
+# open http://localhost:8000/
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Deploy
 
 ```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+wrangler deploy
 ```
 
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Cloudflare Worker (Static Assets) defined in
+[`wrangler.jsonc`](./wrangler.jsonc); HSTS applied in
+[`worker.js`](./worker.js).
