@@ -3630,14 +3630,10 @@ mz-tab-panel:not([hidden]) {
     padding-top: 0;
   }
   .tl-paths {
-    grid-template-columns: 1fr;
     gap: var(--space-3);
   }
-  .tl-merge {
-    display: none;
-  }
-  .tl-gate {
-    margin-top: var(--space-3);
+  .tl-paths .tl-step {
+    padding: var(--space-4);
   }
   .signup-form {
     flex-direction: column;
