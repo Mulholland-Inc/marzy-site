@@ -2912,36 +2912,49 @@ mz-tab-panel:not([hidden]) {
 }
 
 /* ─────────────────────────────────────────── Engagement timeline ──
-   Two entry paths (demo or pilot) converge at a checkpoint, then the full
-   forward-deployed engagement runs down the trunk. Pipes flow between cards. */
+   Left to right: two entry paths (demo or pilot) converge at a checkpoint,
+   then the forward-deployed engagement runs across, card to card, pipes
+   flowing between them. */
 .timeline {
-  max-width: 520px;
-  margin-inline: auto;
+  display: block;
+}
+.tl-row {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   gap: 0;
+  overflow-x: auto;
+  padding-bottom: var(--space-3);
 }
 .tl-step {
-  width: 100%;
-  padding: var(--space-6);
+  flex: 0 0 auto;
+  width: 160px;
+  padding: var(--space-4);
   background: var(--color-surface);
   border: var(--border);
   border-radius: var(--radius);
 }
-/* two converging entry paths */
-.tl-paths {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+/* two entry cards stacked on the left */
+.tl-entry {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   gap: var(--space-4);
-  align-items: stretch;
 }
-.tl-merge {
+.tl-entry .tl-step {
+  width: 176px;
+}
+/* horizontal converging merge (drawn in JS to fit the cards) */
+.tl-merge-h {
+  flex: 0 0 48px;
+  align-self: stretch;
+}
+.tl-merge-h svg {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
 }
-/* checkpoint card where the paths meet */
+/* checkpoint card where paths meet / work is reviewed */
 .tl-gate {
   background: var(--color-volt-soft);
   border-color: var(--color-volt-line);
@@ -2950,15 +2963,15 @@ mz-tab-panel:not([hidden]) {
 .tl-gate .tl-when {
   color: var(--color-volt);
 }
-/* the trunk: trajectory cards joined by pipe connectors */
-.tl-trunk {
-  display: block;
+/* horizontal pipe connector between cards */
+.tl-conn-h {
+  flex: 0 0 36px;
+  align-self: center;
 }
-.tl-conn {
+.tl-conn-h svg {
   display: block;
-  width: auto;
-  height: 40px; /* match the 60x40 viewBox 1:1 so stroke + spacing match the merge */
-  margin-inline: auto;
+  width: 36px;
+  height: 56px;
 }
 /* shared pipe strokes — also used by the pipes divider (mz-pipes).
    Long dash + small gap reads as a near-solid line with a soft separation
@@ -2983,14 +2996,14 @@ mz-tab-panel:not([hidden]) {
 }
 .tl-when {
   display: block;
-  font-size: var(--text-13);
+  font-size: var(--text-12);
   font-weight: var(--weight-medium);
   color: var(--color-muted);
 }
 .tl-title {
   margin-top: var(--space-1);
   font-family: var(--font-display);
-  font-size: var(--text-20);
+  font-size: var(--text-18);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-tight);
   line-height: var(--leading-snug);
@@ -2998,7 +3011,7 @@ mz-tab-panel:not([hidden]) {
 }
 .tl-desc {
   margin-top: var(--space-2);
-  font-size: var(--text-small);
+  font-size: var(--text-13);
   line-height: var(--leading-relaxed);
   color: var(--color-muted);
 }
@@ -3628,12 +3641,6 @@ mz-tab-panel:not([hidden]) {
   }
   .cl-meta {
     padding-top: 0;
-  }
-  .tl-paths {
-    gap: var(--space-3);
-  }
-  .tl-paths .tl-step {
-    padding: var(--space-4);
   }
   .signup-form {
     flex-direction: column;

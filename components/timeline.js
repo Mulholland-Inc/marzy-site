@@ -1,27 +1,21 @@
-// <mz-timeline></mz-timeline>, engagement timeline. Two lightweight entry paths
-// (a guided demo or a scoped pilot) converge at a checkpoint; if you're happy,
-// the full forward-deployed Mulholland engagement runs down the trunk. All the
-// connectors use the shared buildPipes() bundle, so they match <mz-pipes>.
+// <mz-timeline></mz-timeline>, engagement timeline, left to right. Two entry
+// paths (a guided demo or a scoped pilot) converge at a checkpoint; from there
+// the forward-deployed Mulholland engagement runs across, ending on a review
+// checkpoint. Pipes (shared buildPipes) flow between every card; the converging
+// merge is measured/redrawn so it always lines up with the two entry cards.
 import { buildPipes } from "./pipe.js";
 
 const ENTRY = [
-  ["2–3 days", "Guided demo", "A walkthrough on sample data so you can see Marzy work end to end."],
-  ["~1 week", "Scoped pilot", "A limited run on your real data. Length depends on the scope you pick."],
+  ["2–3 days", "Guided demo", "See Marzy run on sample data."],
+  ["~1 week", "Scoped pilot", "A scoped run on your real data."],
 ];
-const GATE = ["Checkpoint", "You're satisfied", "Happy with the pilot, we kick off the full engagement."];
+const GATE = ["Checkpoint", "You're satisfied", "Happy with the pilot, we begin."];
 const TRAJ = [
-  ["Week 0", "An engineer embeds", "A Mulholland engineer sits with your operators and maps how work actually moves."],
-  ["Weeks 1–2", "We audit every workflow", "They document each handoff and mark what is safe to automate."],
-  ["Weeks 3–4", "We automate behind approval", "Agents are tested on real data, then shipped so nothing runs without sign-off."],
+  ["Week 0", "An engineer embeds", "A Mulholland engineer maps how work moves."],
+  ["Weeks 1–2", "We audit", "Every handoff documented, safe work flagged."],
+  ["Weeks 3–4", "We automate", "Agents shipped behind your approval."],
 ];
-const GATE2 = ["Checkpoint", "Review, then scale", "We measure the impact together and pick the next workflows to automate."];
-
-// Two routes that step inward (rounded 90° bends) into one evenly-spaced
-// bundle at the checkpoint.
-const MERGE = [
-  [[126, 0], [126, 32], [246, 32], [246, 72]],
-  [[394, 0], [394, 32], [282, 32], [282, 72]],
-];
+const GATE2 = ["Checkpoint", "Review, then scale", "Measure impact, pick what's next."];
 
 function cardEl([when, title, desc], cls) {
   const d = document.createElement("div");
@@ -29,35 +23,70 @@ function cardEl([when, title, desc], cls) {
   d.innerHTML = `<span class="tl-when">${when}</span><h3 class="tl-title">${title}</h3><p class="tl-desc">${desc}</p>`;
   return d;
 }
-// A straight vertical pipe bundle joining one card to the next.
 function connector() {
-  const svg = buildPipes({ routes: [[[30, 0], [30, 40]]], width: 60, height: 40, n: 5, spacing: 7, radius: 0 });
-  svg.classList.add("tl-conn");
-  return svg;
+  const wrap = document.createElement("div");
+  wrap.className = "tl-conn-h";
+  wrap.appendChild(buildPipes({ routes: [[[0, 28], [36, 28]]], width: 36, height: 56, n: 5, spacing: 7, radius: 0 }));
+  return wrap;
 }
 
 class MzTimeline extends HTMLElement {
   connectedCallback() {
     this.classList.add("timeline");
+    const row = document.createElement("div");
+    row.className = "tl-row";
 
-    const paths = document.createElement("div");
-    paths.className = "tl-paths";
-    ENTRY.forEach((e) => paths.appendChild(cardEl(e)));
-    this.appendChild(paths);
+    const entry = document.createElement("div");
+    entry.className = "tl-entry";
+    ENTRY.forEach((e) => entry.appendChild(cardEl(e)));
+    row.appendChild(entry);
 
-    const merge = buildPipes({ routes: MERGE, width: 520, height: 72, n: 5, spacing: 7, radius: 16 });
-    merge.classList.add("tl-merge");
-    this.appendChild(merge);
+    const merge = document.createElement("div");
+    merge.className = "tl-merge-h";
+    row.appendChild(merge);
 
-    this.appendChild(cardEl(GATE, "tl-gate"));
-
+    row.appendChild(cardEl(GATE, "tl-gate"));
     TRAJ.forEach((t) => {
-      this.appendChild(connector());
-      this.appendChild(cardEl(t));
+      row.appendChild(connector());
+      row.appendChild(cardEl(t));
     });
+    row.appendChild(connector());
+    row.appendChild(cardEl(GATE2, "tl-gate"));
 
-    this.appendChild(connector());
-    this.appendChild(cardEl(GATE2, "tl-gate"));
+    this.appendChild(row);
+    this._entry = entry;
+    this._merge = merge;
+
+    const draw = () => this.drawMerge();
+    requestAnimationFrame(draw);
+    if ("ResizeObserver" in window) {
+      this._ro = new ResizeObserver(draw);
+      this._ro.observe(row);
+    }
+  }
+
+  disconnectedCallback() {
+    this._ro?.disconnect();
+  }
+
+  // Converge the two entry cards into a single bundle at the merge's right edge.
+  drawMerge() {
+    const m = this._merge;
+    const mb = m.getBoundingClientRect();
+    if (!mb.width || !mb.height) return;
+    const [c1, c2] = this._entry.children;
+    const r1 = c1.getBoundingClientRect();
+    const r2 = c2.getBoundingClientRect();
+    const W = mb.width, H = mb.height, yc = H / 2, mx = W * 0.5;
+    const y1 = r1.top + r1.height / 2 - mb.top;
+    const y2 = r2.top + r2.height / 2 - mb.top;
+    const routes = [
+      [[0, y1], [mx, y1], [mx, yc - 10], [W, yc - 10]],
+      [[0, y2], [mx, y2], [mx, yc + 10], [W, yc + 10]],
+    ];
+    m.replaceChildren(
+      buildPipes({ routes, width: W, height: H, n: 3, spacing: 7, radius: 12, preserve: "none" })
+    );
   }
 }
 customElements.define("mz-timeline", MzTimeline);
