@@ -2957,7 +2957,7 @@ mz-tab-panel:not([hidden]) {
 .tl-conn {
   display: block;
   width: auto;
-  height: var(--space-8);
+  height: 40px; /* match the 60x40 viewBox 1:1 so stroke + spacing match the merge */
   margin-inline: auto;
 }
 /* shared pipe strokes — also used by the pipes divider (mz-pipes).
