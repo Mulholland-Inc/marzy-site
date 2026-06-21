@@ -2905,29 +2905,44 @@ mz-tab-panel:not([hidden]) {
 /* ─────────────────────────────────────────── Engagement timeline ──
    Centered stack of phase cards, each joined to the next by a short line. */
 .timeline {
-  max-width: 520px;
+  max-width: 480px;
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-6);
+  align-items: stretch;
+  gap: 0;
 }
 .tl-step {
-  position: relative;
   width: 100%;
   padding: var(--space-6);
   background: var(--color-surface);
   border: var(--border);
   border-radius: var(--radius);
 }
-/* connecting line in the gap between consecutive cards */
-.tl-step:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: var(--space-6);
+/* pipes connector between cards — inner strokes Volt, outer neutral */
+.tl-pipes {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  height: var(--space-8);
+}
+.tl-pipes i {
   width: 2px;
-  height: var(--space-6);
+  height: 100%;
+  border-radius: 1px;
+  background: var(--color-line-strong);
+}
+.tl-pipes i:nth-child(3) {
   background: var(--color-volt);
+}
+.tl-pipes i:nth-child(2),
+.tl-pipes i:nth-child(4) {
+  background: var(--color-volt);
+  opacity: 0.8;
+}
+.tl-pipes i:nth-child(1),
+.tl-pipes i:nth-child(5) {
+  opacity: 0.5;
 }
 .tl-when {
   display: block;
@@ -2945,7 +2960,7 @@ mz-tab-panel:not([hidden]) {
   color: var(--color-ink);
 }
 .tl-desc {
-  margin-top: var(--space-3);
+  margin-top: var(--space-2);
   font-size: var(--text-small);
   line-height: var(--leading-relaxed);
   color: var(--color-muted);

@@ -28,10 +28,10 @@ const STEPS = [
 class MzTimeline extends HTMLElement {
   connectedCallback() {
     this.classList.add("timeline");
-    this.innerHTML = STEPS.map(
-      ([when, title, desc]) =>
-        `<div class="tl-step"><span class="tl-when">${when}</span><h3 class="tl-title">${title}</h3><p class="tl-desc">${desc}</p></div>`
-    ).join("");
+    const card = ([when, title, desc]) =>
+      `<div class="tl-step"><span class="tl-when">${when}</span><h3 class="tl-title">${title}</h3><p class="tl-desc">${desc}</p></div>`;
+    const pipes = `<div class="tl-pipes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>`;
+    this.innerHTML = STEPS.map(card).join(pipes);
   }
 }
 customElements.define("mz-timeline", MzTimeline);
