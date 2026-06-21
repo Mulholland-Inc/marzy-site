@@ -94,6 +94,11 @@ mz-embed-table,
 mz-embed-doc,
 mz-embed-checklist,
 mz-embed-kanban,
+mz-stat,
+mz-bars,
+mz-steps,
+mz-avatars,
+mz-quote,
 mz-pipes,
 mz-preview {
   display: block;
@@ -3225,6 +3230,245 @@ mz-tab-panel:not([hidden]) {
 }
 .ek-dot-volt {
   background: var(--color-volt);
+}
+
+/* ─────────────────────────────────────────── Stat / KPI ── */
+.stat {
+  display: block;
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--card-pad);
+}
+.stat-label {
+  font-size: var(--text-13);
+  color: var(--color-muted);
+}
+.stat-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+}
+.stat-value {
+  font-family: var(--font-display);
+  font-size: var(--text-32);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-heading);
+  color: var(--color-ink);
+}
+.stat-delta {
+  font-size: var(--text-13);
+  font-weight: var(--weight-medium);
+}
+.stat-up {
+  color: var(--color-success);
+}
+.stat-down {
+  color: var(--color-danger);
+}
+.stat-flat {
+  color: var(--color-muted);
+}
+.stat-caption {
+  margin-top: var(--space-1);
+  font-size: var(--text-12);
+  color: var(--color-muted);
+}
+
+/* ─────────────────────────────────────────── Bar chart ── */
+.bars {
+  display: block;
+  max-width: 320px;
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--card-pad);
+}
+.bars-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.bars-label {
+  font-size: var(--text-13);
+  color: var(--color-muted);
+}
+.bars-value {
+  font-family: var(--font-display);
+  font-size: var(--text-20);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+.bars-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 72px;
+  margin: var(--space-4) 0 var(--space-2);
+}
+.bars-chart .bar {
+  flex: 1;
+  min-height: 6px;
+  border-radius: 3px 3px 0 0;
+  background: var(--color-volt-soft);
+}
+.bars-chart .bar.is-last {
+  background: var(--color-volt);
+}
+.bars-caption {
+  font-size: var(--text-12);
+  color: var(--color-muted);
+}
+
+/* ─────────────────────────────────────────── Stepper ── */
+.steps {
+  display: flex;
+}
+.step {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+.step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--color-line);
+  z-index: 0;
+}
+.step.is-done:not(:last-child)::before {
+  background: var(--color-volt);
+}
+.step-dot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 2px solid var(--color-line-strong);
+  font-size: var(--text-13);
+  font-weight: var(--weight-semibold);
+  color: var(--color-muted);
+}
+.step.is-done .step-dot {
+  background: var(--color-volt);
+  border-color: var(--color-volt);
+  color: #fff;
+}
+.step.is-current .step-dot {
+  border-color: var(--color-volt);
+  color: var(--color-volt);
+}
+.step-dot svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.step-label {
+  font-size: var(--text-13);
+  color: var(--color-muted);
+}
+.step.is-done .step-label,
+.step.is-current .step-label {
+  color: var(--color-ink);
+}
+
+/* ─────────────────────────────────────────── Avatar stack ── */
+.avatars {
+  display: inline-flex;
+}
+.avatars .av {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-left: -8px;
+  border-radius: 50%;
+  border: 2px solid var(--color-surface);
+  background: var(--color-surface-2);
+  color: var(--color-ink-2);
+  font-size: var(--text-12);
+  font-weight: var(--weight-semibold);
+}
+.avatars .av:first-child {
+  margin-left: 0;
+}
+.avatars .av-more {
+  background: var(--color-volt);
+  color: #fff;
+}
+
+/* ─────────────────────────────────────────── Quote / testimonial ── */
+.quote {
+  display: block;
+  max-width: 540px;
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(var(--space-6), 4vw, var(--space-8));
+}
+.quote-mark {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 0.4;
+  color: var(--color-volt);
+}
+.quote-text {
+  margin-top: var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-ink);
+}
+.quote-author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+.quote-av {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-surface-2);
+  color: var(--color-ink-2);
+  font-size: var(--text-14);
+  font-weight: var(--weight-semibold);
+}
+.quote-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.quote-meta b {
+  font-size: var(--text-14);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+.quote-meta span {
+  font-size: var(--text-13);
+  color: var(--color-muted);
 }
 
 /* ─────────────────────────────────────────── Gallery (this page) ── */
