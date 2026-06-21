@@ -10,7 +10,7 @@ class MzContract extends HTMLElement {
   connectedCallback() {
     this.classList.add("document");
     const clauses = CLAUSES.map(
-      ([h, p], i) => `<li class="clause"><span class="clause-n">${i + 1}</span><div><h3>${h}</h3><p>${p}</p></div></li>`
+      ([h, p]) => `<li class="clause"><h3>${h}</h3><p>${p}</p></li>`
     ).join("");
     this.innerHTML = `
       <article class="doc">

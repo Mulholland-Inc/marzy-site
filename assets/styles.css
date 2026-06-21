@@ -1971,17 +1971,6 @@ mz-tab-panel:not([hidden]) {
   gap: var(--space-5);
   margin-top: var(--space-6);
 }
-.clause {
-  display: grid;
-  grid-template-columns: 28px 1fr;
-  gap: var(--space-3);
-}
-.clause-n {
-  font-family: var(--font-mono);
-  font-size: var(--text-13);
-  color: var(--color-volt);
-  padding-top: 1px;
-}
 .clause h3 {
   font-size: var(--text-15);
   margin-bottom: var(--space-1);
