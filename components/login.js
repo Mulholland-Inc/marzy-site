@@ -1,4 +1,4 @@
-// <mz-login></mz-login> — centered auth card (auth environment).
+// <mz-login></mz-login>, centered auth card (auth environment).
 import { SPARK } from "./spark.js";
 
 class MzLogin extends HTMLElement {

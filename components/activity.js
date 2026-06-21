@@ -1,9 +1,9 @@
-// <mz-activity></mz-activity> — recent-activity feed card (app).
+// <mz-activity></mz-activity>, recent-activity feed card (app).
 const FEED = [
-  ["Pay run drafted — June payroll", "2m ago"],
-  ["QuickBooks synced — 142 records", "1h ago"],
-  ["New connection — Gusto", "3h ago"],
-  ["Review cleared — 4 items", "Yesterday"],
+  ["Pay run drafted, June payroll", "2m ago"],
+  ["QuickBooks synced, 142 records", "1h ago"],
+  ["New connection, Gusto", "3h ago"],
+  ["Review cleared, 4 items", "Yesterday"],
 ];
 class MzActivity extends HTMLElement {
   connectedCallback() {

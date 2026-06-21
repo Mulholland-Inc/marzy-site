@@ -1,4 +1,4 @@
-// <mz-contract></mz-contract> — contract / agreement template (sample).
+// <mz-contract></mz-contract>, contract / agreement template (sample).
 const CLAUSES = [
   ["Services", "Marzy will operate the back-office workflows agreed by the parties, acting within scoped, revocable connections to the Client's systems."],
   ["Human oversight", "Marzy acts autonomously only on workflows the Client has explicitly trusted. All other actions are queued for the Client's review before execution."],

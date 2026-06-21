@@ -1,4 +1,4 @@
-// <mz-footer></mz-footer> — marketing footer.
+// <mz-footer></mz-footer>, marketing footer.
 import { SPARK } from "./spark.js";
 class MzFooter extends HTMLElement {
   connectedCallback() {

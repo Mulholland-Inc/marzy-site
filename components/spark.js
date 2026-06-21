@@ -1,4 +1,4 @@
-// <mz-spark> — the Marzy mark. Inherits color via currentColor; size is set
+// <mz-spark>, the Marzy mark. Inherits color via currentColor; size is set
 // by context (.logo .spark, .orch-core .spark, etc.). SPARK is exported so
 // other components can inline the same glyph.
 export const SPARK =

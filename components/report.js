@@ -1,4 +1,4 @@
-// <mz-report></mz-report> — long-form report / document page (sample).
+// <mz-report></mz-report>, long-form report / document page (sample).
 class MzReport extends HTMLElement {
   connectedCallback() {
     this.classList.add("document");
@@ -15,9 +15,9 @@ class MzReport extends HTMLElement {
         <h2>Connections</h2>
         <p>All connectors stayed healthy except a brief QuickBooks token expiry, which was renewed the same day. Coverage this month spanned:</p>
         <ul>
-          <li>Gusto — payroll &amp; benefits</li>
-          <li>QuickBooks — billing &amp; ledger</li>
-          <li>Sikka · FHIR — records sync</li>
+          <li>Gusto, payroll &amp; benefits</li>
+          <li>QuickBooks, billing &amp; ledger</li>
+          <li>Sikka · FHIR, records sync</li>
         </ul>
 
         <h2>What's next</h2>

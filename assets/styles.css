@@ -80,12 +80,13 @@ mz-kanban,
 mz-invoice,
 mz-report,
 mz-contract,
-mz-feature,
+mz-workcard,
 mz-compare,
 mz-compliance,
 mz-signup,
 mz-topnav,
 mz-family-hero,
+mz-pipes,
 mz-preview {
   display: block;
 }
@@ -1980,47 +1981,15 @@ mz-tab-panel:not([hidden]) {
   font-weight: var(--weight-semibold);
 }
 
-/* ─────────────────────────────────────────── Feature split ── */
-.feature {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(var(--space-8), 5vw, var(--space-16));
-  align-items: center;
+/* ─────────────────────────────────────────── Work card ── */
+.workcard {
+  max-width: 380px;
+  margin-inline: auto;
 }
-.feature h2 {
-  font-size: var(--text-h2);
-}
-.feature .lead {
-  margin-top: var(--space-4);
-}
-.feature-list {
-  margin-top: var(--space-6);
-  display: grid;
-  gap: var(--space-3);
-}
-.feature-list li {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-size: var(--text-small);
-  color: var(--color-ink-2);
-}
-.feature-list svg {
-  flex: 0 0 auto;
-  width: var(--icon-sm);
-  height: var(--icon-sm);
-  fill: none;
-  stroke: var(--color-volt);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.feature > :last-child {
-  display: grid;
-  place-items: center;
-}
-.feature.reverse > :last-child {
-  order: -1;
+.workcard-title {
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+  margin-bottom: var(--space-2);
 }
 
 /* ─────────────────────────────────────────── Comparison ── */
@@ -2352,8 +2321,23 @@ mz-tab-panel:not([hidden]) {
   color: var(--color-ink-2);
 }
 
+/* ─────────────────────────────────────────── Animated pipes divider ── */
+.pipes {
+  display: block;
+  overflow: hidden;
+}
+.pipes svg {
+  display: block;
+  width: 100%;
+  height: clamp(160px, 18vw, 220px);
+}
+
 /* ─────────────────────────────────────────── Product family hero ── */
 .famhero {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: clamp(var(--space-8), 5vw, 64px);
+  align-items: center;
   padding-block: clamp(40px, 7vw, 88px);
 }
 .famhero-title {
@@ -2387,6 +2371,107 @@ mz-tab-panel:not([hidden]) {
 }
 .famhero .actions {
   margin-top: var(--space-8);
+}
+
+/* Slack-style conversation thread (hero right column) */
+.thread {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--space-4);
+  height: 264px;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+}
+.msg {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: mz-msg-in 0.4s var(--ease) forwards;
+}
+.msg-body {
+  min-width: 0;
+}
+@keyframes mz-msg-in {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.msg-avatar {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-12);
+  font-weight: var(--weight-semibold);
+}
+.msg-avatar.op {
+  background: var(--color-surface-2);
+  color: var(--color-ink-2);
+}
+.msg-avatar.marzy {
+  background: var(--color-volt);
+  color: #fff;
+  padding: 8px;
+}
+.msg-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  line-height: 1.1;
+}
+.msg-name {
+  font-size: var(--text-14);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+.msg-time {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.msg-text {
+  margin-top: 2px;
+  font-size: var(--text-small);
+  line-height: 1.5;
+  color: var(--color-ink-2);
+}
+.typing-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+}
+.typing-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-muted);
+  animation: mz-dot 1.2s var(--ease) infinite;
+}
+.typing-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes mz-dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
 }
 
 /* ─────────────────────────────────────────── Gallery (this page) ── */
@@ -2465,12 +2550,8 @@ mz-tab-panel:not([hidden]) {
   .grid-4 {
     grid-template-columns: repeat(2, 1fr);
   }
-  .feature {
+  .famhero {
     grid-template-columns: 1fr;
-  }
-  .feature > :last-child,
-  .feature.reverse > :last-child {
-    order: 0;
   }
   .nav-links,
   .nav-signin {

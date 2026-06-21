@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Marzy — design system</title>
-    <meta name="description" content="Marzy design system — tokens and components across app, auth, and marketing." />
+    <title>Marzy, design system</title>
+    <meta name="description" content="Marzy design system, tokens and components across app, auth, and marketing." />
     <meta name="theme-color" content="#f6f7f9" />
     <link rel="icon" type="image/svg+xml" href="/assets/favicon/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -23,7 +23,7 @@
         <span class="logo"><mz-spark></mz-spark><span>Marzy</span></span>
         <h1 style="margin-top: 24px">Design system</h1>
         <mz-lead
-          >One set of tokens — type, color, radius, borders, spacing — shown across the
+          >One set of tokens, type, color, radius, borders, spacing, shown across the
           environments they have to work in: the dashboard, sign-in, and the marketing
           site.</mz-lead
         >
@@ -31,16 +31,16 @@
 
       <!-- ───────────────────────── Floating nav ───────────────────────── -->
       <section class="preview">
-        <div class="preview-cap"><b>Floating nav</b><span>scroll inside the frame — it squeezes into a bar</span></div>
+        <div class="preview-cap"><b>Floating nav</b><span>scroll inside the frame, it squeezes into a bar</span></div>
         <div class="topnav-demo">
           <mz-topnav></mz-topnav>
           <div class="topnav-demo-body">
             <h2>Operations that run themselves.</h2>
             <p>Scroll this panel to watch the nav contract into a floating rounded bar.</p>
-            <p>Marzy plugs into the tools you already use — Gusto, QuickBooks, your inbox — reads what arrives, and completes the work end to end.</p>
+            <p>Marzy plugs into the tools you already use, Gusto, QuickBooks, your inbox, reads what arrives, and completes the work end to end.</p>
             <p>From a payroll email to a filed pay run, without the busywork. It drafts, you review, and trusted flows run on their own.</p>
             <p>Every action lands in a queue with its reasoning, so an auditor can follow any decision end to end.</p>
-            <p>Connectors normalize every system into one ontology — a person, a paycheck, and a record all speak the same language.</p>
+            <p>Connectors normalize every system into one ontology, a person, a paycheck, and a record all speak the same language.</p>
             <p>Keep scrolling. The bar stays put while the content moves beneath it.</p>
           </div>
         </div>
@@ -117,7 +117,7 @@
 
       <!-- ───────────────────── Environment: app ───────────────────── -->
       <section class="preview">
-        <div class="preview-cap"><b>Application</b><span>dashboard — sidebar + content</span></div>
+        <div class="preview-cap"><b>Application</b><span>dashboard, sidebar + content</span></div>
         <div class="appshell">
           <mz-sidebar></mz-sidebar>
           <div class="appshell-main">
@@ -132,7 +132,7 @@
                 <div class="stat"><div class="stat-label">Connected systems</div><div class="stat-value">12</div></div>
               </div>
               <mz-card>
-                <h3>Payroll — June run</h3>
+                <h3>Payroll, June run</h3>
                 <p>Drafted from 14 inbox items. Marzy matched hours to employees and prepared pay instructions for your review.</p>
                 <mz-actions style="margin-top: 16px">
                   <mz-btn variant="primary">Approve run</mz-btn>
@@ -164,7 +164,7 @@
 
       <!-- ───────────────────── Kanban ───────────────────── -->
       <section class="preview">
-        <div class="preview-cap"><b>Kanban</b><span>board — columns &amp; cards</span></div>
+        <div class="preview-cap"><b>Kanban</b><span>board, columns &amp; cards</span></div>
         <mz-kanban></mz-kanban>
       </section>
 
@@ -298,7 +298,7 @@
         <div style="display: grid; gap: var(--space-4)">
           <mz-alert variant="info"><b>Heads up</b><p>Marzy drafted 7 pay instructions awaiting your review.</p></mz-alert>
           <mz-alert variant="neutral"><b>Pay run filed</b><p>June payroll was submitted to Gusto successfully.</p></mz-alert>
-          <mz-alert variant="neutral"><b>Connection expiring</b><p>Your QuickBooks token expires in 3 days — reconnect to avoid interruptions.</p></mz-alert>
+          <mz-alert variant="neutral"><b>Connection expiring</b><p>Your QuickBooks token expires in 3 days, reconnect to avoid interruptions.</p></mz-alert>
           <mz-alert variant="danger"><b>Sync failed</b><p>We couldn't reach Sikka. Last successful sync was 6 hours ago.</p></mz-alert>
         </div>
       </section>
@@ -307,9 +307,9 @@
       <section class="preview">
         <div class="preview-cap"><b>FAQ</b><span>accordion</span></div>
         <mz-accordion>
-          <mz-accordion-item q="How does Marzy connect to our tools?">Through scoped, revocable OAuth connections — never more access than a workflow needs.</mz-accordion-item>
+          <mz-accordion-item q="How does Marzy connect to our tools?">Through scoped, revocable OAuth connections, never more access than a workflow needs.</mz-accordion-item>
           <mz-accordion-item q="Does Marzy ever act without approval?">Only on workflows you've explicitly trusted. Everything else lands in a review queue first.</mz-accordion-item>
-          <mz-accordion-item q="Is our data isolated?">Yes — each workspace runs in its own scoped environment with a full, immutable audit trail.</mz-accordion-item>
+          <mz-accordion-item q="Is our data isolated?">Yes, each workspace runs in its own scoped environment with a full, immutable audit trail.</mz-accordion-item>
         </mz-accordion>
       </section>
 
@@ -325,10 +325,16 @@
         <mz-family-hero></mz-family-hero>
       </section>
 
-      <!-- ───────────────────── Feature split ───────────────────── -->
+      <!-- ───────────────────── Pipes divider ───────────────────── -->
       <section class="preview">
-        <div class="preview-cap"><b>Feature split</b><span>marketing</span></div>
-        <mz-feature></mz-feature>
+        <div class="preview-cap"><b>Pipes divider</b><span>animated flow</span></div>
+        <mz-pipes></mz-pipes>
+      </section>
+
+      <!-- ───────────────────── Work card ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Work card</b><span>product item</span></div>
+        <mz-workcard></mz-workcard>
       </section>
 
       <!-- ───────────────────── Comparison ───────────────────── -->

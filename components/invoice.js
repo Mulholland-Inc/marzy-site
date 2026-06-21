@@ -1,7 +1,7 @@
-// <mz-invoice></mz-invoice> — invoice document (sample).
+// <mz-invoice></mz-invoice>, invoice document (sample).
 import { SPARK } from "./spark.js";
 const LINES = [
-  ["Back-office automation — Team plan", "1", "$499.00", "$499.00"],
+  ["Back-office automation, Team plan", "1", "$499.00", "$499.00"],
   ["Additional connectors (3)", "3", "$40.00", "$120.00"],
   ["Onboarding & setup", "1", "$750.00", "$750.00"],
 ];

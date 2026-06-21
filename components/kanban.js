@@ -1,8 +1,8 @@
-// <mz-kanban></mz-kanban> — board with columns and cards (sample).
+// <mz-kanban></mz-kanban>, board with columns and cards (sample).
 const COLS = [
   ["Backlog", [["Reconcile Q2 invoices", "Finance"], ["Onboard new hire", "HR"], ["Renew QuickBooks token", "Ops"]]],
   ["In progress", [["June payroll run", "Payroll"], ["Sikka sync fix", "Eng"]]],
-  ["Review", [["Pay instructions — batch 14", "Review"]]],
+  ["Review", [["Pay instructions, batch 14", "Review"]]],
   ["Done", [["May payroll filed", "Payroll"], ["Connect Gusto", "Ops"]]],
 ];
 class MzKanban extends HTMLElement {

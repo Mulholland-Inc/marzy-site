@@ -1,4 +1,4 @@
-// <mz-sidebar></mz-sidebar> — dashboard navigation rail (app environment).
+// <mz-sidebar></mz-sidebar>, dashboard navigation rail (app environment).
 import { SPARK } from "./spark.js";
 
 const ICON = {

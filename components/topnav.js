@@ -1,4 +1,4 @@
-// <mz-topnav></mz-topnav> — floating top nav. Transparent + full-width at rest;
+// <mz-topnav></mz-topnav>, floating top nav. Transparent + full-width at rest;
 // on scroll the links squeeze and it contracts into a centered rounded bar.
 import { SPARK } from "./spark.js";
 

@@ -1,6 +1,6 @@
 # marzy-site
 
-Marzy's design system + marketing site. Pure HTML/CSS/JS — no framework, no
+Marzy's design system + marketing site. Pure HTML/CSS/JS, no framework, no
 build step. Web-native custom elements styled by a single token layer.
 
 ## Architecture
@@ -17,11 +17,11 @@ tree of tags:
 ```
 
 - One JS file per component in [`/components`](./components/), registered via
-  `customElements.define()`. Light DOM — no shadow roots, so the global
+  `customElements.define()`. Light DOM, no shadow roots, so the global
   stylesheet keeps applying.
 - Variants are attributes: `<mz-btn variant="outline" arrow>`,
   `<mz-section bg="panel">`, `<mz-grid cols="3">`.
-- Entry point is [`/components/index.js`](./components/index.js) — pages just
+- Entry point is [`/components/index.js`](./components/index.js), pages just
   include `<script type="module" src="/components/index.js">`.
 - Body stays at `opacity: 0` until components register (no FOUC).
 
@@ -29,7 +29,7 @@ tree of tags:
 
 All color, type, spacing, radius, borders, and motion live in
 [`/assets/tokens.css`](./assets/tokens.css) as CSS variables.
-[`/assets/styles.css`](./assets/styles.css) only references tokens — change a
+[`/assets/styles.css`](./assets/styles.css) only references tokens, change a
 value in `tokens.css` and the whole system updates.
 
 Language: ink + a single electric accent (**Volt**, `#1b43ff`); Space Grotesk
@@ -37,8 +37,8 @@ display · Inter body · Space Mono labels; light surfaces, crisp hairlines.
 
 ## Pages
 
-- `index.html` — the design-system gallery: token reference (color, type,
-  radius, controls) plus the same components shown across three environments —
+- `index.html`, the design-system gallery: token reference (color, type,
+  radius, controls) plus the same components shown across three environments:
   **application** (dashboard sidebar), **authentication** (sign in), and
   **marketing** (hero, cards, CTA).
 

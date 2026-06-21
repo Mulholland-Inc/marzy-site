@@ -1,6 +1,6 @@
-// <mz-table></mz-table> — a rich, interactive data table (app environment).
+// <mz-table></mz-table>, a rich, interactive data table (app environment).
 // Search, segmented status filter, sortable columns, row selection, row
-// actions, and pagination — all client-side over a sample dataset.
+// actions, and pagination, all client-side over a sample dataset.
 
 const ICON = {
   search: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>',
@@ -188,7 +188,7 @@ class MzTable extends HTMLElement {
             <td><div class="cell-user"><span class="avatar" aria-hidden="true">${initials(r.name)}</span><span><b>${esc(r.name)}</b><small>${esc(r.email)}</small></span></div></td>
             <td><span class="badge badge-${variant}">${label}</span></td>
             <td class="cell-muted">${esc(r.role)}</td>
-            <td class="cell-num">${r.pay ? money(r.pay) : "—"}</td>
+            <td class="cell-num">${r.pay ? money(r.pay) : "·"}</td>
             <td class="cell-muted">${date(r.last)}</td>
             <td><div class="row-actions"><button class="btn btn-outline btn-sm" type="button">View</button><button class="btn-icon" type="button" aria-label="More actions">${ICON.kebab}</button></div></td>
           </tr>`;

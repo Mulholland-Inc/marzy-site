@@ -1,4 +1,4 @@
-// <mz-pricing></mz-pricing> — three-tier pricing section (marketing).
+// <mz-pricing></mz-pricing>, three-tier pricing section (marketing).
 const CHECK = '<svg viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg>';
 const TIERS = [
   { name: "Starter", price: "$0", per: "/mo", cta: "Start free", featured: false, feats: ["1 connected system", "100 workflows / mo", "Email support"] },

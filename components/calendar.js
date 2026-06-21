@@ -1,4 +1,4 @@
-// <mz-calendar></mz-calendar> — month calendar (sample: June 2026).
+// <mz-calendar></mz-calendar>, month calendar (sample: June 2026).
 const PREV = '<svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg>';
 const NEXT = '<svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg>';
 const EVENTS = {

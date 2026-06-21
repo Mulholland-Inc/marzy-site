@@ -1,4 +1,4 @@
-// <mz-compliance></mz-compliance> — three keycard-style compliance badges.
+// <mz-compliance></mz-compliance>, three keycard-style compliance badges.
 const ICON = {
   soc2: '<svg viewBox="0 0 48 48"><path d="M24 5 9 11v9c0 9 6.4 16.3 15 19 8.6-2.7 15-10 15-19v-9z"/><path d="m17 24 5 5 9-10"/></svg>',
   hipaa: '<svg viewBox="0 0 48 48"><path d="M24 39C12 31 7 23 7 16.5A8.5 8.5 0 0 1 24 12a8.5 8.5 0 0 1 17 4.5C41 23 36 31 24 39Z"/><path d="M13 23.5h6l3-5 4 10 3-5h6"/></svg>',
