@@ -94,8 +94,6 @@ mz-embed-table,
 mz-embed-doc,
 mz-embed-checklist,
 mz-embed-kanban,
-mz-bars,
-mz-steps,
 mz-quote,
 mz-changelog,
 mz-gallery,
@@ -3234,118 +3232,6 @@ mz-tab-panel:not([hidden]) {
   background: var(--color-volt);
 }
 
-/* ─────────────────────────────────────────── Bar chart ── */
-.bars {
-  display: block;
-  max-width: 320px;
-  background: var(--color-surface);
-  border: var(--border);
-  border-radius: var(--radius);
-  padding: var(--card-pad);
-}
-.bars-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-}
-.bars-label {
-  font-size: var(--text-13);
-  color: var(--color-muted);
-}
-.bars-value {
-  font-family: var(--font-display);
-  font-size: var(--text-20);
-  font-weight: var(--weight-semibold);
-  color: var(--color-ink);
-}
-.bars-chart {
-  display: flex;
-  align-items: flex-end;
-  gap: 6px;
-  height: 72px;
-  margin: var(--space-4) 0 var(--space-2);
-}
-.bars-chart .bar {
-  flex: 1;
-  min-height: 6px;
-  border-radius: 3px 3px 0 0;
-  background: var(--color-volt-soft);
-}
-.bars-chart .bar.is-last {
-  background: var(--color-volt);
-}
-.bars-caption {
-  font-size: var(--text-12);
-  color: var(--color-muted);
-}
-
-/* ─────────────────────────────────────────── Stepper ── */
-.steps {
-  display: flex;
-}
-.step {
-  position: relative;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-2);
-  text-align: center;
-}
-.step:not(:last-child)::before {
-  content: "";
-  position: absolute;
-  top: 13px;
-  left: 50%;
-  width: 100%;
-  height: 2px;
-  background: var(--color-line);
-  z-index: 0;
-}
-.step.is-done:not(:last-child)::before {
-  background: var(--color-volt);
-}
-.step-dot {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--color-surface);
-  border: 2px solid var(--color-line-strong);
-  font-size: var(--text-13);
-  font-weight: var(--weight-semibold);
-  color: var(--color-muted);
-}
-.step.is-done .step-dot {
-  background: var(--color-volt);
-  border-color: var(--color-volt);
-  color: #fff;
-}
-.step.is-current .step-dot {
-  border-color: var(--color-volt);
-  color: var(--color-volt);
-}
-.step-dot svg {
-  width: 13px;
-  height: 13px;
-  fill: none;
-  stroke: #fff;
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.step-label {
-  font-size: var(--text-13);
-  color: var(--color-muted);
-}
-.step.is-done .step-label,
-.step.is-current .step-label {
-  color: var(--color-ink);
-}
-
 /* ─────────────────────────────────────────── Quote / testimonial ── */
 .quote {
   display: block;
@@ -3406,22 +3292,22 @@ mz-tab-panel:not([hidden]) {
 
 /* ─────────────────────────────────────────── Changelog ── */
 .changelog {
-  display: block;
-  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  max-width: 760px;
 }
 .cl-entry {
-  padding: var(--space-6) 0;
-  border-top: var(--border);
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: var(--space-6);
+  align-items: start;
 }
-.cl-entry:first-child {
-  padding-top: 0;
-  border-top: 0;
-}
-.cl-head {
+.cl-meta {
   display: flex;
-  align-items: baseline;
-  gap: var(--space-3);
-  margin-bottom: var(--space-4);
+  flex-direction: column;
+  gap: 2px;
+  padding-top: var(--space-3);
 }
 .cl-version {
   font-family: var(--font-display);
@@ -3434,9 +3320,23 @@ mz-tab-panel:not([hidden]) {
   font-size: var(--text-13);
   color: var(--color-muted);
 }
+.cl-card {
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--card-pad);
+}
+.cl-title {
+  margin-bottom: var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--text-16);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-ink);
+}
 .cl-list {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 .cl-list li {
   display: flex;
@@ -3464,11 +3364,17 @@ mz-tab-panel:not([hidden]) {
   background: var(--color-surface-2);
   color: var(--color-muted);
 }
-.cl-text {
-  padding-top: 1px;
+.cl-change b {
+  display: block;
   font-size: var(--text-small);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+.cl-change p {
+  margin-top: 2px;
+  font-size: var(--text-13);
   line-height: var(--leading-relaxed);
-  color: var(--color-ink-2);
+  color: var(--color-muted);
 }
 
 /* ─────────────────────────────────────────── Media gallery ── */
@@ -3499,14 +3405,11 @@ mz-tab-panel:not([hidden]) {
 .gal-tag {
   position: absolute;
   top: var(--space-3);
-  left: var(--space-3);
-  padding: 3px 10px;
-  border-radius: var(--radius-pill);
-  background: var(--color-surface);
-  border: var(--border);
+  left: var(--space-4);
   font-family: var(--font-mono);
   font-size: var(--text-12);
-  color: var(--color-ink-2);
+  letter-spacing: var(--tracking-mono);
+  color: var(--color-ink);
 }
 .gal-item figcaption {
   margin-top: var(--space-3);
@@ -3708,6 +3611,13 @@ mz-tab-panel:not([hidden]) {
   }
   .shots {
     grid-template-columns: 1fr;
+  }
+  .cl-entry {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  .cl-meta {
+    padding-top: 0;
   }
   .signup-form {
     flex-direction: column;

@@ -40,8 +40,6 @@ import "./embed-table.js";
 import "./embed-doc.js";
 import "./embed-checklist.js";
 import "./embed-kanban.js";
-import "./bars.js";
-import "./steps.js";
 import "./quote.js";
 import "./changelog.js";
 import "./gallery.js";
