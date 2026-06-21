@@ -16,11 +16,13 @@ const TRAJ = [
 const card = ([when, title, desc], cls = "") =>
   `<div class="tl-step ${cls}"><span class="tl-when">${when}</span><h3 class="tl-title">${title}</h3><p class="tl-desc">${desc}</p></div>`;
 const PIPES = `<div class="tl-pipes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>`;
-const MERGE = `<svg class="tl-merge" viewBox="0 0 520 60" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-    <path class="pn" d="M120 0 C120 38 258 24 258 60"/>
-    <path class="pv" d="M132 0 C132 40 262 24 262 60"/>
-    <path class="pv" d="M388 0 C388 40 258 24 258 60"/>
-    <path class="pn" d="M400 0 C400 38 262 24 262 60"/>
+// Orthogonal routes (straight runs + rounded 90° bends) that step inward and
+// converge into a tight bundle at the checkpoint — the pipes aesthetic.
+const MERGE = `<svg class="tl-merge" viewBox="0 0 520 64" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <path class="pn" d="M120 0 V26 Q120 38 132 38 H240 Q252 38 252 50 V64"/>
+    <path class="pv" d="M132 0 V26 Q132 38 144 38 H246 Q258 38 258 50 V64"/>
+    <path class="pv" d="M388 0 V26 Q388 38 376 38 H274 Q262 38 262 50 V64"/>
+    <path class="pn" d="M400 0 V26 Q400 38 388 38 H280 Q268 38 268 50 V64"/>
   </svg>`;
 
 class MzTimeline extends HTMLElement {
