@@ -6,6 +6,7 @@ class MzBtn extends HTMLElement {
     const href = this.getAttribute("href");
     const type = this.getAttribute("type") || "button";
     const classes = ["btn", `btn-${variant}`];
+    if (this.getAttribute("size") === "sm") classes.push("btn-sm");
     if (this.hasAttribute("arrow")) classes.push("btn-arrow");
     const tag = href ? "a" : "button";
     const attr = href ? ` href="${href}"` : ` type="${type}"`;

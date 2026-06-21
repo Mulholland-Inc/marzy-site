@@ -74,7 +74,9 @@ mz-slider,
 mz-datepicker,
 mz-checkbox,
 mz-radio-group,
-mz-bento,
+mz-activity,
+mz-calendar,
+mz-kanban,
 mz-invoice,
 mz-report,
 mz-contract,
@@ -930,7 +932,7 @@ textarea.input {
   justify-content: space-between;
   /* Symmetric inset (matches the body's padding) so the corner action sits
      equidistant from the top and right edges. */
-  padding: var(--space-5);
+  padding: var(--space-4);
   border-bottom: var(--border);
 }
 .appshell-title {
@@ -941,7 +943,7 @@ textarea.input {
 }
 .appshell-body {
   flex: 1;
-  padding: var(--space-5);
+  padding: var(--space-4);
   display: grid;
   gap: var(--space-4);
   align-content: start;
@@ -1810,31 +1812,7 @@ mz-tab-panel:not([hidden]) {
   color: var(--color-muted);
 }
 
-/* ─────────────────────────────────────────── Dashboard bento ── */
-.bento {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--gap-grid);
-}
-.bento .col-2 {
-  grid-column: span 2;
-}
-.bento-chart {
-  display: flex;
-  align-items: flex-end;
-  gap: var(--space-2);
-  height: 140px;
-  margin-top: var(--space-5);
-}
-.bento-chart span {
-  flex: 1;
-  background: var(--color-volt);
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-  opacity: 0.4;
-}
-.bento-chart span:last-child {
-  opacity: 1;
-}
+/* ─────────────────────────────────────────── Recent activity ── */
 .activity {
   margin-top: var(--space-4);
 }
@@ -2169,6 +2147,142 @@ mz-tab-panel:not([hidden]) {
   flex: 1;
 }
 
+/* ─────────────────────────────────────────── Calendar ── */
+.calendar {
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  /* Symmetric inset so the corner nav button is equidistant from both edges. */
+  padding: var(--space-3);
+  border-bottom: var(--border);
+}
+.cal-title {
+  font-family: var(--font-display);
+  font-size: var(--text-20);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+.cal-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: var(--space-2) 0;
+  border-bottom: var(--border);
+}
+.cal-weekdays span {
+  text-align: center;
+  font-size: var(--text-12);
+  font-weight: var(--weight-medium);
+  color: var(--color-muted);
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.cal-cell {
+  min-height: 104px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-2);
+  border-right: var(--border);
+  border-bottom: var(--border);
+}
+.cal-cell:nth-child(7n) {
+  border-right: 0;
+}
+.cal-grid > .cal-cell:nth-last-child(-n + 7) {
+  border-bottom: 0;
+}
+.cal-daynum {
+  align-self: flex-start;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  font-size: var(--text-13);
+  color: var(--color-ink-2);
+}
+.cal-cell.out .cal-daynum {
+  color: var(--color-muted);
+  opacity: 0.5;
+}
+.cal-cell.today {
+  background: var(--color-surface-2);
+}
+.cal-cell.today .cal-daynum {
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+.cal-event {
+  font-size: var(--text-12);
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--color-volt-soft);
+  color: var(--color-volt);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cal-event.muted {
+  background: var(--color-surface-2);
+  color: var(--color-ink-2);
+}
+
+/* ─────────────────────────────────────────── Kanban ── */
+.kanban {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+}
+.kanban-col {
+  flex: 0 0 272px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.kanban-col-head {
+  font-size: var(--text-small);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+  padding-bottom: var(--space-1);
+}
+.kanban-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.kanban-card {
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4);
+}
+.kanban-card-title {
+  font-size: var(--text-small);
+  color: var(--color-ink);
+  line-height: var(--leading-snug);
+}
+.kanban-tag {
+  display: inline-block;
+  margin-top: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  color: var(--color-muted);
+}
+
 /* ─────────────────────────────────────────── Floating top nav ── */
 .topnav {
   position: sticky;
@@ -2185,7 +2299,8 @@ mz-tab-panel:not([hidden]) {
   align-items: center;
   gap: var(--space-6);
   height: 56px;
-  padding-inline: var(--space-4);
+  /* 12px inline = (56 − 32 control) / 2, so corner controls sit equidistant. */
+  padding-inline: var(--space-3);
   border: 1px solid transparent;
   border-radius: var(--radius-lg);
   background: transparent;
@@ -2309,8 +2424,7 @@ mz-tab-panel:not([hidden]) {
     order: -1;
   }
   .grid-3,
-  .grid-4,
-  .bento {
+  .grid-4 {
     grid-template-columns: repeat(2, 1fr);
   }
   .feature {
@@ -2360,7 +2474,6 @@ mz-tab-panel:not([hidden]) {
   .grid-2,
   .grid-3,
   .grid-4,
-  .bento,
   .invoice-parties,
   .sign-grid,
   .compare {
@@ -2368,9 +2481,6 @@ mz-tab-panel:not([hidden]) {
   }
   .comp-cards {
     grid-template-columns: 1fr;
-  }
-  .bento .col-2 {
-    grid-column: auto;
   }
   .signup-form {
     flex-direction: column;

@@ -123,7 +123,7 @@
           <div class="appshell-main">
             <div class="appshell-topbar">
               <span class="appshell-title">Overview</span>
-              <mz-btn variant="primary">New connection</mz-btn>
+              <mz-btn variant="primary" size="sm">New connection</mz-btn>
             </div>
             <div class="appshell-body">
               <div class="stat-grid">
@@ -150,10 +150,22 @@
         <mz-table></mz-table>
       </section>
 
-      <!-- ───────────────────── Dashboard grid ───────────────────── -->
+      <!-- ───────────────────── Recent activity ───────────────────── -->
       <section class="preview">
-        <div class="preview-cap"><b>Dashboard grid</b><span>bento — stats, chart, activity</span></div>
-        <mz-bento></mz-bento>
+        <div class="preview-cap"><b>Recent activity</b><span>feed</span></div>
+        <mz-activity></mz-activity>
+      </section>
+
+      <!-- ───────────────────── Calendar ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Calendar</b><span>month view</span></div>
+        <mz-calendar></mz-calendar>
+      </section>
+
+      <!-- ───────────────────── Kanban ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Kanban</b><span>board — columns &amp; cards</span></div>
+        <mz-kanban></mz-kanban>
       </section>
 
       <!-- ───────────────────── Environment: auth ───────────────────── -->
