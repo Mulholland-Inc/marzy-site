@@ -1182,6 +1182,71 @@ button.sidebar-item {
   }
 }
 
+/* Compact, Notion-style density inside the app: tighter spacing + smaller type.
+   Overriding the spacing tokens here cascades into every component used in the
+   dashboard (cards, grids), so density stays consistent and token-driven. */
+.app {
+  --card-pad: var(--space-3); /* 12 */
+  --gap-grid: var(--space-2); /* 8 */
+}
+.app-topbar {
+  padding: var(--space-2) var(--space-4);
+}
+.app-title {
+  font-size: var(--text-15);
+}
+.app-body {
+  padding: var(--space-4);
+  gap: var(--space-4);
+}
+/* denser sidebar */
+.app .sidebar {
+  padding: var(--space-4);
+}
+.app .sidebar-brand {
+  padding: var(--space-1) var(--space-2) var(--space-3);
+}
+.app .brand-stripes {
+  margin-left: calc(-1 * (var(--space-4) + var(--space-2)));
+}
+.app .sidebar-section {
+  margin: var(--space-3) 0 var(--space-1);
+}
+.app .sidebar-item {
+  height: 30px;
+  font-size: var(--text-13);
+}
+.app .sidebar-item svg {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+}
+/* compact cards */
+.app .card {
+  border-radius: var(--radius-sm);
+}
+.app .card h3 {
+  font-size: var(--text-15);
+  margin-bottom: var(--space-2);
+}
+.app .card p {
+  font-size: var(--text-13);
+}
+/* smaller KPI figures */
+.app .stat-value {
+  font-size: var(--text-24);
+}
+.app .stat-label {
+  font-size: var(--text-13);
+}
+/* tighter table + kanban */
+.app .table th,
+.app .table td {
+  padding: var(--space-2) var(--space-4);
+}
+.app .kanban-card {
+  padding: var(--space-3);
+}
+
 /* Status cards */
 .dash-cards {
   display: grid;
