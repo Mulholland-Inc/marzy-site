@@ -40,11 +40,7 @@
         font-size: var(--text-18);
         letter-spacing: var(--tracking-tight);
       }
-      .ed-group {
-        display: inline-flex;
-        gap: var(--space-2);
-        align-items: center;
-      }
+      .ed-group { display: inline-flex; gap: var(--space-2); align-items: center; }
       .ed-spacer { flex: 1; }
       .ed-btn {
         font-family: var(--font-body);
@@ -66,9 +62,23 @@
         border-color: var(--color-volt);
         color: #fff;
       }
-      .ed-btn:focus-visible {
-        outline: 2px solid var(--color-volt);
-        outline-offset: 2px;
+      .ed-btn:focus-visible { outline: 2px solid var(--color-volt); outline-offset: 2px; }
+
+      .ed-field {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: var(--text-13);
+        color: var(--color-muted);
+        white-space: nowrap;
+      }
+      .ed-field input[type="range"] { width: 92px; accent-color: var(--color-volt); }
+      .ed-field b {
+        font-weight: var(--weight-semibold);
+        color: var(--color-ink);
+        font-variant-numeric: tabular-nums;
+        min-width: 1.4em;
+        text-align: right;
       }
 
       /* Stage */
@@ -99,28 +109,27 @@
       #board.is-erasing { cursor: cell; }
 
       .ed-grid line { stroke: var(--color-line); stroke-width: 1; }
-      .pipe {
+      .ed-node { fill: var(--color-volt); }
+
+      /* brand pipe strokes — copied from the site so the flow matches exactly */
+      .mz-pipe {
         fill: none;
-        stroke: var(--color-volt);
+        stroke-width: 2;
         stroke-linecap: round;
+        stroke-dasharray: 120 16;
+        animation: mz-pipe-flow linear infinite;
+        animation-play-state: paused;
       }
-      .pipe-node { fill: var(--color-volt); }
-      #board.playing .pipe {
-        stroke-dasharray: 9 7;
-        animation: ed-flow 0.9s linear infinite;
-      }
-      @keyframes ed-flow { to { stroke-dashoffset: -16; } }
+      #board.playing .mz-pipe { animation-play-state: running; }
+      .mz-pipe-v { stroke: var(--color-volt); }
+      .mz-pipe-n { stroke: var(--color-volt-300); }
+      @keyframes mz-pipe-flow { to { stroke-dashoffset: -136; } }
       @media (prefers-reduced-motion: reduce) {
-        #board.playing .pipe { animation: none; }
+        #board.playing .mz-pipe { animation: none; }
       }
 
-      .ed-hint {
-        margin: 0;
-        font-size: var(--text-small);
-        color: var(--color-muted);
-      }
+      .ed-hint { margin: 0; font-size: var(--text-small); color: var(--color-muted); }
 
-      /* Toast */
       .ed-toast {
         position: fixed;
         left: 50%;
@@ -144,8 +153,14 @@
         <button class="ed-btn" data-tool="erase">Erase</button>
       </div>
       <div class="ed-group">
+        <button class="ed-btn" id="generate">Generate</button>
         <button class="ed-btn" id="clear">Clear</button>
         <button class="ed-btn" id="play" aria-pressed="true">Pause flow</button>
+      </div>
+      <div class="ed-group">
+        <label class="ed-field">Lines <input type="range" id="lines" min="1" max="9" step="2" value="5" /><b id="linesV">5</b></label>
+        <label class="ed-field">Spacing <input type="range" id="spacing" min="3" max="14" value="7" /><b id="spacingV">7</b></label>
+        <label class="ed-field">Bend <input type="range" id="bend" min="0" max="17" value="15" /><b id="bendV">15</b></label>
       </div>
       <span class="ed-spacer"></span>
       <div class="ed-group">
@@ -159,15 +174,16 @@
         <svg id="board" class="playing" aria-label="Pipe grid"></svg>
       </div>
       <p class="ed-hint">
-        Click or drag on the grid to lay pipe. Adjacent segments connect
-        automatically.
+        Draw or drag to lay a path — it renders as a parallel pipe bundle with
+        rounded bends. Press Generate for a procedural one.
       </p>
     </main>
 
     <div class="ed-toast" id="toast" hidden></div>
 
     <script type="module">
-      const NS = "http://www.w3.org/2000/svg";
+      import { buildPipes } from "./components/pipe.js";
+
       const board = document.getElementById("board");
       const toast = document.getElementById("toast");
 
@@ -176,16 +192,18 @@
       const CELL = 34;
       const W = COLS * CELL;
       const H = ROWS * CELL;
-      const STROKE = Math.round(CELL * 0.3);
 
       const cells = new Set(); // "r,c"
       let tool = "draw";
       let painting = false;
       let lastKey = null;
+      let lines = 5, spacing = 7, bend = 15;
 
       const key = (r, c) => r + "," + c;
       const has = (r, c) => cells.has(key(r, c));
       const inBounds = (r, c) => r >= 0 && c >= 0 && r < ROWS && c < COLS;
+      const cx = (c) => c * CELL + CELL / 2;
+      const cy = (r) => r * CELL + CELL / 2;
 
       function setupBoard() {
         board.setAttribute("viewBox", `0 0 ${W} ${H}`);
@@ -200,51 +218,99 @@
         board.innerHTML = g;
       }
 
-      // Which orthogonal neighbours are also pipe → this cell connects to them.
-      function connections(r, c) {
-        const d = [];
-        if (has(r - 1, c)) d.push("N");
-        if (has(r, c + 1)) d.push("E");
-        if (has(r + 1, c)) d.push("S");
-        if (has(r, c - 1)) d.push("W");
-        return d;
-      }
+      // ── Trace the drawn cells into polyline routes ──────────────────────
+      const NB = [[-1, 0], [0, 1], [1, 0], [0, -1]];
+      const adj = (r, c) =>
+        NB.map(([dr, dc]) => [r + dr, c + dc]).filter(([nr, nc]) => has(nr, nc));
+      const eKey = (a, b) => {
+        const s1 = a[0] * COLS + a[1], s2 = b[0] * COLS + b[1];
+        return s1 < s2 ? s1 + "-" + s2 : s2 + "-" + s1;
+      };
+      const same = (a, b) => a[0] === b[0] && a[1] === b[1];
 
-      function renderPipes() {
-        const layer = board.querySelector("#pipes");
-        let out = "";
-        for (const k of cells) {
-          const [r, c] = k.split(",").map(Number);
-          const X = c * CELL + CELL / 2;
-          const Y = r * CELL + CELL / 2;
-          const conn = connections(r, c);
-          if (conn.length === 0) {
-            // lone segment → a node
-            out += `<circle class="pipe-node" cx="${X}" cy="${Y}" r="${STROKE * 0.6}"/>`;
-            continue;
-          }
-          // a stub from the cell centre out to each connected edge; stubs from
-          // both sides meet at the shared edge, so pipes join seamlessly
-          for (const dir of conn) {
-            let ex = X, ey = Y;
-            if (dir === "N") ey = r * CELL;
-            else if (dir === "S") ey = (r + 1) * CELL;
-            else if (dir === "E") ex = (c + 1) * CELL;
-            else if (dir === "W") ex = c * CELL;
-            out += `<path class="pipe" d="M${X} ${Y} L${ex} ${ey}" stroke-width="${STROKE}"/>`;
-          }
+      function walk(start, first, used) {
+        const path = [start, first];
+        used.add(eKey(start, first));
+        let prev = start, cur = first;
+        while (adj(cur[0], cur[1]).length === 2) {
+          const next = adj(cur[0], cur[1]).find((n) => !same(n, prev));
+          if (!next) break;
+          const ek = eKey(cur, next);
+          if (used.has(ek)) break; // closed a loop
+          used.add(ek);
+          prev = cur;
+          cur = next;
+          path.push(cur);
         }
-        layer.innerHTML = out;
+        return path;
       }
 
+      function traceRoutes() {
+        const used = new Set();
+        const list = [...cells].map((k) => k.split(",").map(Number));
+        const routes = [];
+        const start = (r, c) =>
+          adj(r, c).forEach((nb) => {
+            if (!used.has(eKey([r, c], nb))) routes.push(walk([r, c], nb, used));
+          });
+        // endpoints + junctions first, then any leftover loops
+        for (const [r, c] of list) {
+          const d = adj(r, c).length;
+          if (d === 1 || d >= 3) start(r, c);
+        }
+        for (const [r, c] of list) start(r, c);
+        return routes.map(toPoints);
+      }
+
+      // cell path → pixel points, dropping collinear midpoints (keep bends)
+      function toPoints(path) {
+        const pts = path.map(([r, c]) => [cx(c), cy(r)]);
+        if (pts.length <= 2) return pts;
+        const out = [pts[0]];
+        for (let i = 1; i < pts.length - 1; i++) {
+          const a = out[out.length - 1], b = pts[i], c2 = pts[i + 1];
+          const colinear =
+            (a[0] === b[0] && b[0] === c2[0]) || (a[1] === b[1] && b[1] === c2[1]);
+          if (!colinear) out.push(b);
+        }
+        out.push(pts[pts.length - 1]);
+        return out;
+      }
+
+      // ── Render ──────────────────────────────────────────────────────────
+      function render() {
+        const layer = board.querySelector("#pipes");
+        const routes = traceRoutes();
+        let nodes = "";
+        for (const [r, c] of [...cells].map((k) => k.split(",").map(Number))) {
+          if (adj(r, c).length === 0)
+            nodes += `<circle class="ed-node" cx="${cx(c)}" cy="${cy(r)}" r="${lines * spacing / 2 || 3}"/>`;
+        }
+        const built = routes.length
+          ? buildPipes({
+              routes,
+              width: W,
+              height: H,
+              n: lines,
+              spacing,
+              radius: Math.max(1, bend),
+              preserve: "none",
+              fade: false,
+            })
+          : null;
+        layer.replaceChildren(...(built ? [...built.childNodes] : []));
+        if (nodes) layer.insertAdjacentHTML("beforeend", nodes);
+      }
+
+      // ── Painting ────────────────────────────────────────────────────────
       function cellFromEvent(e) {
         const rect = board.getBoundingClientRect();
-        const scale = rect.width / W; // uniform (height:auto preserves aspect)
-        const x = (e.clientX - rect.left) / scale;
-        const y = (e.clientY - rect.top) / scale;
-        return { r: Math.floor(y / CELL), c: Math.floor(x / CELL) };
+        const scale = rect.width / W;
+        return {
+          r: Math.floor((e.clientY - rect.top) / scale / CELL),
+          c: Math.floor((e.clientX - rect.left) / scale / CELL),
+        };
       }
-
       function apply(r, c) {
         if (!inBounds(r, c)) return;
         const k = key(r, c);
@@ -255,9 +321,8 @@
           if (!cells.has(k)) return;
           cells.delete(k);
         }
-        renderPipes();
+        render();
       }
-
       board.addEventListener("pointerdown", (e) => {
         e.preventDefault();
         painting = true;
@@ -274,14 +339,38 @@
         lastKey = k;
         apply(r, c);
       });
-      const stop = () => {
-        painting = false;
-        lastKey = null;
-      };
+      const stop = () => { painting = false; lastKey = null; };
       board.addEventListener("pointerup", stop);
       board.addEventListener("pointercancel", stop);
 
-      // Tool toggle
+      // ── Procedural generator: self-avoiding orthogonal walks with bends ──
+      const rint = (n) => Math.floor(Math.random() * n);
+      function generate() {
+        cells.clear();
+        const strokes = 1 + rint(2);
+        for (let s = 0; s < strokes; s++) {
+          let r = 3 + rint(ROWS - 6), c = 3 + rint(COLS - 6);
+          let di = rint(4);
+          const len = 18 + rint(22);
+          let placed = 0, guard = 0;
+          cells.add(key(r, c));
+          while (placed < len && guard++ < len * 8) {
+            if (Math.random() < 0.42) di = (di + (Math.random() < 0.5 ? 1 : 3)) % 4;
+            const [dr, dc] = NB[di];
+            const nr = r + dr, nc = c + dc;
+            if (!inBounds(nr, nc) || cells.has(key(nr, nc))) {
+              di = (di + 1) % 4;
+              continue;
+            }
+            r = nr; c = nc;
+            cells.add(key(r, c));
+            placed++;
+          }
+        }
+        render();
+      }
+
+      // ── Controls ────────────────────────────────────────────────────────
       document.querySelectorAll("[data-tool]").forEach((b) =>
         b.addEventListener("click", () => {
           tool = b.dataset.tool;
@@ -291,12 +380,11 @@
           board.classList.toggle("is-erasing", tool === "erase");
         })
       );
-
+      document.getElementById("generate").addEventListener("click", generate);
       document.getElementById("clear").addEventListener("click", () => {
         cells.clear();
-        renderPipes();
+        render();
       });
-
       const play = document.getElementById("play");
       play.addEventListener("click", () => {
         const on = board.classList.toggle("playing");
@@ -304,22 +392,33 @@
         play.setAttribute("aria-pressed", String(on));
       });
 
-      // Keyboard: d = draw, e = erase
+      const bindSlider = (id, set) => {
+        const el = document.getElementById(id);
+        const out = document.getElementById(id + "V");
+        el.addEventListener("input", () => {
+          set(Number(el.value));
+          out.textContent = el.value;
+          render();
+        });
+      };
+      bindSlider("lines", (v) => (lines = v));
+      bindSlider("spacing", (v) => (spacing = v));
+      bindSlider("bend", (v) => (bend = v));
+
       window.addEventListener("keydown", (e) => {
         if (e.target.matches("input, textarea")) return;
-        if (e.key === "d" || e.key === "e") {
-          const b = document.querySelector(`[data-tool="${e.key === "d" ? "draw" : "erase"}"]`);
-          b && b.click();
-        }
+        if (e.key === "d" || e.key === "e")
+          document.querySelector(`[data-tool="${e.key === "d" ? "draw" : "erase"}"]`).click();
+        if (e.key === "g") generate();
       });
 
+      // ── Export ──────────────────────────────────────────────────────────
       function showToast(msg) {
         toast.textContent = msg;
         toast.hidden = false;
         clearTimeout(showToast._t);
         showToast._t = setTimeout(() => (toast.hidden = true), 1500);
       }
-
       async function copy(text, msg) {
         try {
           await navigator.clipboard.writeText(text);
@@ -328,28 +427,28 @@
           showToast("Copy failed — clipboard blocked");
         }
       }
-
       document.getElementById("copySvg").addEventListener("click", () => {
-        const pipes = board.querySelector("#pipes").innerHTML;
+        const inner = board.querySelector("#pipes").innerHTML;
         const svg =
-          `<svg xmlns="${NS}" viewBox="0 0 ${W} ${H}" fill="none">` +
-          `<style>.pipe{stroke:#1b43ff;stroke-linecap:round}.pipe-node{fill:#1b43ff}</style>` +
-          pipes +
+          `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" fill="none">` +
+          `<style>.mz-pipe{fill:none;stroke-width:2;stroke-linecap:round}.mz-pipe-v{stroke:#1b43ff}.mz-pipe-n{stroke:#8fa3ff}.ed-node{fill:#1b43ff}</style>` +
+          inner +
           `</svg>`;
         copy(svg, "SVG copied to clipboard");
       });
-
       document.getElementById("copyJson").addEventListener("click", () => {
-        const data = {
-          cols: COLS,
-          rows: ROWS,
-          cells: [...cells].map((k) => k.split(",").map(Number)),
-        };
-        copy(JSON.stringify(data), "Pipe data copied to clipboard");
+        copy(
+          JSON.stringify({
+            cols: COLS,
+            rows: ROWS,
+            cells: [...cells].map((k) => k.split(",").map(Number)),
+          }),
+          "Pipe data copied to clipboard"
+        );
       });
 
       setupBoard();
-      renderPipes();
+      generate();
     </script>
   </body>
 </html>
