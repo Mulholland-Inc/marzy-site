@@ -2993,9 +2993,22 @@ mz-tab-panel:not([hidden]) {
   height: 100%;
   max-height: 200px;
 }
+/* all pipe strokes Volt (override the neutral outer + fade) */
+.dclean-pipes .mz-pipe-n {
+  stroke: var(--color-volt);
+}
+.dclean-pipes .mz-pipe {
+  opacity: 1 !important;
+}
+/* each table sits in its own card */
 .dclean-stage {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-4);
+  align-content: start;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-lg);
 }
 .dclean-tag {
   justify-self: start;
@@ -3005,8 +3018,8 @@ mz-tab-panel:not([hidden]) {
   text-transform: uppercase;
   color: var(--color-muted);
 }
-.dclean-tag-volt {
-  color: var(--color-volt);
+.dclean-tag-ready {
+  color: var(--color-ink);
 }
 .dclean-rows {
   display: grid;
@@ -3021,26 +3034,29 @@ mz-tab-panel:not([hidden]) {
   border-radius: var(--radius-sm);
   font-size: var(--text-small);
 }
+/* left table: two columns — field label + raw value */
 .dclean-row.is-raw {
-  background: var(--color-paper);
-  color: var(--color-muted);
-}
-.dclean-row.is-clean {
-  background: var(--color-surface);
-  border-color: var(--color-volt-line);
-  color: var(--color-ink);
-}
-.dclean-mk {
-  flex: 0 0 auto;
   display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: var(--radius-pill);
-  background: var(--color-surface-2);
-  color: var(--color-muted);
+  grid-template-columns: 4.5rem 1fr;
+  gap: var(--space-3);
+  align-items: baseline;
+  background: var(--color-paper);
+}
+.dclean-field {
   font-size: var(--text-12);
   font-weight: var(--weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+.dclean-val {
+  min-width: 0;
+  color: var(--color-ink-2);
+}
+/* right table: clean rows, black accents (not blue) */
+.dclean-row.is-clean {
+  background: var(--color-surface);
+  color: var(--color-ink);
 }
 .dclean-ok {
   flex: 0 0 auto;
@@ -3049,7 +3065,7 @@ mz-tab-panel:not([hidden]) {
   width: 22px;
   height: 22px;
   border-radius: var(--radius-pill);
-  background: var(--color-volt);
+  background: var(--color-ink);
   color: #fff;
 }
 .dclean-ok svg {
@@ -3070,7 +3086,7 @@ mz-tab-panel:not([hidden]) {
 .dclean-txt i {
   font-style: normal;
   font-size: var(--text-12);
-  color: var(--color-volt);
+  color: var(--color-muted);
 }
 /* ─────────────────────────────────────────── Engagement timeline ──
    Left to right: two entry paths (demo or pilot) converge at a checkpoint,

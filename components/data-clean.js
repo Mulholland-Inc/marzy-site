@@ -7,11 +7,11 @@ import { buildPipes } from "./pipe.js";
 const CHECK =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17.5 19 6.5"/></svg>';
 
-// [marker, raw text, what Marzy did, cleaned text]
+// [field, raw value, what Marzy did, cleaned value]
 const ROWS = [
-  ["dup", "Jon Smith · J. Smith", "merged", "Jonathan Smith"],
-  ["—", "phone: missing", "enriched", "+1 415 555 0142"],
-  ["≠", "03/04/26 · 4-Mar", "normalized", "2026-03-04"],
+  ["Name", "Jon Smith · J. Smith", "merged", "Jonathan Smith"],
+  ["Phone", "— missing", "enriched", "+1 415 555 0142"],
+  ["Date", "03/04/26 · 4-Mar", "normalized", "2026-03-04"],
 ];
 
 class MzDataClean extends HTMLElement {
@@ -19,8 +19,8 @@ class MzDataClean extends HTMLElement {
     this.classList.add("dclean");
 
     const before = ROWS.map(
-      ([mk, raw]) =>
-        `<li class="dclean-row is-raw"><span class="dclean-mk">${mk}</span><span class="dclean-txt">${raw}</span></li>`
+      ([field, raw]) =>
+        `<li class="dclean-row is-raw"><span class="dclean-field">${field}</span><span class="dclean-val">${raw}</span></li>`
     ).join("");
 
     const after = ROWS.map(
@@ -40,7 +40,7 @@ class MzDataClean extends HTMLElement {
         </div>
         <div class="dclean-pipes" aria-hidden="true"></div>
         <div class="dclean-stage">
-          <span class="dclean-tag dclean-tag-volt">AI-ready</span>
+          <span class="dclean-tag dclean-tag-ready">AI-ready</span>
           <ul class="dclean-rows">${after}</ul>
         </div>
       </div>`;
