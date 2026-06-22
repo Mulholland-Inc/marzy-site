@@ -9,7 +9,7 @@ const ENTRY = [
   ["2–3 days", "Guided demo", "See Marzy work on sample data."],
   ["~1 week", "Scoped pilot", "A scoped run on your real data."],
 ];
-const GATE = ["Checkpoint", "Proven on the pilot", "You've seen the hours and dollars it saves."];
+const GATE = ["Checkpoint", "Proven on pilot", "You've seen the hours and dollars it saves."];
 const EMBED = ["Week 0", "Engineer embeds", "A Mulholland engineer maps how work moves."];
 const SPLIT = [
   ["Weeks 1–2", "You audit", "You flag what's safe to automate."],
