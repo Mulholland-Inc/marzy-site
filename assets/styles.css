@@ -3582,15 +3582,23 @@ mz-tab-panel:not([hidden]) {
   margin-block: clamp(var(--space-6), 4vw, var(--space-10));
   height: clamp(120px, 15vw, 180px);
 }
-/* Volt on the inside, white on the outside; thicker so the pipes read big */
+/* Volt on the inside, white on the outside; thick, long, non-scaling strokes */
 .ctabig-pipes .mz-pipe {
-  stroke-width: 6;
+  stroke-width: 4;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 300 24;
+  animation-name: ctabig-flow;
 }
 .ctabig-pipes .mz-pipe-v {
   stroke: var(--color-volt);
 }
 .ctabig-pipes .mz-pipe-n {
   stroke: #fff;
+}
+@keyframes ctabig-flow {
+  to {
+    stroke-dashoffset: -324;
+  }
 }
 .ctabig-actions {
   justify-content: center;
