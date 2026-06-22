@@ -61,6 +61,12 @@ import "./footer.js";
 import "./topnav.js";
 import "./sidebar.js";
 import "./dashboard.js";
+import "./view-table.js";
+import "./view-board.js";
+import "./view-grid.js";
+import "./view-gallery.js";
+import "./view-todo.js";
+import "./collection.js";
 import "./app.js";
 import "./login.js";
 

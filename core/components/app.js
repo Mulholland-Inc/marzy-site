@@ -1,19 +1,20 @@
 // <mz-app></mz-app>, a full-screen dashboard application: a fixed sidebar with
 // working navigation and a scrollable main area whose content switches per
-// view. Views are composed from existing <mz-*> components.
+// view. Object pages render an <mz-collection> (archive + create + detail pane);
+// other pages render their own content.
 import { SPARK } from "./spark.js";
 
 const ICON = {
   overview:
     '<svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>',
   tasks:
-    '<svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9h17M9 4.5v15"/></svg>',
+    '<svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="5" height="15" rx="1.2"/><rect x="9.75" y="4.5" width="5" height="10" rx="1.2"/><rect x="16" y="4.5" width="5" height="13" rx="1.2"/></svg>',
+  projects:
+    '<svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>',
+  inbox:
+    '<svg viewBox="0 0 24 24"><path d="M3.5 13 6 5.5h12L20.5 13v5.5a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1z"/><path d="M3.5 13H8l1.5 2.5h5L16 13h4.5"/></svg>',
   calendar:
     '<svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17M8 3v3M16 3v3"/></svg>',
-  members:
-    '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.6 19a5.4 5.4 0 0 1 10.8 0"/><path d="M16.5 5.4a3.2 3.2 0 0 1 0 5.9"/><path d="M17.8 13.2a5.4 5.4 0 0 1 2.6 4.6"/></svg>',
-  connections:
-    '<svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M8.3 10.9 15.7 7.1M8.3 13.1 15.7 16.9"/></svg>',
   settings:
     '<svg viewBox="0 0 24 24"><path d="M3 8h12"/><circle cx="18" cy="8" r="2.4"/><path d="M21 16H9"/><circle cx="6" cy="16" r="2.4"/></svg>',
 };
@@ -25,21 +26,10 @@ const STATS = [
   ["99.9%", "workflow uptime"],
 ];
 
-const CONNECTIONS = [
-  ["Gusto", "Payroll & benefits", "success", "Connected"],
-  ["QuickBooks", "Billing & ledger", "warning", "Token expiring"],
-  ["Gmail", "Inbox", "success", "Connected"],
-  ["Sikka", "Records sync", "success", "Connected"],
-  ["Stripe", "Payments", "neutral", "Not connected"],
-  ["Slack", "Notifications", "success", "Connected"],
-];
-
 const VIEWS = [
   {
     id: "overview",
     label: "Overview",
-    title: "Overview",
-    action: "New connection",
     render: () => `
       <mz-grid cols="4">
         ${STATS.map(([v, l]) => `<mz-card><mz-stat value="${v}" label="${l}"></mz-stat></mz-card>`).join("")}
@@ -62,73 +52,63 @@ const VIEWS = [
   {
     id: "tasks",
     label: "Tasks",
-    title: "Tasks",
-    action: "New task",
-    render: () => `<mz-card><mz-kanban></mz-kanban></mz-card>`,
+    collection: { singular: "task", view: "board", views: "board,table,grid,gallery,todo,calendar" },
+  },
+  {
+    id: "projects",
+    label: "Projects",
+    collection: { singular: "project", view: "grid", views: "grid,gallery,table,board" },
+  },
+  {
+    id: "inbox",
+    label: "Inbox",
+    collection: { singular: "item", view: "todo", views: "todo,table" },
   },
   {
     id: "calendar",
     label: "Calendar",
-    title: "Calendar",
     render: () => `<mz-calendar></mz-calendar>`,
-  },
-  {
-    id: "members",
-    label: "Members",
-    title: "Members",
-    action: "Invite member",
-    render: () => `<mz-table></mz-table>`,
-  },
-  {
-    id: "connections",
-    label: "Connections",
-    title: "Connections",
-    action: "Add connection",
-    render: () => `
-      <mz-grid cols="3">
-        ${CONNECTIONS.map(
-          ([name, meta, variant, tag]) => `
-          <mz-card hover>
-            <mz-stack gap="3">
-              <h3>${name}</h3>
-              <p>${meta}</p>
-              <mz-badge variant="${variant}">${tag}</mz-badge>
-            </mz-stack>
-          </mz-card>`
-        ).join("")}
-      </mz-grid>`,
   },
   {
     id: "settings",
     label: "Settings",
-    title: "Settings",
     render: () => `
-      <mz-card>
-        <div style="max-width: 620px">
+      <mz-grid cols="2" align="start">
+        <mz-card>
           <h3>Workspace</h3>
           <mz-stack gap="4">
-            <mz-grid cols="2">
-              <mz-field label="Workspace name" placeholder="Lazarco Inc." for="s-name"></mz-field>
-              <mz-field label="Billing email" type="email" placeholder="ops@lazarco.com" for="s-email"></mz-field>
-            </mz-grid>
+            <mz-field label="Workspace name" placeholder="Lazarco Inc." for="s-name"></mz-field>
+            <mz-field label="Billing email" type="email" placeholder="ops@lazarco.com" for="s-email"></mz-field>
             <mz-select label="Timezone">
-              <option>Pacific (PT)</option>
-              <option>Mountain (MT)</option>
-              <option>Central (CT)</option>
-              <option>Eastern (ET)</option>
+              <option>Pacific (PT)</option><option>Mountain (MT)</option>
+              <option>Central (CT)</option><option>Eastern (ET)</option>
             </mz-select>
-            <mz-divider></mz-divider>
+          </mz-stack>
+        </mz-card>
+        <mz-card>
+          <h3>Automation</h3>
+          <mz-stack gap="3">
             <mz-switch label="Auto-run trusted workflows" checked></mz-switch>
             <mz-switch label="Require approval over the limit" checked></mz-switch>
             <mz-switch label="Email me when review is needed"></mz-switch>
-            <mz-divider></mz-divider>
-            <mz-actions align="end">
-              <mz-btn variant="ghost">Cancel</mz-btn>
-              <mz-btn variant="primary">Save changes</mz-btn>
-            </mz-actions>
           </mz-stack>
-        </div>
-      </mz-card>`,
+        </mz-card>
+        <mz-card>
+          <h3>Members</h3>
+          <mz-stack gap="3">
+            <mz-switch label="Allow members to invite others"></mz-switch>
+            <mz-switch label="Require 2-factor authentication" checked></mz-switch>
+            <mz-actions><mz-btn variant="outline" size="sm">Manage members</mz-btn></mz-actions>
+          </mz-stack>
+        </mz-card>
+        <mz-card>
+          <h3>Plan &amp; billing</h3>
+          <mz-stack gap="3">
+            <p>You're on the <b>Team</b> plan, billed monthly.</p>
+            <mz-actions><mz-btn variant="outline" size="sm">Change plan</mz-btn></mz-actions>
+          </mz-stack>
+        </mz-card>
+      </mz-grid>`,
   },
 ];
 
@@ -141,7 +121,7 @@ class MzApp extends HTMLElement {
     ).join("");
     this.innerHTML = `
       <aside class="sidebar">
-        <div class="sidebar-brand"><span class="brand-stripes" aria-hidden="true"><i></i><i></i><i></i></span><span class="logo"><span class="spark" aria-hidden="true">${SPARK}</span><span>Marzy</span></span></div>
+        <div class="sidebar-brand"><span class="logo"><span class="spark" aria-hidden="true">${SPARK}</span><span>Marzy</span></span></div>
         <nav class="sidebar-nav" aria-label="Sidebar">${nav}</nav>
         <div class="sidebar-spacer"></div>
         <div class="sidebar-user">
@@ -155,7 +135,6 @@ class MzApp extends HTMLElement {
 
     this._body = this.querySelector(".app-body");
     this._nav = this.querySelector(".sidebar-nav");
-
     this._nav.addEventListener("click", (e) => {
       const btn = e.target.closest(".sidebar-item");
       if (!btn) return;
@@ -169,10 +148,12 @@ class MzApp extends HTMLElement {
   show(id) {
     const view = VIEWS.find((v) => v.id === id) || VIEWS[0];
     const head = `<header class="app-head">
-        <span class="app-head-title"><span class="app-head-icon" aria-hidden="true">${ICON[view.id]}</span>${view.title}</span>
-        ${view.action ? `<mz-btn variant="primary" size="sm">${view.action}</mz-btn>` : ""}
+        <span class="app-head-title"><span class="app-head-icon" aria-hidden="true">${ICON[view.id]}</span>${view.label}</span>
       </header>`;
-    this._body.innerHTML = head + view.render();
+    const content = view.collection
+      ? `<mz-collection singular="${view.collection.singular}" view="${view.collection.view}" views="${view.collection.views}"></mz-collection>`
+      : view.render();
+    this._body.innerHTML = head + content;
     this._body.scrollTop = 0;
   }
 }

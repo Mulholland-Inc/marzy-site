@@ -30,7 +30,7 @@ class MzSidebar extends HTMLElement {
         `<a class="sidebar-item${active ? " is-active" : ""}" href="#">${ICON[icon]}<span>${label}</span></a>`
     ).join("");
     this.innerHTML = `
-      <div class="sidebar-brand"><span class="brand-stripes" aria-hidden="true"><i></i><i></i><i></i></span><span class="logo"><span class="spark" aria-hidden="true">${SPARK}</span><span>Marzy</span></span></div>
+      <div class="sidebar-brand"><span class="logo"><span class="spark" aria-hidden="true">${SPARK}</span><span>Marzy</span></span></div>
       <div class="sidebar-section">Workspace</div>
       <nav class="sidebar-nav" aria-label="Sidebar">${items}</nav>
       <div class="sidebar-spacer"></div>
