@@ -3582,15 +3582,15 @@ mz-tab-panel:not([hidden]) {
   margin-block: clamp(var(--space-6), 4vw, var(--space-10));
   height: clamp(120px, 15vw, 180px);
 }
-/* white on the outside, gray within — read clearly on the dark ground */
+/* Volt on the inside, white on the outside */
 .ctabig-pipes .mz-pipe {
   stroke-width: 2.5;
 }
+.ctabig-pipes .mz-pipe-v {
+  stroke: var(--color-volt);
+}
 .ctabig-pipes .mz-pipe-n {
   stroke: #fff;
-}
-.ctabig-pipes .mz-pipe-v {
-  stroke: var(--color-muted);
 }
 .ctabig-actions {
   justify-content: center;
