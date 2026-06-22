@@ -44,6 +44,7 @@ import "./embed-doc.js";
 import "./embed-checklist.js";
 import "./embed-kanban.js";
 import "./quote.js";
+import "./post-card.js";
 import "./changelog.js";
 import "./gallery.js";
 import "./logos.js";

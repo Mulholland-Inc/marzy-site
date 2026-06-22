@@ -29,45 +29,39 @@
 
         <mz-stack gap="8">
           <!-- Featured -->
-          <mz-card hover>
-            <mz-stack gap="4">
-              <mz-muted>Featured · June 18, 2026 · 6 min read</mz-muted>
-              <h2><a href="blog-back-office-autopilot.html">Putting the back office on autopilot</a></h2>
-              <p>
-                Every business runs on routine work nobody wants to think about — payroll, billing,
-                reconciliation. Here's how we think about handing it to an agent without handing
-                over control.
-              </p>
-              <mz-link href="blog-back-office-autopilot.html">Read the post</mz-link>
-            </mz-stack>
-          </mz-card>
+          <mz-post-card
+            featured
+            href="blog-back-office-autopilot.html"
+            date="Featured · June 18, 2026 · 6 min read"
+            title="Putting the back office on autopilot"
+            >Every business runs on routine work nobody wants to think about — payroll, billing,
+            reconciliation. Here's how we think about handing it to an agent without handing over
+            control.</mz-post-card
+          >
 
           <!-- Recent -->
           <mz-grid cols="3">
-            <mz-card hover>
-              <mz-stack gap="3">
-                <mz-muted>June 9, 2026 · 5 min read</mz-muted>
-                <h3><a href="blog-audit-trail-that-pays.html">The audit trail that pays for itself</a></h3>
-                <p>Why we attach reasoning to every action — and how it turns compliance from a cost into a feature.</p>
-                <mz-link href="blog-audit-trail-that-pays.html">Read</mz-link>
-              </mz-stack>
-            </mz-card>
-            <mz-card hover>
-              <mz-stack gap="3">
-                <mz-muted>May 27, 2026 · 4 min read</mz-muted>
-                <h3><a href="blog-clean-data-first.html">Why we clean your data before any model runs</a></h3>
-                <p>AI breaks on the back office it inherits. Reconciliation isn't a step — it's the foundation.</p>
-                <mz-link href="blog-clean-data-first.html">Read</mz-link>
-              </mz-stack>
-            </mz-card>
-            <mz-card hover>
-              <mz-stack gap="3">
-                <mz-muted>May 12, 2026 · 5 min read</mz-muted>
-                <h3><a href="blog-forward-deployed.html">Why we forward-deploy our engineers</a></h3>
-                <p>The fastest way to automate a workflow is to sit next to the person who runs it.</p>
-                <mz-link href="blog-forward-deployed.html">Read</mz-link>
-              </mz-stack>
-            </mz-card>
+            <mz-post-card
+              href="blog-audit-trail-that-pays.html"
+              date="June 9, 2026 · 5 min read"
+              title="The audit trail that pays for itself"
+              >Why we attach reasoning to every action — and how it turns compliance from a cost into
+              a feature.</mz-post-card
+            >
+            <mz-post-card
+              href="blog-clean-data-first.html"
+              date="May 27, 2026 · 4 min read"
+              title="Why we clean your data before any model runs"
+              >AI breaks on the back office it inherits. Reconciliation isn't a step — it's the
+              foundation.</mz-post-card
+            >
+            <mz-post-card
+              href="blog-forward-deployed.html"
+              date="May 12, 2026 · 5 min read"
+              title="Why we forward-deploy our engineers"
+              >The fastest way to automate a workflow is to sit next to the person who runs
+              it.</mz-post-card
+            >
           </mz-grid>
         </mz-stack>
       </mz-section>
