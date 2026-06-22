@@ -854,10 +854,27 @@ textarea.input {
   border-right: var(--border);
 }
 .sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   padding: var(--space-2) var(--space-2) var(--space-5);
 }
 .sidebar-brand .logo {
   font-size: var(--text-18);
+}
+/* black mark in the sidebar — stripes carry the Volt accent instead */
+.sidebar-brand .logo .spark {
+  color: var(--color-ink);
+}
+.brand-stripes {
+  display: inline-flex;
+  gap: 3px;
+}
+.brand-stripes i {
+  width: 3px;
+  height: 18px;
+  border-radius: 2px;
+  background: var(--color-volt);
 }
 .sidebar-section {
   margin: var(--space-5) 0 var(--space-2);
