@@ -768,12 +768,29 @@ textarea.input {
 
 /* ─────────────────────────────────────────── Auth / login ── */
 .auth {
+  position: relative;
   display: grid;
   place-items: center;
   padding: clamp(32px, 6vw, 72px) var(--gutter);
   background: var(--color-bg-soft);
+  overflow: hidden;
+}
+/* animated pipe-maze background, behind the card */
+.auth-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.45;
+}
+.auth-bg svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .auth-card {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 400px;
   background: var(--color-surface);
@@ -783,27 +800,13 @@ textarea.input {
 }
 .auth-brand {
   display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  /* span into the card padding so stripes reach both edges */
-  margin: 0 calc(-1 * var(--space-8)) var(--space-6);
+  justify-content: center;
+  margin: 0 0 var(--space-6);
 }
 .auth-brand .auth-mark {
   flex: none;
-  width: 28px;
+  width: 30px;
   color: var(--color-ink);
-}
-.auth-brand .brand-stripes {
-  flex: 1 1 0;
-  margin-left: 0;
-}
-.auth-brand .brand-stripes svg {
-  display: block;
-  width: 100%;
-  height: 18px;
-}
-.auth-brand .brand-stripes .mz-pipe {
-  stroke-width: 3;
 }
 .auth-card h2 {
   font-size: var(--text-h3);
