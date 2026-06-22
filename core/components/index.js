@@ -61,6 +61,7 @@ import "./footer.js";
 import "./topnav.js";
 import "./sidebar.js";
 import "./dashboard.js";
+import "./app.js";
 import "./login.js";
 
 // Scroll-reveal: sections ease up as they enter the viewport (one-shot).
