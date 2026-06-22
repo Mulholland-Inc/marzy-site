@@ -1,7 +1,7 @@
 // <mz-data-clean></mz-data-clean>, marketing section positioning Marzy as the
-// back-office data cleaner. Two tables — raw records and AI-ready records —
-// with an animated Volt pipe bundle flowing between them. Raw values read
-// muted; cleaned values land in ink (black) with a small note tag.
+// back-office data cleaner. Two headerless tables — raw records and AI-ready
+// records — bridged edge to edge by a dense animated Volt pipe field. Raw
+// values read muted; cleaned values land in ink (black) with a small note tag.
 import { buildPipes } from "./pipe.js";
 
 // [field, raw value, cleaned value, what Marzy did]
@@ -34,30 +34,30 @@ class MzDataClean extends HTMLElement {
       <div class="dclean-flow">
         <div class="dclean-card table-card">
           <table class="table dclean-table">
-            <thead><tr><th>Field</th><th>Raw record</th></tr></thead>
             <tbody>${rawRows}</tbody>
           </table>
         </div>
         <div class="dclean-pipes" aria-hidden="true"></div>
         <div class="dclean-card table-card">
           <table class="table dclean-table">
-            <thead><tr><th>AI-ready</th></tr></thead>
             <tbody>${cleanRows}</tbody>
           </table>
         </div>
       </div>`;
 
-    // Animated Volt pipe bundle flowing left → right, raw into AI-ready.
+    // Dense Volt pipe field spanning edge to edge between the two tables.
+    // Route runs past the viewBox on both sides; preserve "none" stretches it
+    // to fill the column flush against each table.
     this.querySelector(".dclean-pipes").appendChild(
       buildPipes({
-        routes: [[[-20, 30], [140, 30]]],
-        width: 120,
-        height: 60,
-        n: 5,
-        spacing: 7,
+        routes: [[[-20, 120], [92, 120]]],
+        width: 72,
+        height: 240,
+        n: 15,
+        spacing: 14,
         radius: 1,
         fade: false,
-        preserve: "xMidYMid meet",
+        preserve: "none",
       })
     );
   }
