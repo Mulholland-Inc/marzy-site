@@ -53,6 +53,7 @@ class MzDataClean extends HTMLElement {
 
     // Build the pipe field at the grid's exact measured pixel height so the
     // viewBox is 1:1 with the element — no scaling, no distortion, no clip.
+    const SPACING = 10;
     const draw = () => {
       const h = Math.round(grid.getBoundingClientRect().height);
       if (!h) return;
@@ -61,8 +62,10 @@ class MzDataClean extends HTMLElement {
           routes: [[[-12, h / 2], [PIPE_W + 12, h / 2]]],
           width: PIPE_W,
           height: h,
-          n: Math.max(4, Math.round(h / 13)),
-          spacing: 13,
+          // overfill so the bundle runs past the top/bottom edges (cropped),
+          // leaving no white gap above or below the field
+          n: Math.ceil(h / SPACING) + 3,
+          spacing: SPACING,
           radius: 1,
           fade: false,
           preserve: "none",

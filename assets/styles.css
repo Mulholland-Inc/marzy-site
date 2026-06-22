@@ -2978,10 +2978,8 @@ mz-tab-panel:not([hidden]) {
 /* one rounded container: raw grid | pipes | organized rows */
 .dclean-flow {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 72px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 0.95fr) 72px minmax(0, 1.05fr);
   align-items: stretch;
-  max-width: 1000px;
-  margin-inline: auto;
   width: 100%;
   background: var(--color-surface);
   border: var(--border);
@@ -3029,9 +3027,9 @@ mz-tab-panel:not([hidden]) {
 }
 .dclean-row {
   display: grid;
-  grid-template-columns: 1.1fr 1.5fr 1fr auto;
+  grid-template-columns: 1.2fr 1.7fr 1.1fr auto;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 .dclean-row > span:not(.dclean-note) {
   min-width: 0;
@@ -3062,6 +3060,7 @@ mz-tab-panel:not([hidden]) {
   position: relative;
   overflow: hidden;
   border-inline: var(--border);
+  background: var(--color-paper);
 }
 .dclean-pipes svg {
   position: absolute;
