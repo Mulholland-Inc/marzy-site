@@ -1135,7 +1135,7 @@ button.sidebar-item {
   overflow: hidden;
 }
 .app .sidebar {
-  flex: 0 0 256px;
+  flex: 0 0 208px;
   border-right: var(--border);
   overflow-y: auto;
 }
@@ -1146,22 +1146,6 @@ button.sidebar-item {
   /* allow the column to shrink so the body (not the page) scrolls */
   min-width: 0;
   min-height: 0;
-}
-.app-topbar {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-5);
-  border-bottom: var(--border);
-}
-.app-title {
-  font-family: var(--font-display);
-  font-weight: var(--weight-semibold);
-  font-size: var(--text-20);
-  letter-spacing: var(--tracking-tight);
-  color: var(--color-ink);
 }
 .app-body {
   flex: 1;
@@ -1188,12 +1172,6 @@ button.sidebar-item {
 .app {
   --card-pad: var(--space-3); /* 12 */
   --gap-grid: var(--space-3); /* 12 — same gap within grids and between blocks */
-}
-.app-topbar {
-  padding: var(--space-2) var(--space-4);
-}
-.app-title {
-  font-size: var(--text-15);
 }
 .app-body {
   padding: var(--space-4);

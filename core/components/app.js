@@ -142,7 +142,6 @@ class MzApp extends HTMLElement {
     this.innerHTML = `
       <aside class="sidebar">
         <div class="sidebar-brand"><span class="brand-stripes" aria-hidden="true"><i></i><i></i><i></i></span><span class="logo"><span class="spark" aria-hidden="true">${SPARK}</span><span>Marzy</span></span></div>
-        <div class="sidebar-section">Workspace</div>
         <nav class="sidebar-nav" aria-label="Sidebar">${nav}</nav>
         <div class="sidebar-spacer"></div>
         <div class="sidebar-user">
@@ -151,15 +150,9 @@ class MzApp extends HTMLElement {
         </div>
       </aside>
       <div class="app-main">
-        <header class="app-topbar">
-          <span class="app-title"></span>
-          <span class="app-action"></span>
-        </header>
         <div class="app-body" tabindex="-1"></div>
       </div>`;
 
-    this._title = this.querySelector(".app-title");
-    this._action = this.querySelector(".app-action");
     this._body = this.querySelector(".app-body");
     this._nav = this.querySelector(".sidebar-nav");
 
@@ -175,11 +168,10 @@ class MzApp extends HTMLElement {
 
   show(id) {
     const view = VIEWS.find((v) => v.id === id) || VIEWS[0];
-    this._title.textContent = view.title;
-    this._action.innerHTML = view.action
-      ? `<mz-btn variant="primary" size="sm">${view.action}</mz-btn>`
+    const action = view.action
+      ? `<mz-actions align="end"><mz-btn variant="primary" size="sm">${view.action}</mz-btn></mz-actions>`
       : "";
-    this._body.innerHTML = view.render();
+    this._body.innerHTML = action + view.render();
     this._body.scrollTop = 0;
   }
 }
