@@ -99,6 +99,8 @@ mz-changelog,
 mz-gallery,
 mz-logos,
 mz-cta,
+mz-cta-big,
+mz-trust-banner,
 mz-pipes,
 mz-preview {
   display: block;
@@ -3545,6 +3547,91 @@ mz-tab-panel:not([hidden]) {
 }
 .ctaband-ghost:hover {
   border-color: rgba(255, 255, 255, 0.7);
+}
+
+/* ─────────────────────────────────────────── Big CTA (pipes backdrop) ── */
+.ctabig {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-ink);
+  border-radius: var(--radius-lg);
+  padding: clamp(var(--space-16), 9vw, var(--space-24)) var(--gutter);
+  text-align: center;
+}
+.ctabig-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.3;
+  pointer-events: none;
+}
+.ctabig-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 44rem;
+  margin-inline: auto;
+}
+.ctabig h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-tight);
+  color: #fff;
+}
+.ctabig p {
+  margin-top: var(--space-5);
+  font-size: var(--text-lead);
+  color: rgba(255, 255, 255, 0.72);
+}
+.ctabig .actions {
+  margin-top: var(--space-8);
+  justify-content: center;
+}
+
+/* ─────────────────────────────────────────── Trust / compliance banner ── */
+.trustbanner {
+  background: var(--color-ink);
+  border-radius: var(--radius-lg);
+  padding: clamp(var(--space-12), 8vw, var(--space-20)) var(--gutter);
+  text-align: center;
+}
+.trustbanner-icons {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+.trustbanner-icons svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: var(--color-volt-300);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.trustbanner-title {
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-tight);
+  color: #fff;
+}
+.trustbanner-dot {
+  color: var(--color-volt-300);
+}
+.trustbanner-sub {
+  max-width: 38rem;
+  margin: var(--space-5) auto 0;
+  font-size: var(--text-lead);
+  color: rgba(255, 255, 255, 0.72);
+}
+.trustbanner .actions {
+  margin-top: var(--space-8);
+  justify-content: center;
 }
 
 /* ─────────────────────────────────────────── Gallery (this page) ── */

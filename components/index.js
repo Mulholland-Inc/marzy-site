@@ -45,6 +45,8 @@ import "./changelog.js";
 import "./gallery.js";
 import "./logos.js";
 import "./cta.js";
+import "./cta-big.js";
+import "./trust-banner.js";
 import "./pipes.js";
 import "./workcard.js";
 import "./compliance.js";
