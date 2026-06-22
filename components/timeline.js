@@ -12,7 +12,7 @@ const ENTRY = [
 const GATE = ["Checkpoint", "Proven on the pilot", "You've seen the hours and dollars it saves."];
 const EMBED = ["Week 0", "Engineer embeds", "A Mulholland engineer maps how work moves."];
 const SPLIT = [
-  ["Weeks 1–2", "We audit", "Each handoff documented, risks flagged."],
+  ["Weeks 1–2", "You audit", "Each handoff documented, risks flagged."],
   ["Weeks 3–4", "We automate", "Agents shipped behind your approval."],
 ];
 const GATE2 = ["Ongoing", "Margins keep improving", "We report the time and money each automation wins back."];
