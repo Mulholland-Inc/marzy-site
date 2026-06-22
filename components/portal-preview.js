@@ -28,7 +28,7 @@ class MzPortalPreview extends HTMLElement {
     const slug = (this.getAttribute("slug") || "client").trim();
     const heading =
       this.getAttribute("heading") ||
-      "Your own branded environment, workspace and agents.";
+      "Your own workspace and agents.";
     const sub = this.getAttribute("sub") || "";
 
     const nav = NAV.map(
