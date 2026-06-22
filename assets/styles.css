@@ -2955,7 +2955,7 @@ mz-tab-panel:not([hidden]) {
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Data cleaning · two tables joined by pipes ── */
+/* ── Data cleaning · raw grid → organized rows ── */
 .dclean {
   display: grid;
   gap: clamp(var(--space-8), 5vw, 56px);
@@ -2975,66 +2975,93 @@ mz-tab-panel:not([hidden]) {
   margin-top: var(--space-4);
 }
 
+/* one rounded container: raw grid | pipes | organized rows */
 .dclean-flow {
   display: grid;
-  grid-template-columns: 1fr 64px 1fr;
+  grid-template-columns: minmax(0, 1fr) 72px minmax(0, 1fr);
   align-items: stretch;
-  gap: 0;
+  max-width: 1000px;
+  margin-inline: auto;
   width: 100%;
-}
-.dclean-card {
-  width: 100%;
-  min-width: 0;
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
 
-/* compact — tighter than the app data table; raw muted, clean ink */
-.dclean-table {
-  table-layout: fixed;
+/* shared table basics */
+.dclean-grid-table,
+.dclean-rows-table {
   width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: var(--text-small);
 }
-.dclean-table td {
-  padding: var(--space-2) var(--space-3);
+.dclean-grid-table td,
+.dclean-rows-table td {
+  height: 40px;
+  padding: 0 var(--space-3);
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  vertical-align: middle;
 }
-.dclean-table.is-raw td {
+
+/* LEFT — raw grid: full cell lines, muted (the outer edge is the card border) */
+.dclean-grid-table td {
+  border: var(--border);
   color: var(--color-muted);
 }
-.dclean-table.is-clean td {
-  color: var(--color-ink-2);
+.dclean-grid-table tr td:first-child { border-left: 0; }
+.dclean-grid-table tr td:last-child { border-right: 0; }
+.dclean-grid-table tr:first-child td { border-top: 0; }
+.dclean-grid-table tr:last-child td { border-bottom: 0; }
+.dclean-grid-table td:nth-child(1) { width: 36%; }
+.dclean-grid-table td:nth-child(2) { width: 38%; }
+.dclean-grid-table td:nth-child(3) { width: 26%; }
+
+/* RIGHT — organized rows: horizontal separators only, neatly arranged fields */
+.dclean-rows-table td {
+  border-bottom: var(--border);
 }
-.dclean-table.is-clean td:first-child {
+.dclean-rows-table tr:last-child td {
+  border-bottom: 0;
+}
+.dclean-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1.5fr 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+}
+.dclean-row > span:not(.dclean-note) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dclean-rn {
   color: var(--color-ink);
   font-weight: var(--weight-semibold);
 }
-/* column proportions — give email room, keep the note tag tight */
-.dclean-table.is-raw td:nth-child(1) { width: 32%; }
-.dclean-table.is-raw td:nth-child(2) { width: 40%; }
-.dclean-table.is-raw td:nth-child(3) { width: 28%; }
-.dclean-table.is-clean td:nth-child(1) { width: 26%; }
-.dclean-table.is-clean td:nth-child(2) { width: 36%; }
-.dclean-table.is-clean td:nth-child(3) { width: 24%; }
-.dclean-table.is-clean td:nth-child(4) { width: 14%; }
-.dclean-note-cell {
-  text-align: right;
-  white-space: nowrap;
+.dclean-rm {
+  color: var(--color-muted);
 }
 .dclean-note {
-  display: inline-block;
-  padding: 2px var(--space-2);
+  justify-self: end;
+  padding: 1px var(--space-2);
   border: var(--border);
   border-radius: var(--radius-sm);
   background: var(--color-surface-2);
-  font-weight: var(--weight-medium);
   font-size: var(--text-12);
-  line-height: 1.4;
+  font-weight: var(--weight-medium);
   color: var(--color-ink-2);
 }
 
-/* pipes between the two tables — all Volt, flowing left → right, edge to edge */
+/* PIPES — Volt field, edge to edge; svg sized to exact px in JS (no distortion) */
 .dclean-pipes {
   position: relative;
   overflow: hidden;
+  border-inline: var(--border);
 }
 .dclean-pipes svg {
   position: absolute;
@@ -3042,6 +3069,9 @@ mz-tab-panel:not([hidden]) {
   display: block;
   width: 100%;
   height: 100%;
+}
+.dclean-pipes .mz-pipe {
+  stroke-width: 1.6;
 }
 .dclean .mz-pipe-n {
   stroke: var(--color-volt);
@@ -3859,10 +3889,12 @@ mz-tab-panel:not([hidden]) {
   }
   .dclean-flow {
     grid-template-columns: 1fr;
-    gap: var(--space-5);
   }
   .dclean-pipes {
     display: none;
+  }
+  .dclean-rows-table {
+    border-top: var(--border);
   }
   .nav-links,
   .nav-signin {
