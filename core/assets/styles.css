@@ -271,6 +271,15 @@ p {
 .grid-4 {
   grid-template-columns: repeat(4, 1fr);
 }
+.grid-vcenter {
+  align-items: center;
+}
+.grid-vstart {
+  align-items: start;
+}
+.grid-vend {
+  align-items: end;
+}
 
 .actions {
   display: flex;
