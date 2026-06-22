@@ -1,11 +1,10 @@
-// <mz-data-clean></mz-data-clean>, marketing section on the unglamorous work
-// that makes AI usable: Marzy as the back-office data cleaner. A centered
-// title/subtitle over two tables — raw records and AI-ready records — joined
-// by animated pipes flowing from one into the next.
+// <mz-data-clean></mz-data-clean>, marketing section positioning Marzy as the
+// back-office data cleaner. A single "reconciliation ledger": raw records on
+// the left pass through a central Volt pipe (the brand motif, here the cleaning
+// filter) and resolve into AI-ready records on the right. Type carries the
+// transformation — raw values are set in mono (unresolved), cleaned values in
+// the display face (composed).
 import { buildPipes } from "./pipe.js";
-
-const CHECK =
-  '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17.5 19 6.5"/></svg>';
 
 // [field, raw value, what Marzy did, cleaned value]
 const ROWS = [
@@ -18,43 +17,48 @@ class MzDataClean extends HTMLElement {
   connectedCallback() {
     this.classList.add("dclean");
 
-    const before = ROWS.map(
-      ([field, raw]) =>
-        `<li class="dclean-row is-raw"><span class="dclean-field">${field}</span><span class="dclean-val">${raw}</span></li>`
+    const raw = ROWS.map(
+      ([field, value]) =>
+        `<li class="dclean-row"><span class="dclean-field">${field}</span><span class="dclean-raw">${value}</span></li>`
     ).join("");
 
-    const after = ROWS.map(
-      ([, , did, clean]) =>
-        `<li class="dclean-row is-clean"><span class="dclean-ok">${CHECK}</span><span class="dclean-txt">${clean}<i>${did}</i></span></li>`
+    const clean = ROWS.map(
+      ([, , note, value]) =>
+        `<li class="dclean-row"><span class="dclean-clean">${value}</span><span class="dclean-note">${note}</span></li>`
     ).join("");
 
     this.innerHTML = `
       <div class="dclean-head">
-        <h2 class="dclean-title">We clean your data, so your AI actually works.</h2>
-        <p class="lead dclean-sub">Most AI stalls on the back office it inherits — duplicate records, missing fields, formats that don't match. Marzy does the unglamorous part first: dedupe, enrich and normalize every record, so whatever you adopt next has something solid to stand on.</p>
+        <p class="dclean-kicker">Dedupe · Enrich · Normalize</p>
+        <h2 class="dclean-title">We clean your data first.</h2>
+        <p class="lead dclean-sub">AI breaks on the back office it inherits — duplicate records, missing fields, dates that don't agree. Marzy reconciles every record before a model ever touches it.</p>
       </div>
-      <div class="dclean-flow">
-        <div class="dclean-stage">
-          <span class="dclean-tag">Raw records</span>
-          <ul class="dclean-rows">${before}</ul>
+      <div class="dclean-card">
+        <div class="dclean-grid">
+          <div class="dclean-col">
+            <span class="dclean-tag">Raw records</span>
+            <ul class="dclean-rows">${raw}</ul>
+          </div>
+          <div class="dclean-seam" aria-hidden="true"></div>
+          <div class="dclean-col is-clean">
+            <span class="dclean-tag">AI-ready</span>
+            <ul class="dclean-rows">${clean}</ul>
+          </div>
         </div>
-        <div class="dclean-pipes" aria-hidden="true"></div>
-        <div class="dclean-stage">
-          <span class="dclean-tag dclean-tag-ready">AI-ready</span>
-          <ul class="dclean-rows">${after}</ul>
-        </div>
+        <p class="dclean-foot">1,284 records reconciled this week — 0 left ambiguous.</p>
       </div>`;
 
-    // Animated pipes flowing left → right, from raw records into AI-ready.
-    this.querySelector(".dclean-pipes").appendChild(
+    // Central vertical pipe — the brand motif as the cleaning filter. All
+    // strokes are recolored Volt in CSS; it slices to fill the card height.
+    this.querySelector(".dclean-seam").appendChild(
       buildPipes({
-        routes: [[[-40, 60], [160, 60]]],
-        width: 120,
-        height: 120,
-        n: 7,
-        spacing: 8,
+        routes: [[[32, -40], [32, 440]]],
+        width: 64,
+        height: 400,
+        n: 5,
+        spacing: 7,
         radius: 1,
-        preserve: "xMidYMid meet",
+        preserve: "xMidYMid slice",
       })
     );
   }

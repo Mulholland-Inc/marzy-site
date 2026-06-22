@@ -2955,138 +2955,145 @@ mz-tab-panel:not([hidden]) {
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Data cleaning / AI-ready ── */
+/* ── Data cleaning · reconciliation ledger ── */
 .dclean {
   display: grid;
   gap: clamp(var(--space-8), 5vw, 56px);
 }
 .dclean-head {
-  max-width: 44rem;
+  max-width: 40rem;
   margin-inline: auto;
   text-align: center;
 }
+.dclean-kicker {
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-volt);
+}
 .dclean-title {
+  margin-top: var(--space-3);
   font-size: var(--text-h2);
   line-height: var(--leading-snug);
   letter-spacing: var(--tracking-heading);
   color: var(--color-ink);
 }
 .dclean-sub {
-  margin-top: var(--space-5);
+  margin-top: var(--space-4);
 }
-.dclean-flow {
-  display: grid;
-  grid-template-columns: 1fr minmax(56px, 120px) 1fr;
-  align-items: center;
-  gap: var(--space-3);
-  max-width: 880px;
+
+/* The ledger card */
+.dclean-card {
+  max-width: 760px;
   margin-inline: auto;
   width: 100%;
-}
-.dclean-pipes {
-  align-self: stretch;
-  display: flex;
-  justify-content: center;
-}
-.dclean-pipes svg {
-  width: 100%;
-  height: 100%;
-  max-height: 200px;
-}
-/* all pipe strokes Volt (override the neutral outer + fade) */
-.dclean-pipes .mz-pipe-n {
-  stroke: var(--color-volt);
-}
-.dclean-pipes .mz-pipe {
-  opacity: 1 !important;
-}
-/* each table sits in its own card */
-.dclean-stage {
-  display: grid;
-  gap: var(--space-4);
-  align-content: start;
-  padding: var(--space-5);
   background: var(--color-surface);
   border: var(--border);
   border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.dclean-grid {
+  display: grid;
+  grid-template-columns: 1fr 64px 1fr;
+  align-items: stretch;
+}
+.dclean-col {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  padding: var(--space-6);
+}
+.dclean-col.is-clean {
+  background: var(--color-paper);
 }
 .dclean-tag {
-  justify-self: start;
+  font-family: var(--font-mono);
   font-size: var(--text-12);
-  font-weight: var(--weight-semibold);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-mono);
   text-transform: uppercase;
   color: var(--color-muted);
+  padding-bottom: var(--space-2);
 }
-.dclean-tag-ready {
+.dclean-col.is-clean .dclean-tag {
   color: var(--color-ink);
 }
 .dclean-rows {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 .dclean-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  border: var(--border);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-small);
-}
-/* left table: two columns — field label + raw value */
-.dclean-row.is-raw {
   display: grid;
-  grid-template-columns: 4.5rem 1fr;
-  gap: var(--space-3);
+  min-height: 52px;
+  align-content: center;
+  gap: 2px;
+  padding-block: var(--space-2);
+}
+/* left: two columns — field label + raw value, both mono (unresolved) */
+.dclean-col:not(.is-clean) .dclean-row {
+  grid-template-columns: 4rem 1fr;
   align-items: baseline;
-  background: var(--color-paper);
+  gap: var(--space-3);
 }
 .dclean-field {
+  font-family: var(--font-mono);
   font-size: var(--text-12);
-  font-weight: var(--weight-semibold);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-mono);
   text-transform: uppercase;
   color: var(--color-muted);
 }
-.dclean-val {
-  min-width: 0;
+.dclean-raw {
+  font-family: var(--font-mono);
+  font-size: var(--text-13);
   color: var(--color-ink-2);
+  word-break: break-word;
 }
-/* right table: clean rows, black accents (not blue) */
-.dclean-row.is-clean {
-  background: var(--color-surface);
+/* right: cleaned value in the display face (composed), note in mono — black, not blue */
+.dclean-clean {
+  font-family: var(--font-display);
+  font-size: var(--text-16);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-tight);
   color: var(--color-ink);
 }
-.dclean-ok {
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: var(--radius-pill);
-  background: var(--color-ink);
-  color: #fff;
-}
-.dclean-ok svg {
-  width: 13px;
-  height: 13px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.dclean-txt {
-  min-width: 0;
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-3);
-}
-.dclean-txt i {
-  font-style: normal;
+.dclean-note {
+  font-family: var(--font-mono);
   font-size: var(--text-12);
+  letter-spacing: var(--tracking-mono);
   color: var(--color-muted);
+}
+
+/* central pipe — the brand motif as the cleaning filter; all strokes Volt */
+.dclean-seam {
+  position: relative;
+  overflow: hidden;
+}
+.dclean-seam svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.dclean-seam .mz-pipe-n {
+  stroke: var(--color-volt);
+}
+.dclean-seam .mz-pipe {
+  opacity: 1 !important;
+}
+
+.dclean-foot {
+  border-top: var(--border);
+  padding: var(--space-4) var(--space-6);
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  letter-spacing: var(--tracking-mono);
+  color: var(--color-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dclean-seam .mz-pipe {
+    animation: none;
+  }
 }
 /* ─────────────────────────────────────────── Engagement timeline ──
    Left to right: two entry paths (demo or pilot) converge at a checkpoint,
@@ -3893,12 +3900,14 @@ mz-tab-panel:not([hidden]) {
   .datactrl {
     grid-template-columns: 1fr;
   }
-  .dclean-flow {
+  .dclean-grid {
     grid-template-columns: 1fr;
-    gap: var(--space-5);
   }
-  .dclean-pipes {
+  .dclean-seam {
     display: none;
+  }
+  .dclean-col.is-clean {
+    border-top: var(--border);
   }
   .nav-links,
   .nav-signin {
