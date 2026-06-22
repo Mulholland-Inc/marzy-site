@@ -2977,10 +2977,10 @@ mz-tab-panel:not([hidden]) {
 
 .dclean-flow {
   display: grid;
-  grid-template-columns: 1fr 64px 1fr;
+  grid-template-columns: 1fr 120px 1fr;
   align-items: stretch;
   gap: 0;
-  max-width: 640px;
+  max-width: 1080px;
   margin-inline: auto;
   width: 100%;
 }
@@ -2988,28 +2988,29 @@ mz-tab-panel:not([hidden]) {
   width: 100%;
 }
 
-/* table cells — tighter than the app data table; raw muted, clean ink */
+/* bigger than the app data table; raw rows muted, clean rows ink */
+.dclean-table {
+  font-size: var(--text-15);
+}
 .dclean-table td {
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-4) var(--space-5);
 }
-.dclean-field {
-  color: var(--color-ink);
-  font-weight: var(--weight-medium);
-}
-.dclean-raw {
+.dclean-table.is-raw td {
   color: var(--color-muted);
 }
-.dclean-clean {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
+.dclean-table.is-clean td {
+  color: var(--color-ink-2);
+}
+.dclean-table.is-clean td:first-child {
   color: var(--color-ink);
   font-weight: var(--weight-semibold);
-  white-space: normal;
+}
+.dclean-note-cell {
+  text-align: right;
+  white-space: nowrap;
 }
 .dclean-note {
-  flex: none;
-  margin-left: auto;
+  display: inline-block;
   padding: 2px var(--space-2);
   border: var(--border);
   border-radius: var(--radius-sm);
