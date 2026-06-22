@@ -704,9 +704,13 @@ p {
 .fnd-type-row {
   display: flex;
   align-items: baseline;
-  gap: var(--space-6);
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
   padding: var(--space-4) 0;
   border-top: var(--border);
+}
+.fnd-type-row > * {
+  min-width: 0;
 }
 .fnd-type-row .meta {
   flex: 0 0 120px;
@@ -2440,8 +2444,8 @@ mz-tab-panel:not([hidden]) {
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
-  width: 440px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 440px;
   padding: var(--space-4);
   background: var(--color-surface);
   border: var(--border);
@@ -3574,17 +3578,17 @@ mz-tab-panel:not([hidden]) {
   font-size: var(--text-lead);
   color: rgba(255, 255, 255, 0.72);
 }
-/* full-bleed pipes band between the text and the buttons */
+/* centered ring of pipes between the text and the buttons */
 .ctabig-pipes {
-  display: block;
-  width: calc(100% + 2 * var(--gutter));
-  margin-inline: calc(-1 * var(--gutter));
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-block: clamp(var(--space-6), 4vw, var(--space-10));
-  height: clamp(120px, 15vw, 180px);
+  height: clamp(200px, 26vw, 300px);
 }
 .ctabig-pipes svg {
   display: block;
-  width: 100%;
+  width: auto;
   height: 100%;
 }
 /* Volt on the inside, white on the outside; thick, long strokes */
@@ -3643,6 +3647,7 @@ mz-tab-panel:not([hidden]) {
   margin-inline: auto;
   padding: var(--gutter);
   display: grid;
+  grid-template-columns: minmax(0, 1fr); /* cap column to container; no max-content blowout */
   gap: clamp(72px, 9vw, 128px);
 }
 .gallery-head {
@@ -3657,6 +3662,7 @@ mz-tab-panel:not([hidden]) {
 }
 .preview {
   display: grid;
+  grid-template-columns: minmax(0, 1fr); /* cap to container; no max-content blowout */
   gap: var(--space-5);
 }
 .preview-cap {

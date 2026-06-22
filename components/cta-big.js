@@ -1,24 +1,7 @@
 // <mz-cta-big heading="…" sub="…"></mz-cta-big>, a large dark call-to-action:
-// centered title, a full-width pipes band, then the buttons. The pipes are
-// drawn to the band's exact pixels (no scaling, no crop) and redrawn on resize.
-import { buildPipes } from "./pipe.js";
-
-// The pipes divider's serpentine, normalized to 0..1, so we can map it to the
-// band's exact pixels (keeps the same composition, no scaling/cropping).
-const LEVELS = [
-  [0, 0.47], [0.179, 0.47], [0.179, 1], [0.343, 1],
-  [0.343, 0.067], [0.507, 0.067], [0.507, 0.87], [0.627, 0.87],
-  [0.627, 0], [0.806, 0], [0.806, 0.67], [1, 0.67],
-];
-
-function serpentine(W, H) {
-  const pad = 30; // keeps the bundle off the top/bottom edges (no clip)
-  const span = Math.max(20, H - 2 * pad);
-  const pts = LEVELS.map(([nx, ny]) => [nx * W, pad + ny * span]);
-  pts.unshift([-40, pts[0][1]]); // bleed left
-  pts.push([W + 40, pts[pts.length - 1][1]]); // bleed right
-  return pts;
-}
+// centered title, a ring of animated pipes, then the buttons. The ring is sized
+// to the band's pixels and redrawn on resize.
+import { buildRing } from "./pipe.js";
 
 class MzCtaBig extends HTMLElement {
   connectedCallback() {
@@ -44,7 +27,7 @@ class MzCtaBig extends HTMLElement {
       <a class="btn ctaband-ghost" href="#">Talk to us</a>`;
     this.appendChild(actions);
 
-    const draw = () => this.drawPipes();
+    const draw = () => this.drawRing();
     requestAnimationFrame(draw);
     if ("ResizeObserver" in window) {
       this._ro = new ResizeObserver(draw);
@@ -56,13 +39,11 @@ class MzCtaBig extends HTMLElement {
     this._ro?.disconnect();
   }
 
-  drawPipes() {
+  drawRing() {
     const b = this._band.getBoundingClientRect();
-    if (!b.width || !b.height) return;
-    const W = Math.round(b.width), H = Math.round(b.height);
-    this._band.replaceChildren(
-      buildPipes({ routes: [serpentine(W, H)], width: W, height: H, n: 7, spacing: 9, radius: 28, preserve: "none", fade: false })
-    );
+    if (!b.height) return;
+    const size = Math.round(b.height);
+    this._band.replaceChildren(buildRing({ size, n: 7, spacing: 10, pad: 8, fade: false }));
   }
 }
 customElements.define("mz-cta-big", MzCtaBig);

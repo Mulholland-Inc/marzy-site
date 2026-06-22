@@ -58,3 +58,27 @@ export function buildPipes({ routes, width, height, n = 7, spacing = 9, radius =
   }
   return svg;
 }
+
+// Concentric ring of pipes (same strokes/flow as buildPipes) in a square svg.
+export function buildRing({ size, n = 7, spacing = 10, pad = 8, fade = true }) {
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", `0 0 ${size} ${size}`);
+  svg.setAttribute("aria-hidden", "true");
+  const cx = size / 2;
+  const half = (n - 1) / 2;
+  const baseR = size / 2 - pad - half * spacing;
+  for (let i = 0; i < n; i++) {
+    const dist = Math.abs(i - half);
+    const inner = dist <= 1;
+    const c = document.createElementNS(ns, "circle");
+    c.setAttribute("cx", cx);
+    c.setAttribute("cy", cx);
+    c.setAttribute("r", Math.max(1, baseR + i * spacing));
+    c.setAttribute("class", `mz-pipe ${inner ? "mz-pipe-v" : "mz-pipe-n"}`);
+    c.style.opacity = fade ? (inner ? 0.95 - dist * 0.15 : 0.4 + (half - dist) * 0.05) : 1;
+    c.style.animationDuration = 2.6 + (i % 5) * 0.2 + "s";
+    svg.appendChild(c);
+  }
+  return svg;
+}
