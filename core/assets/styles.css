@@ -2617,6 +2617,7 @@ mz-tab-panel:not([hidden]) {
 .msg-embed .embed {
   width: 100%;
   max-width: 100%;
+  margin-top: var(--space-2);
 }
 .msg-body {
   flex: 1;
