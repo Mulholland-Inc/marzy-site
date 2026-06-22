@@ -3,24 +3,26 @@
 import { SPARK } from "./spark.js";
 import { buildPipes } from "./pipe.js";
 
-// One continuous snake of pipes — a serpentine (boustrophedon) route that
-// runs across, U-turns at the edge, drops a row, runs back, and so on. A
-// single non-crossing path, rendered as the same thick layered bundle as the
-// site dividers. radius = rowGap/2 makes the U-turns clean half-circles.
-const ROW_GAP = 96;
-const OVER_X = 90; // overshoot so the snake bleeds off the sides
+// One continuous snake of pipes — a vertical "comb": run down a column,
+// U-turn, run up the next, U-turn, and so on across the width. The U-turns
+// sit INSIDE the viewport (top & bottom), so you see a bend on every column —
+// a maze-like pattern, not just straight lines. Single non-crossing path,
+// rendered as the same thick layered bundle as the site dividers.
+const COL_GAP = 112;
 
 function buildSnake(W, H) {
-  const rows = Math.ceil((H + ROW_GAP) / ROW_GAP) + 1;
-  const startY = -ROW_GAP / 2;
+  const yTop = 72, yBot = H - 72;
+  const cols = Math.ceil((W + 2 * COL_GAP) / COL_GAP) + 1;
+  const startX = -COL_GAP;
   const pts = [];
-  let x = -OVER_X;
-  for (let i = 0; i < rows; i++) {
-    const y = startY + i * ROW_GAP;
-    const other = x === -OVER_X ? W + OVER_X : -OVER_X;
-    pts.push([x, y]);     // turn down into this row (vertical from the row above)
-    pts.push([other, y]); // run across
-    x = other;
+  for (let j = 0; j < cols; j++) {
+    const x = startX + j * COL_GAP;
+    if (j % 2 === 0) {
+      pts.push([x, yTop], [x, yBot]); // run down
+    } else {
+      pts.push([x, yBot], [x, yTop]); // run up
+    }
+    // the segment to the next column's first point becomes the U-turn
   }
   return buildPipes({
     routes: [pts],
@@ -28,7 +30,7 @@ function buildSnake(W, H) {
     height: H,
     n: 7,
     spacing: 9,
-    radius: ROW_GAP / 2,
+    radius: COL_GAP / 2,
     fade: false,
     preserve: "none",
   });
