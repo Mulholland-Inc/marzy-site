@@ -228,22 +228,39 @@
       };
       const same = (a, b) => a[0] === b[0] && a[1] === b[1];
 
+      // Walk a route, always preferring to continue STRAIGHT — so a route
+      // runs straight through junctions (crosses pass through, tees keep their
+      // main line unbroken). Only turn where the path itself bends (degree 2).
       function walk(start, first, used) {
         const path = [start, first];
         used.add(eKey(start, first));
         let prev = start, cur = first;
-        while (adj(cur[0], cur[1]).length === 2) {
-          const next = adj(cur[0], cur[1]).find((n) => !same(n, prev));
+        while (true) {
+          const inDir = [cur[0] - prev[0], cur[1] - prev[1]];
+          const sCell = [cur[0] + inDir[0], cur[1] + inDir[1]];
+          let next = null;
+          if (has(sCell[0], sCell[1]) && !used.has(eKey(cur, sCell))) {
+            next = sCell; // straight continuation (through junctions)
+          } else if (adj(cur[0], cur[1]).length === 2) {
+            next = adj(cur[0], cur[1]).find(
+              (n) => !same(n, prev) && !used.has(eKey(cur, n))
+            ); // a real bend
+          }
           if (!next) break;
-          const ek = eKey(cur, next);
-          if (used.has(ek)) break; // closed a loop
-          used.add(ek);
+          used.add(eKey(cur, next));
           prev = cur;
           cur = next;
           path.push(cur);
         }
         return path;
       }
+
+      const plen = (pts) => {
+        let s = 0;
+        for (let i = 1; i < pts.length; i++)
+          s += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+        return s;
+      };
 
       function traceRoutes() {
         const used = new Set();
@@ -253,13 +270,14 @@
           adj(r, c).forEach((nb) => {
             if (!used.has(eKey([r, c], nb))) routes.push(walk([r, c], nb, used));
           });
-        // endpoints + junctions first, then any leftover loops
-        for (const [r, c] of list) {
-          const d = adj(r, c).length;
-          if (d === 1 || d >= 3) start(r, c);
-        }
+        // 1) from endpoints → maximal straight-through routes (the through line
+        //    of a tee, both arms of a cross). 2) leftover junction segments and
+        //    closed loops.
+        for (const [r, c] of list) if (adj(r, c).length === 1) start(r, c);
         for (const [r, c] of list) start(r, c);
-        return routes.map(toPoints);
+        // shorter routes first so longer mains draw ON TOP — branches tee in
+        // cleanly under the main pipe.
+        return routes.map(toPoints).sort((a, b) => plen(a) - plen(b));
       }
 
       // cell path → pixel points, dropping collinear midpoints (keep bends)
