@@ -2968,15 +2968,16 @@ mz-tab-panel:not([hidden]) {
 .tl-gate .tl-when {
   color: var(--color-volt);
 }
-/* horizontal pipe connector between cards */
+/* pipe connector between two single cards */
 .tl-conn-h {
   flex: 0 0 36px;
   align-self: center;
+  height: 56px;
 }
 .tl-conn-h svg {
   display: block;
-  width: 36px;
-  height: 56px;
+  width: 100%;
+  height: 100%;
 }
 /* shared pipe strokes — also used by the pipes divider (mz-pipes).
    Long dash + small gap reads as a near-solid line with a soft separation
@@ -3019,6 +3020,35 @@ mz-tab-panel:not([hidden]) {
   font-size: var(--text-13);
   line-height: var(--leading-relaxed);
   color: var(--color-muted);
+}
+/* Mobile: stack the whole thing top-down. Columns become side-by-side pairs,
+   branches/connectors run vertically (JS redraws them for this orientation). */
+@media (max-width: 640px) {
+  .tl-row {
+    flex-direction: column;
+    align-items: stretch;
+    overflow-x: visible;
+  }
+  .tl-col {
+    flex: 0 0 auto;
+    flex-direction: row;
+    gap: var(--space-3);
+  }
+  .tl-col .tl-step {
+    flex: 1 1 0;
+  }
+  .tl-branch {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 64px;
+    align-self: stretch;
+  }
+  .tl-conn-h {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 40px;
+    align-self: stretch;
+  }
 }
 
 /* ─────────────────────────────────────────── Embeddable cards ──

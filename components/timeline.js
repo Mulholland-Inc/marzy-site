@@ -1,8 +1,9 @@
-// <mz-timeline></mz-timeline>, engagement timeline, left to right. Two entry
-// paths (a guided demo or a scoped pilot) converge at a checkpoint; the engineer
-// embeds; work then diverges into audit + automate and merges into the review
-// checkpoint. Pipes (shared buildPipes) flow between every card; the converging
-// and diverging branches are measured/redrawn so they line up with the cards.
+// <mz-timeline></mz-timeline>, engagement timeline. Two entry paths (a guided
+// demo or a scoped pilot) converge at a checkpoint; the engineer embeds; work
+// diverges into audit + automate and merges into the review checkpoint. Pipes
+// (shared buildPipes) flow between every card. Laid out left-to-right on
+// desktop and top-down on mobile; the converge/diverge branches and the
+// connectors are measured and redrawn for whichever orientation is active.
 import { buildPipes } from "./pipe.js";
 
 const ENTRY = [
@@ -16,6 +17,8 @@ const SPLIT = [
   ["Weeks 3–4", "We automate", "Agents shipped behind your approval."],
 ];
 const GATE2 = ["Ongoing", "Margins keep improving", "Each automation compounds."];
+
+const MOBILE = "(max-width: 640px)";
 
 function cardEl([when, title, desc], cls) {
   const d = document.createElement("div");
@@ -31,35 +34,29 @@ function colEl(pair) {
   col.append(c1, c2);
   return { col, c1, c2 };
 }
-function connector() {
-  const wrap = document.createElement("div");
-  wrap.className = "tl-conn-h";
-  wrap.appendChild(buildPipes({ routes: [[[0, 28], [36, 28]]], width: 36, height: 56, n: 5, spacing: 7, radius: 0 }));
-  return wrap;
-}
-function branchEl() {
+function el(cls) {
   const d = document.createElement("div");
-  d.className = "tl-branch";
+  d.className = cls;
   return d;
 }
 
 class MzTimeline extends HTMLElement {
   connectedCallback() {
     this.classList.add("timeline");
-    const row = document.createElement("div");
-    row.className = "tl-row";
+    const row = el("tl-row");
 
     const entry = colEl(ENTRY);
     const split = colEl(SPLIT);
-    const bMerge1 = branchEl();
-    const bDiverge = branchEl();
-    const bMerge2 = branchEl();
+    const bMerge1 = el("tl-branch");
+    const bDiverge = el("tl-branch");
+    const bMerge2 = el("tl-branch");
+    const conn = el("tl-conn-h");
 
     row.append(
       entry.col,
       bMerge1,
       cardEl(GATE, "tl-gate"),
-      connector(),
+      conn,
       cardEl(EMBED),
       bDiverge,
       split.col,
@@ -68,12 +65,12 @@ class MzTimeline extends HTMLElement {
     );
     this.appendChild(row);
 
-    // [branch element, top card, bottom card, mode]
     this._branches = [
       [bMerge1, entry.c1, entry.c2, "merge"],
       [bDiverge, split.c1, split.c2, "diverge"],
       [bMerge2, split.c1, split.c2, "merge"],
     ];
+    this._conns = [conn];
 
     const draw = () => this.layout();
     requestAnimationFrame(draw);
@@ -88,29 +85,60 @@ class MzTimeline extends HTMLElement {
   }
 
   layout() {
-    for (const [el, c1, c2, mode] of this._branches) this.drawBranch(el, c1, c2, mode);
+    const vertical = matchMedia(MOBILE).matches;
+    for (const [b, c1, c2, mode] of this._branches) this.drawBranch(b, c1, c2, mode, vertical);
+    for (const c of this._conns) this.drawConn(c, vertical);
   }
 
-  // Connect a single side and a two-card side with a pipe bundle.
-  drawBranch(el, c1, c2, mode) {
-    const mb = el.getBoundingClientRect();
+  drawConn(elem, vertical) {
+    const b = elem.getBoundingClientRect();
+    if (!b.width || !b.height) return;
+    const W = b.width, H = b.height;
+    const routes = vertical ? [[[W / 2, 0], [W / 2, H]]] : [[[0, H / 2], [W, H / 2]]];
+    elem.replaceChildren(buildPipes({ routes, width: W, height: H, n: 5, spacing: 7, radius: 0, preserve: "none" }));
+  }
+
+  // Connect a single side to a two-card side with a pipe bundle, in whichever
+  // orientation is active.
+  drawBranch(elem, c1, c2, mode, vertical) {
+    const mb = elem.getBoundingClientRect();
     if (!mb.width || !mb.height) return;
     const r1 = c1.getBoundingClientRect();
     const r2 = c2.getBoundingClientRect();
-    const W = mb.width, H = mb.height, yc = H / 2, mx = W / 2;
-    const y1 = r1.top + r1.height / 2 - mb.top;
-    const y2 = r2.top + r2.height / 2 - mb.top;
-    const routes =
-      mode === "diverge"
-        ? [
-            [[0, yc - 10], [mx, yc - 10], [mx, y1], [W, y1]],
-            [[0, yc + 10], [mx, yc + 10], [mx, y2], [W, y2]],
-          ]
-        : [
-            [[0, y1], [mx, y1], [mx, yc - 10], [W, yc - 10]],
-            [[0, y2], [mx, y2], [mx, yc + 10], [W, yc + 10]],
-          ];
-    el.replaceChildren(buildPipes({ routes, width: W, height: H, n: 3, spacing: 7, radius: 12, preserve: "none" }));
+    const W = mb.width, H = mb.height;
+    let routes;
+    if (vertical) {
+      // cards sit in a row (side by side); flow runs top -> bottom
+      const x1 = r1.left + r1.width / 2 - mb.left;
+      const x2 = r2.left + r2.width / 2 - mb.left;
+      const xc = W / 2, my = H / 2;
+      routes =
+        mode === "diverge"
+          ? [
+              [[xc - 10, 0], [xc - 10, my], [x1, my], [x1, H]],
+              [[xc + 10, 0], [xc + 10, my], [x2, my], [x2, H]],
+            ]
+          : [
+              [[x1, 0], [x1, my], [xc - 10, my], [xc - 10, H]],
+              [[x2, 0], [x2, my], [xc + 10, my], [xc + 10, H]],
+            ];
+    } else {
+      // cards sit in a column (stacked); flow runs left -> right
+      const y1 = r1.top + r1.height / 2 - mb.top;
+      const y2 = r2.top + r2.height / 2 - mb.top;
+      const yc = H / 2, mx = W / 2;
+      routes =
+        mode === "diverge"
+          ? [
+              [[0, yc - 10], [mx, yc - 10], [mx, y1], [W, y1]],
+              [[0, yc + 10], [mx, yc + 10], [mx, y2], [W, y2]],
+            ]
+          : [
+              [[0, y1], [mx, y1], [mx, yc - 10], [W, yc - 10]],
+              [[0, y2], [mx, y2], [mx, yc + 10], [W, yc + 10]],
+            ];
+    }
+    elem.replaceChildren(buildPipes({ routes, width: W, height: H, n: 3, spacing: 7, radius: 12, preserve: "none" }));
   }
 }
 customElements.define("mz-timeline", MzTimeline);
