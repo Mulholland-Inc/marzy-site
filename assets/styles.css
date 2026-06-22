@@ -788,8 +788,8 @@ textarea.input {
   width: 100%;
   height: 100%;
 }
-/* outer strokes of each pipe in ink (not the default grey) */
-.auth-bg .mz-pipe-n {
+/* all pipe strokes in ink — black lines only, no Volt */
+.auth-bg .mz-pipe {
   stroke: var(--color-ink);
 }
 .auth-card {
