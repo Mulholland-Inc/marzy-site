@@ -6,7 +6,7 @@ import { buildPipes } from "./pipe.js";
 // Background is a single Hilbert curve — a space-filling curve that threads
 // one continuous, non-crossing pipe through the whole area, bending at nearly
 // every step. Rendered as the thick layered bundle used by the site dividers.
-const CELL = 120;
+const CELL = 60;
 
 // Hilbert d → (x, y) on a side×side grid (side must be a power of two).
 function hilbert(side, d) {
@@ -51,8 +51,8 @@ function buildSnake(W, H) {
     width: W,
     height: H,
     n: 7,
-    spacing: 8,
-    radius: 48,
+    spacing: 7,
+    radius: 22,
     fade: false,
     preserve: "none",
   });
