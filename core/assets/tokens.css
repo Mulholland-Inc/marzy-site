@@ -111,8 +111,8 @@
 
   --section-gap: clamp(48px, 6vw, 88px);
   --section-gap-sm: clamp(32px, 4vw, 56px);
-  --card-pad: var(--space-5); /* 20 — uniform internal padding for cards */
-  --gap-grid: var(--space-4); /* 16 — uniform gap between grid cells */
+  --card-pad: var(--space-3); /* 12 — uniform internal padding for cards */
+  --gap-grid: var(--space-3); /* 12 — uniform gap between grid cells */
 
   /* ─────────────────────────────────────────── Layout ── */
   --container: 1180px;
