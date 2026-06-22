@@ -2993,13 +2993,16 @@ mz-tab-panel:not([hidden]) {
   color: var(--color-muted);
 }
 .dclean-clean {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   color: var(--color-ink);
   font-weight: var(--weight-semibold);
   white-space: normal;
 }
 .dclean-note {
-  display: inline-block;
-  margin-left: var(--space-2);
+  flex: none;
+  margin-left: auto;
   padding: 2px var(--space-2);
   border: var(--border);
   border-radius: var(--radius-sm);
