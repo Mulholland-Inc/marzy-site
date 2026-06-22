@@ -67,7 +67,8 @@ export function buildRing({ size, n = 7, spacing = 10, pad = 8, fade = true }) {
   svg.setAttribute("aria-hidden", "true");
   const cx = size / 2;
   const half = (n - 1) / 2;
-  const baseR = size / 2 - pad - half * spacing;
+  // outermost circle = size/2 - pad; inner ones step inward by `spacing`
+  const baseR = size / 2 - pad - (n - 1) * spacing;
   for (let i = 0; i < n; i++) {
     const dist = Math.abs(i - half);
     const inner = dist <= 1;
