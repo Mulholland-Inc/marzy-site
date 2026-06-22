@@ -3,62 +3,46 @@
 import { SPARK } from "./spark.js";
 import { buildPipes } from "./pipe.js";
 
-// One continuous snake of pipes that twists through the whole area like the
-// game Snake. A self-avoiding walk on a coarse grid, steered by Warnsdorff's
-// heuristic (always move to the most-constrained cell) so it fills the space
-// with constant turns and never crosses itself. Rendered as the same thick
-// layered bundle as the site dividers.
-const CELL = 96;
-const NB = [[-1, 0], [0, 1], [1, 0], [0, -1]];
-const rint = (n) => Math.floor(Math.random() * n);
+// Background is a single Hilbert curve — a space-filling curve that threads
+// one continuous, non-crossing pipe through the whole area, bending at nearly
+// every step. Rendered as the thick layered bundle used by the site dividers.
+const CELL = 60;
 
-function snakePath(cols, rows) {
-  const seen = new Set();
-  const key = (r, c) => r + "," + c;
-  const inB = (r, c) => r >= 0 && c >= 0 && r < rows && c < cols;
-  const free = (r, c) => inB(r, c) && !seen.has(key(r, c));
-  const onward = (r, c) => NB.reduce((n, [dr, dc]) => n + (free(r + dr, c + dc) ? 1 : 0), 0);
-
-  let r = rint(rows), c = rint(cols);
-  seen.add(key(r, c));
-  const path = [[r, c]];
-  while (true) {
-    const opts = NB.map(([dr, dc]) => [r + dr, c + dc]).filter(([nr, nc]) => free(nr, nc));
-    if (!opts.length) break;
-    // Warnsdorff: step to the neighbour with the fewest onward moves (random
-    // tie-break) — yields long, twisty, near space-filling snakes
-    let min = Infinity, pick = [];
-    for (const [nr, nc] of opts) {
-      const o = onward(nr, nc);
-      if (o < min) { min = o; pick = [[nr, nc]]; }
-      else if (o === min) pick.push([nr, nc]);
+// Hilbert d → (x, y) on a side×side grid (side must be a power of two).
+function hilbert(side, d) {
+  let x = 0, y = 0, t = d;
+  for (let s = 1; s < side; s *= 2) {
+    const rx = 1 & (t >> 1);
+    const ry = 1 & (t ^ rx);
+    if (ry === 0) {
+      if (rx === 1) { x = s - 1 - x; y = s - 1 - y; }
+      const tmp = x; x = y; y = tmp;
     }
-    [r, c] = pick[rint(pick.length)];
-    seen.add(key(r, c));
-    path.push([r, c]);
+    x += s * rx;
+    y += s * ry;
+    t >>= 2;
   }
-  return path;
+  return [x, y];
 }
 
 function buildSnake(W, H) {
-  // overscan the grid by a ring of cells so the snake bleeds off every edge
-  const cols = Math.ceil(W / CELL) + 3;
-  const rows = Math.ceil(H / CELL) + 3;
-  const total = cols * rows;
+  // smallest power-of-two grid whose square covers the area; centre + overscan
+  let side = 2;
+  while (side * CELL < Math.max(W, H) && side < 64) side *= 2;
+  const sidePx = side * CELL;
+  const ox = (W - sidePx) / 2 + CELL / 2;
+  const oy = (H - sidePx) / 2 + CELL / 2;
 
-  let best = [];
-  for (let t = 0; t < 10 && best.length < total * 0.85; t++) {
-    const p = snakePath(cols, rows);
-    if (p.length > best.length) best = p;
+  const raw = [];
+  for (let d = 0; d < side * side; d++) {
+    const [gx, gy] = hilbert(side, d);
+    raw.push([ox + gx * CELL, oy + gy * CELL]);
   }
-
-  // grid → pixel points (shifted so the overscan ring is off-screen), keeping
-  // only the turn vertices
-  const raw = best.map(([r, c]) => [c * CELL - CELL, r * CELL - CELL]);
+  // keep only the corner vertices
   const pts = [raw[0]];
   for (let i = 1; i < raw.length - 1; i++) {
-    const a = pts[pts.length - 1], b = raw[i], d = raw[i + 1];
-    if (!((a[0] === b[0] && b[0] === d[0]) || (a[1] === b[1] && b[1] === d[1]))) pts.push(b);
+    const a = pts[pts.length - 1], b = raw[i], e = raw[i + 1];
+    if (!((a[0] === b[0] && b[0] === e[0]) || (a[1] === b[1] && b[1] === e[1]))) pts.push(b);
   }
   pts.push(raw[raw.length - 1]);
 
@@ -67,8 +51,8 @@ function buildSnake(W, H) {
     width: W,
     height: H,
     n: 7,
-    spacing: 9,
-    radius: 34,
+    spacing: 7,
+    radius: 22,
     fade: false,
     preserve: "none",
   });
