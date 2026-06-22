@@ -2,6 +2,7 @@
 // centered title, a ring of animated pipes, then the buttons. The ring is sized
 // to the band's pixels and redrawn on resize.
 import { buildRing } from "./pipe.js";
+import { ROUTES } from "./site-map.js";
 
 class MzCtaBig extends HTMLElement {
   connectedCallback() {
@@ -23,8 +24,8 @@ class MzCtaBig extends HTMLElement {
     const actions = document.createElement("div");
     actions.className = "actions ctabig-actions";
     actions.innerHTML = `
-      <a class="btn btn-primary" href="#">Get a demo</a>
-      <a class="btn ctaband-ghost" href="#">Talk to us</a>`;
+      <a class="btn btn-primary" href="${ROUTES.demo}">Get a demo</a>
+      <a class="btn ctaband-ghost" href="${ROUTES.contact}">Talk to us</a>`;
     this.appendChild(actions);
 
     const draw = () => this.drawRing();

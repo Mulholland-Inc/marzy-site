@@ -1,6 +1,7 @@
 // <mz-family-hero></mz-family-hero>, product-family hero with a typewriter
 // headline that rotates through the verticals Marzy serves. The animated
 // conversation card now lives in its own component, <mz-thread>.
+import { ROUTES } from "./site-map.js";
 const WORDS = ["Dental", "Accounting", "Healthcare", "Payroll", "Operations"];
 const rand = (a, b) => a + Math.random() * (b - a);
 
@@ -12,8 +13,8 @@ class MzFamilyHero extends HTMLElement {
         <h1 class="famhero-title">Marzy for<br /><span class="typer"><span class="type-text">${WORDS[0]}</span><span class="type-cursor" aria-hidden="true"></span></span></h1>
         <p class="lead">One AI agent for the back office, now tailored to your industry. Same engine, built for the way your field actually works.</p>
         <div class="actions">
-          <a class="btn btn-primary" href="#">Get a demo</a>
-          <a class="btn btn-outline" href="#">Explore products</a>
+          <a class="btn btn-primary" href="${ROUTES.demo}">Get a demo</a>
+          <a class="btn btn-outline" href="${ROUTES.product}">Explore products</a>
         </div>
       </div>`;
 

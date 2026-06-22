@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Customers — Marzy</title>
+    <meta name="description" content="How teams use Marzy to run payroll, close the books, and clear the inbox — with the audit trail to prove it." />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="../assets/tokens.css" rel="stylesheet" />
+    <link href="../assets/styles.css" rel="stylesheet" />
+    <script src="../components/index.js" type="module"></script>
+  </head>
+  <body>
+    <mz-topnav></mz-topnav>
+    <main>
+      <mz-section>
+        <mz-section-head center>
+          <h1>Teams that stopped running the back office.</h1>
+          <mz-lead>The hours and dollars Marzy gives back, in their words.</mz-lead>
+        </mz-section-head>
+        <mz-logos></mz-logos>
+      </mz-section>
+
+      <mz-section bg="soft">
+        <mz-stack center>
+          <mz-quote author="Dana Reyes" role="COO, Lazarco Inc."
+            >Marzy closed our books in a day and flagged the three things that mattered. The audit
+            trail alone paid for it.</mz-quote
+          >
+        </mz-stack>
+      </mz-section>
+
+      <mz-section>
+        <mz-grid cols="4">
+          <mz-stat value="2 days → 4 hrs" label="time to file payroll"></mz-stat>
+          <mz-stat value="412" label="transactions reconciled / mo"></mz-stat>
+          <mz-stat value="3×" label="faster month-end close"></mz-stat>
+          <mz-stat value="0" label="missed deadlines"></mz-stat>
+        </mz-grid>
+      </mz-section>
+
+      <mz-section bg="soft">
+        <mz-section-head center>
+          <h2>What they automated first</h2>
+        </mz-section-head>
+        <mz-grid cols="3">
+          <mz-card hover>
+            <mz-spark></mz-spark>
+            <h3>Northwind Dental</h3>
+            <p>Intake, eligibility checks, and prior-auth requests — drafted from the inbox, filed on approval.</p>
+          </mz-card>
+          <mz-card hover>
+            <mz-spark></mz-spark>
+            <h3>Lazarco Inc.</h3>
+            <p>Payroll and month-end close, matched to timesheets and reconciled against the ledger.</p>
+          </mz-card>
+          <mz-card hover>
+            <mz-spark></mz-spark>
+            <h3>Meridian Health</h3>
+            <p>Invoicing and AR follow-up, with overdue accounts surfaced in plain language.</p>
+          </mz-card>
+        </mz-grid>
+      </mz-section>
+
+      <mz-section>
+        <mz-portal-preview
+          slug="lazarco"
+          heading="Every client, their own workspace."
+          sub="The same agents, the client's data — on a branded subdomain they actually log into."
+        ></mz-portal-preview>
+      </mz-section>
+
+      <mz-section bg="soft">
+        <mz-stack center>
+          <mz-quote author="Marcus Lin" role="Practice Manager, Northwind Dental"
+            >It feels like hiring an operations team that never sleeps and writes everything
+            down.</mz-quote
+          >
+        </mz-stack>
+      </mz-section>
+
+      <mz-section>
+        <mz-cta></mz-cta>
+      </mz-section>
+    </main>
+    <mz-footer></mz-footer>
+  </body>
+</html>

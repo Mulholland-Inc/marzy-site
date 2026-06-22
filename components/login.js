@@ -78,7 +78,7 @@ class MzLogin extends HTMLElement {
         </form>
         <div class="auth-divider">or</div>
         <button class="btn btn-outline" type="button" style="width:100%;justify-content:center">Continue with Google</button>
-        <p class="auth-foot">New to Marzy? <a class="link" href="#">Request access</a></p>
+        <p class="auth-foot">New to Marzy? <a class="link" href="contact.html">Request access</a></p>
       </div>`;
 
     const bg = this.querySelector(".auth-bg");

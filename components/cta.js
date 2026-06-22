@@ -1,4 +1,5 @@
 // <mz-cta heading="…" sub="…"></mz-cta>, dark call-to-action band (marketing).
+import { ROUTES } from "./site-map.js";
 class MzCta extends HTMLElement {
   connectedCallback() {
     this.classList.add("ctaband");
@@ -12,8 +13,8 @@ class MzCta extends HTMLElement {
         <p>${sub}</p>
       </div>
       <div class="ctaband-actions">
-        <a class="btn btn-primary" href="#">Get a demo</a>
-        <a class="btn ctaband-ghost" href="#">Talk to us</a>
+        <a class="btn btn-primary" href="${ROUTES.demo}">Get a demo</a>
+        <a class="btn ctaband-ghost" href="${ROUTES.contact}">Talk to us</a>
       </div>`;
   }
 }

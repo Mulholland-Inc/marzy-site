@@ -2,6 +2,7 @@
 // on the left, an "ask your data" query panel on the right showing an operator
 // getting a plain-language answer without SQL or exports.
 import { SPARK } from "./spark.js";
+import { ROUTES } from "./site-map.js";
 
 const SEARCH =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>';
@@ -13,7 +14,7 @@ class MzDataControl extends HTMLElement {
       <div class="datactrl-copy">
         <h2 class="datactrl-title">Your data, instantly queryable</h2>
         <p class="lead">Operators and clients get answers in plain language, no SQL, no CSV exports, no waiting on a report. Everything Marzy touches stays structured and searchable, ready the moment someone asks.</p>
-        <div class="actions"><a class="btn btn-primary" href="#">Explore your data</a></div>
+        <div class="actions"><a class="btn btn-primary" href="${ROUTES.product}">Explore your data</a></div>
       </div>
       <div class="datactrl-panel dq">
         <div class="dq-bar"><span class="dq-icon">${SEARCH}</span><span class="dq-q">Which invoices are overdue this month?</span></div>

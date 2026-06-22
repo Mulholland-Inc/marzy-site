@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Putting the back office on autopilot — Marzy blog</title>
+    <meta name="description" content="How we think about handing routine back-office work to an agent without handing over control." />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="../assets/tokens.css" rel="stylesheet" />
+    <link href="../assets/styles.css" rel="stylesheet" />
+    <script src="../components/index.js" type="module"></script>
+  </head>
+  <body>
+    <mz-topnav></mz-topnav>
+    <main>
+      <mz-section>
+        <mz-stack gap="6">
+          <mz-link href="blog.html">← All posts</mz-link>
+          <mz-doc title="Putting the back office on autopilot" meta="By Sam Mulholland · June 18, 2026 · 6 min read">
+            <mz-lead
+              >Every business runs on routine work nobody wants to think about — payroll, billing,
+              reconciliation, records. It's the work that has to happen and rarely gets noticed
+              until it breaks.</mz-lead
+            >
+            <p>
+              For most teams, that work is held together by a person and a spreadsheet. It scales
+              by hiring. And the knowledge of how it actually gets done lives in someone's head.
+              We think there's a better answer: hand the routine to an agent, and let people decide
+              only what actually needs deciding.
+            </p>
+
+            <h2>Automation isn't a chatbot</h2>
+            <p>
+              The first wave of AI tools answered questions. That's useful, but it leaves the work
+              where it started — with you. Marzy is different: it takes the action. From a payroll
+              email to a filed pay run, it drafts the work, checks it against the systems of record,
+              and completes it.
+            </p>
+            <p>
+              The hard part was never generating text. It was acting safely on systems that matter,
+              with data that's usually a mess, in a way someone can later audit.
+            </p>
+
+            <h2>Earn trust, then automate</h2>
+            <p>
+              Nothing runs unattended on day one. Every workflow starts in review: Marzy drafts, you
+              approve, and the action runs. You watch it work. Once a flow has cleared a few review
+              cycles without edits, you can trust it — and it runs on its own, on schedule.
+            </p>
+            <ul>
+              <li>Draft — Marzy prepares the work from what arrived.</li>
+              <li>Review — anything uncertain waits in a queue with its reasoning.</li>
+              <li>Run — trusted flows execute on their own, in your timezone.</li>
+            </ul>
+            <p>
+              The point isn't to remove people. It's to remove the parts of the job that never
+              needed a person in the first place.
+            </p>
+
+            <h2>Show your work</h2>
+            <p>
+              Every action keeps its trail: the source it came from, the reasoning behind it, and
+              the exact change it made. An auditor can follow any decision end to end. That trail is
+              what makes trust possible — and, as it turns out, it's what makes the whole thing pay
+              for itself.
+            </p>
+
+            <h2>Where to start</h2>
+            <p>
+              The best first workflow is the one that's painful, repetitive, and well-defined.
+              Payroll. Month-end close. AR follow-up. We start with a demo or a scoped pilot, embed
+              an engineer to map how your work actually moves, and ship the first automation behind
+              your approval. From there, it compounds.
+            </p>
+          </mz-doc>
+        </mz-stack>
+      </mz-section>
+
+      <mz-section>
+        <mz-cta></mz-cta>
+      </mz-section>
+    </main>
+    <mz-footer></mz-footer>
+  </body>
+</html>

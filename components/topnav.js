@@ -1,13 +1,8 @@
 // <mz-topnav></mz-topnav>, floating top nav. Transparent + full-width at rest;
 // on scroll the links squeeze and it contracts into a centered rounded bar.
+// Link targets come from the shared site-map.
 import { SPARK } from "./spark.js";
-
-const LINKS = [
-  ["#", "Product"],
-  ["#", "Pricing"],
-  ["#", "Security"],
-  ["#", "Docs"],
-];
+import { NAV, CTA, HOME } from "./site-map.js";
 
 function scrollParent(el) {
   let p = el.parentElement;
@@ -22,10 +17,11 @@ function scrollParent(el) {
 class MzTopnav extends HTMLElement {
   connectedCallback() {
     this.classList.add("topnav");
+    const [ctaHref, ctaLabel] = CTA;
     this.innerHTML = `<div class="topnav-bar">
-      <a class="logo" href="#" aria-label="Marzy home"><span class="spark" aria-hidden="true">${SPARK}</span><span>Marzy</span></a>
-      <nav class="topnav-links" aria-label="Primary">${LINKS.map(([h, t]) => `<a href="${h}">${t}</a>`).join("")}</nav>
-      <a class="btn btn-primary btn-sm" href="#">Get a demo</a>
+      <a class="logo" href="${HOME}" aria-label="Marzy home"><span class="spark" aria-hidden="true">${SPARK}</span><span>Marzy</span></a>
+      <nav class="topnav-links" aria-label="Primary">${NAV.map(([h, t]) => `<a href="${h}">${t}</a>`).join("")}</nav>
+      <a class="btn btn-primary btn-sm" href="${ctaHref}">${ctaLabel}</a>
     </div>`;
     const root = scrollParent(this);
     const target = root || window;

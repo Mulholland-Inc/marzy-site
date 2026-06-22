@@ -42,6 +42,8 @@ mz-section,
 mz-section-head,
 mz-container,
 mz-grid,
+mz-stack,
+mz-stat,
 mz-card,
 mz-divider,
 mz-actions,
@@ -102,6 +104,7 @@ mz-cta,
 mz-cta-big,
 mz-trust-banner,
 mz-pipes,
+mz-doc,
 mz-preview {
   display: block;
 }
@@ -242,6 +245,10 @@ p {
   max-width: 42rem;
   margin-bottom: clamp(2.5rem, 5vw, 4rem);
 }
+.section-head-center {
+  margin-inline: auto;
+  text-align: center;
+}
 .section-head h2 {
   margin-bottom: var(--space-4);
 }
@@ -269,6 +276,68 @@ p {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
+}
+.actions-center {
+  justify-content: center;
+}
+.actions-end {
+  justify-content: flex-end;
+}
+
+/* Vertical rhythm primitive — <mz-stack gap="n" center> */
+.stack {
+  display: grid;
+  gap: var(--space-5);
+}
+.stack-2 {
+  gap: var(--space-2);
+}
+.stack-3 {
+  gap: var(--space-3);
+}
+.stack-4 {
+  gap: var(--space-4);
+}
+.stack-5 {
+  gap: var(--space-5);
+}
+.stack-6 {
+  gap: var(--space-6);
+}
+.stack-8 {
+  gap: var(--space-8);
+}
+.stack-10 {
+  gap: var(--space-10);
+}
+.stack-12 {
+  gap: var(--space-12);
+}
+.stack-center {
+  justify-items: center;
+  text-align: center;
+}
+.stack-center .actions {
+  justify-content: center;
+}
+
+/* Metric block — <mz-stat value label> */
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.stat-value {
+  font-family: var(--font-display);
+  font-size: var(--text-48);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-none);
+  color: var(--color-ink);
+}
+.stat-label {
+  font-size: var(--text-small);
+  color: var(--color-muted);
 }
 
 .divider {
@@ -660,6 +729,28 @@ p {
   font-weight: var(--weight-semibold);
   color: var(--color-ink);
   margin-bottom: var(--space-1);
+}
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-5);
+  margin-top: clamp(var(--space-8), 5vw, var(--space-12));
+  padding-top: var(--space-5);
+  border-top: var(--border);
+  font-size: var(--text-13);
+}
+.footer-copy {
+  color: var(--color-muted);
+}
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+}
+.footer-legal a:hover {
+  color: var(--color-ink);
 }
 
 /* ─────────────────────────────────────────── Reveal-on-scroll ── */

@@ -10,9 +10,12 @@ class MzSection extends HTMLElement {
     this.innerHTML = `<div class="${c}">${this.innerHTML}</div>`;
   }
 }
+// <mz-section-head center>…</mz-section-head> — intro block above a section's
+// body. center centers it and its text.
 class MzSectionHead extends HTMLElement {
   connectedCallback() {
     this.classList.add("section-head");
+    if (this.hasAttribute("center")) this.classList.add("section-head-center");
   }
 }
 customElements.define("mz-section", MzSection);

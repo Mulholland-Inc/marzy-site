@@ -41,12 +41,26 @@ display · Inter body · Space Mono labels; light surfaces, crisp hairlines.
   radius, controls) plus the same components shown across three environments:
   **application** (dashboard sidebar), **authentication** (sign in), and
   **marketing** (hero, cards, CTA).
+- [`/site`](./site/), the marketing website: ~23 pages assembled entirely from
+  `<mz-*>` components — no page-level custom styles. Home, product, pricing,
+  security, about, customers, careers, contact, sign in, a blog (index + four
+  posts), changelog, status, a 404, and the legal set (privacy, terms, cookies,
+  DPA, sub-processors, acceptable use). Pages are flat siblings, so internal
+  links are bare filenames (`pricing.html`) and assets/components resolve via
+  `../`. Open `http://localhost:8000/site/`.
+
+  Navigation is data-driven: [`/components/site-map.js`](./components/site-map.js)
+  is the single source of truth for the nav, footer, and the routes that feature
+  components (CTA bands, pricing, hero) link to. New layout primitives —
+  `<mz-stack>` (vertical rhythm), `<mz-stat>` (metric), and `<mz-doc>` (long-form
+  document) — keep every page token- and component-driven.
 
 ## Develop locally
 
 ```sh
 python3 -m http.server 8000
-# open http://localhost:8000/
+# gallery:        http://localhost:8000/
+# marketing site: http://localhost:8000/site/
 ```
 
 ## Deploy
