@@ -3037,6 +3037,12 @@ mz-tab-panel:not([hidden]) {
   .tl-col .tl-step {
     flex: 1 1 0;
   }
+  /* single cards (checkpoints, engineer embeds) stay centered, not full width */
+  .tl-row > .tl-step {
+    align-self: center;
+    width: 72%;
+    max-width: 300px;
+  }
   .tl-branch {
     flex: 0 0 auto;
     width: 100%;
