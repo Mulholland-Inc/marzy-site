@@ -2920,7 +2920,7 @@ mz-tab-panel:not([hidden]) {
 }
 .tl-row {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 0;
   width: 100%;
   overflow-x: auto;
@@ -2929,6 +2929,9 @@ mz-tab-panel:not([hidden]) {
 .tl-step {
   flex: 1 1 0;
   min-width: 132px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: var(--space-4);
   background: var(--color-surface);
   border: var(--border);
@@ -2940,11 +2943,12 @@ mz-tab-panel:not([hidden]) {
   min-width: 132px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 .tl-entry .tl-step {
+  flex: 1 1 0;
   width: 100%;
+  padding: var(--space-3);
 }
 /* horizontal converging merge (drawn in JS to fit the cards) */
 .tl-merge-h {
@@ -3378,8 +3382,8 @@ mz-tab-panel:not([hidden]) {
   color: var(--color-volt);
 }
 .cl-improved {
-  background: var(--color-success-soft);
-  color: var(--color-success);
+  background: var(--color-surface-2);
+  color: var(--color-ink-2);
 }
 .cl-fixed {
   background: var(--color-surface-2);
