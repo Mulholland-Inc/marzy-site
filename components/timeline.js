@@ -9,12 +9,12 @@ const ENTRY = [
   ["2–3 days", "Guided demo", "On sample data."],
   ["~1 week", "Scoped pilot", "On your real data."],
 ];
-const GATE = ["Checkpoint", "You're satisfied", "We begin."];
+const GATE = ["Checkpoint", "You're satisfied", "Pilot approved."];
 const TRAJ = [
-  ["Week 0", "An engineer embeds", "Maps how work moves."],
-  ["Weeks 1–4", "Audit & automate", "Shipped behind approval."],
+  ["Week 0", "Engineer embeds", "Maps how work moves."],
+  ["Weeks 1–4", "Audit & automate", "Shipped with approval."],
 ];
-const GATE2 = ["Checkpoint", "Review & scale", "Pick what's next."];
+const GATE2 = ["Ongoing", "Review & scale", "Pick what's next."];
 
 function cardEl([when, title, desc], cls) {
   const d = document.createElement("div");
