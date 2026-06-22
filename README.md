@@ -84,10 +84,8 @@ page-level custom styles.
 
 ## Sites
 
-- [`/sites/marzy`](./sites/marzy/) — the marketing website: home, product,
-  pricing, security, about, customers, careers, contact, sign in, a blog (index
-  + four posts), changelog, status, and the legal set (privacy, terms, cookies,
-  DPA, sub-processors, acceptable use).
+- [`/sites/dashboard`](./sites/dashboard/) — a workspace dashboard mockup: the
+  app shell (sidebar, status cards, activity feed).
 - [`/sites/gallery`](./sites/gallery/) — the design-system gallery: token
   reference plus every component shown across the **application**,
   **authentication**, and **marketing** environments.
@@ -97,7 +95,7 @@ page-level custom styles.
 ```sh
 python3 -m http.server 8000
 # hub:            http://localhost:8000/
-# marketing site: http://localhost:8000/sites/marzy/
+# dashboard:      http://localhost:8000/sites/dashboard/
 # design gallery: http://localhost:8000/sites/gallery/
 ```
 
