@@ -3554,7 +3554,7 @@ mz-tab-panel:not([hidden]) {
   overflow: hidden;
   background: var(--color-ink);
   border-radius: var(--radius-lg);
-  padding: clamp(var(--space-12), 8vw, var(--space-20)) var(--gutter);
+  padding: clamp(var(--space-8), 5vw, var(--space-12)) var(--gutter);
   text-align: center;
 }
 .ctabig-inner {
@@ -3574,13 +3574,23 @@ mz-tab-panel:not([hidden]) {
   font-size: var(--text-lead);
   color: rgba(255, 255, 255, 0.72);
 }
-/* full-width pipes band running between the text and the buttons */
+/* full-bleed pipes band between the text and the buttons */
 .ctabig-pipes {
   display: block;
   width: calc(100% + 2 * var(--gutter));
   margin-inline: calc(-1 * var(--gutter));
-  margin-block: clamp(var(--space-8), 5vw, var(--space-12));
-  height: clamp(120px, 16vw, 200px);
+  margin-block: clamp(var(--space-6), 4vw, var(--space-10));
+  height: clamp(120px, 15vw, 180px);
+}
+/* white on the outside, gray within — read clearly on the dark ground */
+.ctabig-pipes .mz-pipe {
+  stroke-width: 2.5;
+}
+.ctabig-pipes .mz-pipe-n {
+  stroke: #fff;
+}
+.ctabig-pipes .mz-pipe-v {
+  stroke: var(--color-muted);
 }
 .ctabig-actions {
   justify-content: center;

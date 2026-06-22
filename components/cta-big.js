@@ -22,7 +22,8 @@ class MzCtaBig extends HTMLElement {
     inner.innerHTML = `<h2>${heading}</h2><p>${sub}</p>`;
     this.appendChild(inner);
 
-    const pipes = buildPipes({ routes: [PTS], width: 1200, height: 240, n: 7, spacing: 9, radius: 44, preserve: "xMidYMid slice" });
+    // Smaller viewBox + slice crops/zooms the serpentine so the pipes read big.
+    const pipes = buildPipes({ routes: [PTS], width: 560, height: 150, n: 7, spacing: 11, radius: 44, preserve: "xMidYMid slice" });
     pipes.classList.add("ctabig-pipes");
     this.appendChild(pipes);
 
