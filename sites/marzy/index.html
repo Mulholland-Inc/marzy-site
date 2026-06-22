@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Marzy — the back office, on autopilot</title>
+    <meta name="description" content="Marzy plugs into the tools you already use, reads what arrives, and completes the back-office work end to end — with a full audit trail." />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/svg+xml" href="../../core/assets/favicon/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="../../core/assets/tokens.css" rel="stylesheet" />
+    <link href="../../core/assets/styles.css" rel="stylesheet" />
+    <script src="site.config.js"></script>
+    <script src="../../core/components/index.js" type="module"></script>
+  </head>
+  <body>
+    <mz-topnav></mz-topnav>
+    <main>
+      <!-- Hero -->
+      <mz-section>
+        <mz-grid cols="2">
+          <mz-stack gap="6">
+            <h1>Operations that run themselves.</h1>
+            <mz-lead
+              >Marzy plugs into the tools you already use — Gusto, QuickBooks, your inbox — reads
+              what arrives, and completes the work end to end. It drafts, you review, and trusted
+              flows run on their own.</mz-lead
+            >
+            <mz-actions>
+              <mz-btn variant="primary" href="contact.html" arrow>Get a demo</mz-btn>
+              <mz-btn variant="outline" href="product.html">See how it works</mz-btn>
+            </mz-actions>
+          </mz-stack>
+          <mz-thread></mz-thread>
+        </mz-grid>
+      </mz-section>
+
+      <!-- Social proof -->
+      <mz-section bg="soft" size="sm">
+        <mz-logos></mz-logos>
+      </mz-section>
+
+      <!-- What it does -->
+      <mz-section>
+        <mz-section-head center>
+          <h2>The back office, handled.</h2>
+          <mz-lead>Not a chatbot. Marzy takes the action and stops to ask only when it matters.</mz-lead>
+        </mz-section-head>
+        <mz-grid cols="3">
+          <mz-card hover>
+            <mz-spark></mz-spark>
+            <h3>One model for everything</h3>
+            <p>Connectors normalize every system into a single ontology your whole team shares.</p>
+          </mz-card>
+          <mz-card hover>
+            <mz-spark></mz-spark>
+            <h3>Agents that do the work</h3>
+            <p>From a payroll email to a filed pay run — Marzy completes the task, not just the chat.</p>
+          </mz-card>
+          <mz-card hover>
+            <mz-spark></mz-spark>
+            <h3>Auditable by default</h3>
+            <p>Every decision keeps its trail: the source, the reasoning, and the exact change.</p>
+          </mz-card>
+          <mz-card hover>
+            <mz-spark></mz-spark>
+            <h3>Scoped, revocable access</h3>
+            <p>Marzy connects through OAuth and never holds more access than a workflow needs.</p>
+          </mz-card>
+          <mz-card hover>
+            <mz-spark></mz-spark>
+            <h3>You stay in control</h3>
+            <p>Trust a flow and it runs on its own. Everything else waits in a review queue.</p>
+          </mz-card>
+          <mz-card hover>
+            <mz-spark></mz-spark>
+            <h3>Your data, queryable</h3>
+            <p>Ask in plain language and get an answer — no SQL, no exports, no waiting on a report.</p>
+          </mz-card>
+        </mz-grid>
+      </mz-section>
+
+      <!-- Stats -->
+      <mz-section bg="panel">
+        <mz-grid cols="4">
+          <mz-stat value="40+" label="connected systems"></mz-stat>
+          <mz-stat value="3 hrs" label="avg inbox to filed"></mz-stat>
+          <mz-stat value="99.9%" label="workflow uptime"></mz-stat>
+          <mz-stat value="100%" label="actions audited"></mz-stat>
+        </mz-grid>
+      </mz-section>
+
+      <!-- Data cleaning -->
+      <mz-section>
+        <mz-data-clean></mz-data-clean>
+      </mz-section>
+
+      <!-- Client portal -->
+      <mz-section bg="soft">
+        <mz-portal-preview
+          slug="northwind"
+          sub="Every client gets a branded workspace on their own subdomain — the same agents, their data."
+        ></mz-portal-preview>
+      </mz-section>
+
+      <!-- Engagement -->
+      <mz-section>
+        <mz-section-head center>
+          <h2>How an engagement works</h2>
+          <mz-lead
+            >Start with a demo or a scoped pilot. A Mulholland engineer embeds, maps how your work
+            moves, and ships automations behind your approval.</mz-lead
+          >
+        </mz-section-head>
+        <mz-timeline></mz-timeline>
+      </mz-section>
+
+      <!-- Testimonial -->
+      <mz-section bg="soft">
+        <mz-stack center>
+          <mz-quote author="Dana Reyes" role="COO, Lazarco Inc."
+            >Marzy closed our books in a day and flagged the three things that mattered. The audit
+            trail alone paid for it.</mz-quote
+          >
+          <mz-link href="customers.html">Read customer stories</mz-link>
+        </mz-stack>
+      </mz-section>
+
+      <!-- Trust -->
+      <mz-section>
+        <mz-trust-banner></mz-trust-banner>
+      </mz-section>
+
+      <!-- Closing CTA -->
+      <mz-section>
+        <mz-cta-big></mz-cta-big>
+      </mz-section>
+    </main>
+    <mz-footer></mz-footer>
+  </body>
+</html>

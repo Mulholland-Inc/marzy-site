@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Marzy, design system</title>
+    <meta name="description" content="Marzy design system, tokens and components across app, auth, and marketing." />
+    <meta name="theme-color" content="#f6f7f9" />
+    <link rel="icon" type="image/svg+xml" href="../../core/assets/favicon/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="../../core/assets/tokens.css" rel="stylesheet" />
+    <link href="../../core/assets/styles.css" rel="stylesheet" />
+    <script src="site.config.js"></script>
+    <script src="../../core/components/index.js" type="module"></script>
+  </head>
+  <body style="background: var(--color-bg-soft)">
+    <main class="gallery">
+      <header class="gallery-head">
+        <span class="logo"><mz-spark></mz-spark><span>Marzy</span></span>
+        <h1 style="margin-top: 24px">Design system</h1>
+        <mz-lead
+          >One set of tokens, type, color, radius, borders, spacing, shown across the
+          environments they have to work in: the dashboard, sign-in, and the marketing
+          site.</mz-lead
+        >
+      </header>
+
+      <!-- ───────────────────────── Floating nav ───────────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Floating nav</b><span>scroll inside the frame, it squeezes into a bar</span></div>
+        <div class="topnav-demo">
+          <mz-topnav></mz-topnav>
+          <div class="topnav-demo-body">
+            <h2>Operations that run themselves.</h2>
+            <p>Scroll this panel to watch the nav contract into a floating rounded bar.</p>
+            <p>Marzy plugs into the tools you already use, Gusto, QuickBooks, your inbox, reads what arrives, and completes the work end to end.</p>
+            <p>From a payroll email to a filed pay run, without the busywork. It drafts, you review, and trusted flows run on their own.</p>
+            <p>Every action lands in a queue with its reasoning, so an auditor can follow any decision end to end.</p>
+            <p>Connectors normalize every system into one ontology, a person, a paycheck, and a record all speak the same language.</p>
+            <p>Keep scrolling. The bar stays put while the content moves beneath it.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────────────────── Tokens: color ───────────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Color</b><span>neutrals + one accent (Volt)</span></div>
+        <div class="fnd-swatches">
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #0b0d12"></div>
+            <div class="fnd-swatch-meta"><b>Ink</b>#0b0d12</div>
+          </div>
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #353a47"></div>
+            <div class="fnd-swatch-meta"><b>Ink 2</b>#353a47</div>
+          </div>
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #6c7382"></div>
+            <div class="fnd-swatch-meta"><b>Muted</b>#6c7382</div>
+          </div>
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #1b43ff"></div>
+            <div class="fnd-swatch-meta"><b>Volt</b>#1b43ff</div>
+          </div>
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #1232d6"></div>
+            <div class="fnd-swatch-meta"><b>Volt 700</b>#1232d6</div>
+          </div>
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #f6f7f9"></div>
+            <div class="fnd-swatch-meta"><b>Paper</b>#f6f7f9</div>
+          </div>
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #eef1f6"></div>
+            <div class="fnd-swatch-meta"><b>Surface 2</b>#eef1f6</div>
+          </div>
+          <div class="fnd-swatch">
+            <div class="fnd-swatch-chip" style="background: #e4e7ee"></div>
+            <div class="fnd-swatch-meta"><b>Line</b>#e4e7ee</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────────────────── Tokens: type ───────────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Type</b><span>Space Grotesk display · Inter body · Space Mono labels</span></div>
+        <div class="fnd-specimen">
+          <div class="fnd-type-row"><mz-meta>Display / h1</mz-meta><h1>Operations that run themselves</h1></div>
+          <div class="fnd-type-row"><mz-meta>Heading / h2</mz-meta><h2>Built for the work that never stops</h2></div>
+          <div class="fnd-type-row"><mz-meta>Subhead / h3</mz-meta><h3>One model for everything</h3></div>
+          <div class="fnd-type-row"><mz-meta>Lead</mz-meta><mz-lead>Marzy reads what arrives and completes the work end to end.</mz-lead></div>
+          <div class="fnd-type-row"><mz-meta>Body</mz-meta><p>Connectors normalize every system into one ontology, so a person, a paycheck, and a record all speak the same language.</p></div>
+          <div class="fnd-type-row"><mz-meta>Mono / meta</mz-meta><mz-meta>SOC&nbsp;2 Type&nbsp;II · 40+ connected systems</mz-meta></div>
+        </div>
+      </section>
+
+      <!-- ─────────────────── Tokens: radius + buttons ─────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Radius &amp; controls</b><span>corner scale and button variants</span></div>
+        <div class="fnd-radius">
+          <div class="fnd-radius-box" style="border-radius: var(--radius-sm)">8</div>
+          <div class="fnd-radius-box" style="border-radius: var(--radius)">14</div>
+          <div class="fnd-radius-box" style="border-radius: var(--radius-lg)">22</div>
+          <div class="fnd-radius-box" style="border-radius: var(--radius-pill)">pill</div>
+        </div>
+        <div class="specimen-row" style="margin-top: 8px">
+          <mz-btn variant="primary">Get a demo</mz-btn>
+          <mz-btn variant="outline">Secondary</mz-btn>
+          <mz-btn variant="ghost">Ghost</mz-btn>
+          <mz-btn variant="primary" arrow>With arrow</mz-btn>
+        </div>
+      </section>
+
+      <!-- ───────────────────── Environment: app ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Application</b><span>dashboard, sidebar + content</span></div>
+        <mz-dashboard></mz-dashboard>
+      </section>
+
+      <!-- ───────────────────── Environment: data table ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Data table</b><span>search · filter · sort · select · paginate</span></div>
+        <mz-table></mz-table>
+      </section>
+
+      <!-- ───────────────────── Recent activity ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Recent activity</b><span>feed</span></div>
+        <mz-activity></mz-activity>
+      </section>
+
+      <!-- ───────────────────── Calendar ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Calendar</b><span>month view</span></div>
+        <mz-calendar></mz-calendar>
+      </section>
+
+      <!-- ───────────────────── Kanban ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Kanban</b><span>board, columns &amp; cards</span></div>
+        <mz-kanban></mz-kanban>
+      </section>
+
+      <!-- ───────────────────── Environment: auth ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Authentication</b><span>sign in</span></div>
+        <div style="border: var(--border); border-radius: var(--radius-lg); overflow: hidden">
+          <mz-login></mz-login>
+        </div>
+      </section>
+
+      <!-- ─────────────────── Environment: marketing ─────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Marketing</b><span>hero · feature cards · call to action</span></div>
+        <div style="display: grid; gap: var(--space-8); background: var(--color-surface); border: var(--border); border-radius: var(--radius-lg); padding: var(--space-8)">
+          <div>
+            <h2 style="font-size: var(--text-h1)">Operations that<br />run themselves.</h2>
+            <mz-lead style="margin-top: var(--space-5); max-width: 34rem"
+              >Marzy plugs into the tools you already use, reads what arrives, and completes the
+              work end to end.</mz-lead
+            >
+            <mz-actions style="margin-top: var(--space-6)">
+              <mz-btn variant="primary" href="#">Get a demo</mz-btn>
+              <mz-btn variant="outline" href="#">See how it works</mz-btn>
+            </mz-actions>
+          </div>
+
+          <mz-grid cols="3">
+            <mz-card hover>
+              <mz-spark></mz-spark>
+              <h3>One model for everything</h3>
+              <p>Connectors normalize every system into a single ontology your whole team shares.</p>
+            </mz-card>
+            <mz-card hover>
+              <mz-spark></mz-spark>
+              <h3>Agents that do the work</h3>
+              <p>Not a chatbot. Marzy takes the action and stops to ask only when it matters.</p>
+            </mz-card>
+            <mz-card hover>
+              <mz-spark></mz-spark>
+              <h3>Auditable by default</h3>
+              <p>Every decision keeps its trail: the source, the reasoning, and the exact change.</p>
+            </mz-card>
+          </mz-grid>
+
+          <div class="cta-panel">
+            <h2>Stop running the back office.</h2>
+            <p>Let Marzy run it. See your own workflows automated in a 30-minute demo.</p>
+            <mz-actions>
+              <mz-btn variant="primary" href="#">Get a demo</mz-btn>
+              <mz-btn variant="ghost" href="#">Talk to us</mz-btn>
+            </mz-actions>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────────────── Tabs ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Tabs</b><span>switchable panels</span></div>
+        <mz-card>
+          <mz-tabs>
+            <mz-tab-panel label="Overview"><p>A summary of the workspace: connected systems, workflows run this week, and anything awaiting review.</p></mz-tab-panel>
+            <mz-tab-panel label="Activity"><p>A running log of every action Marzy took, each with its source and reasoning.</p></mz-tab-panel>
+            <mz-tab-panel label="Settings">
+              <div style="display: grid; gap: var(--space-4); max-width: 520px">
+                <mz-switch label="Auto-run trusted workflows" checked></mz-switch>
+                <mz-switch label="Email me when review is needed"></mz-switch>
+              </div>
+            </mz-tab-panel>
+          </mz-tabs>
+        </mz-card>
+      </section>
+
+      <!-- ───────────────────── Form ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Form</b><span>profile &amp; preferences</span></div>
+        <mz-card>
+          <div style="max-width: 640px; margin-inline: auto">
+          <h3 style="margin-bottom: var(--space-5)">Edit member</h3>
+          <div style="display: grid; gap: var(--space-4)">
+            <mz-grid cols="2" style="align-items: start">
+              <mz-field label="First name" placeholder="Dana"></mz-field>
+              <mz-field label="Last name" placeholder="Reyes"></mz-field>
+            </mz-grid>
+            <mz-field label="Email" type="email" placeholder="dana@lazarco.com" hint="Used for sign-in and workflow notifications."></mz-field>
+            <mz-grid cols="2" style="align-items: start">
+              <mz-select label="Role"><option>Operations</option><option>Finance</option><option>Support</option><option>Warehouse</option></mz-select>
+              <mz-select label="Approval limit"><option>$1,000</option><option>$5,000</option><option>$10,000</option><option>No limit</option></mz-select>
+            </mz-grid>
+            <mz-field label="Notes" type="textarea" placeholder="Anything the team should know…"></mz-field>
+            <mz-divider></mz-divider>
+            <mz-switch label="Auto-run trusted workflows" checked></mz-switch>
+            <mz-switch label="Require approval over the limit" checked></mz-switch>
+            <mz-switch label="Email me when review is needed"></mz-switch>
+            <mz-divider></mz-divider>
+            <mz-actions style="justify-content: flex-end">
+              <mz-btn variant="ghost">Cancel</mz-btn>
+              <mz-btn variant="primary">Save changes</mz-btn>
+            </mz-actions>
+          </div>
+          </div>
+        </mz-card>
+      </section>
+
+      <!-- ───────────────────── More controls ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>More controls</b><span>date · slider · choice</span></div>
+        <mz-card>
+          <div style="display: grid; gap: var(--space-6); max-width: 640px; margin-inline: auto">
+            <mz-grid cols="2" style="align-items: start">
+              <mz-datepicker label="Pay date" value="2026-06-15"></mz-datepicker>
+              <mz-datepicker label="Cutoff" value="2026-06-12"></mz-datepicker>
+            </mz-grid>
+            <mz-slider label="Max concurrency" min="0" max="100" value="40" suffix="%"></mz-slider>
+            <mz-divider></mz-divider>
+            <mz-radio-group label="Run mode" name="mode" options="Manual, Review, Auto" value="Review"></mz-radio-group>
+            <mz-divider></mz-divider>
+            <div style="display: grid; gap: var(--space-3)">
+              <span class="field-label">Notify on</span>
+              <mz-checkbox label="New pay run drafted" checked></mz-checkbox>
+              <mz-checkbox label="Connection errors" checked></mz-checkbox>
+              <mz-checkbox label="Weekly summary"></mz-checkbox>
+            </div>
+          </div>
+        </mz-card>
+      </section>
+
+      <!-- ───────────────────── Alerts ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Alerts</b><span>status callouts</span></div>
+        <div style="display: grid; gap: var(--space-4)">
+          <mz-alert variant="info"><b>Heads up</b><p>Marzy drafted 7 pay instructions awaiting your review.</p></mz-alert>
+          <mz-alert variant="neutral"><b>Pay run filed</b><p>June payroll was submitted to Gusto successfully.</p></mz-alert>
+          <mz-alert variant="neutral"><b>Connection expiring</b><p>Your QuickBooks token expires in 3 days, reconnect to avoid interruptions.</p></mz-alert>
+          <mz-alert variant="danger"><b>Sync failed</b><p>We couldn't reach Sikka. Last successful sync was 6 hours ago.</p></mz-alert>
+        </div>
+      </section>
+
+      <!-- ───────────────────── FAQ ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>FAQ</b><span>accordion</span></div>
+        <mz-accordion>
+          <mz-accordion-item q="How does Marzy connect to our tools?">Through scoped, revocable OAuth connections, never more access than a workflow needs.</mz-accordion-item>
+          <mz-accordion-item q="Does Marzy ever act without approval?">Only on workflows you've explicitly trusted. Everything else lands in a review queue first.</mz-accordion-item>
+          <mz-accordion-item q="Is our data isolated?">Yes, each workspace runs in its own scoped environment with a full, immutable audit trail.</mz-accordion-item>
+        </mz-accordion>
+      </section>
+
+      <!-- ───────────────────── Pricing ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Pricing</b><span>three tiers</span></div>
+        <mz-pricing></mz-pricing>
+      </section>
+
+      <!-- ───────────────────── Product family hero ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Product hero</b><span>animated vertical</span></div>
+        <mz-family-hero></mz-family-hero>
+      </section>
+
+      <!-- ───────────────────── Conversation thread ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Conversation</b><span>animated Marzy thread</span></div>
+        <mz-thread></mz-thread>
+      </section>
+
+      <!-- ───────────────────── Client portal preview ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Portal preview</b><span>fake browser · client subdomain</span></div>
+        <mz-portal-preview slug="northwind"></mz-portal-preview>
+      </section>
+
+      <!-- ───────────────────── Data control ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Data control</b><span>ownership · export · audit</span></div>
+        <mz-data-control></mz-data-control>
+      </section>
+
+      <!-- ───────────────────── Data cleaning / AI-ready ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Data cleaning</b><span>dedupe · enrich · normalize · AI-ready</span></div>
+        <mz-data-clean></mz-data-clean>
+      </section>
+
+      <!-- ───────────────────── Engagement timeline ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Engagement timeline</b><span>embed · audit · automate · scale</span></div>
+        <mz-timeline></mz-timeline>
+      </section>
+
+      <!-- ───────────────────── Embeddable cards ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Embeds</b><span>compact, display-only · Slack &amp; MCP</span></div>
+        <div class="embed-gallery">
+          <mz-embed-table></mz-embed-table>
+          <mz-embed-doc></mz-embed-doc>
+          <mz-embed-checklist></mz-embed-checklist>
+          <mz-embed-kanban></mz-embed-kanban>
+        </div>
+      </section>
+
+      <!-- ───────────────────── Testimonial ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Quote</b><span>testimonial</span></div>
+        <mz-quote author="Dana Reyes" role="COO, Lazarco Inc.">Marzy closed our books in a day and flagged the three things that mattered. The audit trail alone paid for it.</mz-quote>
+      </section>
+
+      <!-- ───────────────────── Logo cloud ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Logo cloud</b><span>trusted by</span></div>
+        <mz-logos></mz-logos>
+      </section>
+
+      <!-- ───────────────────── Media gallery ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Gallery</b><span>screenshot grid</span></div>
+        <mz-gallery></mz-gallery>
+      </section>
+
+      <!-- ───────────────────── Changelog ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Changelog</b><span>release notes</span></div>
+        <mz-changelog></mz-changelog>
+      </section>
+
+      <!-- ───────────────────── CTA band ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>CTA band</b><span>dark call to action</span></div>
+        <mz-cta></mz-cta>
+      </section>
+
+      <!-- ───────────────────── Big CTA ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Big CTA</b><span>dark · pipes backdrop · centered</span></div>
+        <mz-cta-big></mz-cta-big>
+      </section>
+
+      <!-- ───────────────────── Trust banner ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Trust banner</b><span>dark · compliance</span></div>
+        <mz-trust-banner></mz-trust-banner>
+      </section>
+
+      <!-- ───────────────────── Pipes divider ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Pipes divider</b><span>animated flow</span></div>
+        <mz-pipes></mz-pipes>
+      </section>
+
+      <!-- ───────────────────── Work card ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Work card</b><span>product item</span></div>
+        <mz-workcard></mz-workcard>
+      </section>
+
+      <!-- ───────────────────── Compliance ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Compliance</b><span>SOC 2 · HIPAA · ISO 27001</span></div>
+        <mz-compliance></mz-compliance>
+      </section>
+
+      <!-- ───────────────────── Waitlist ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Waitlist</b><span>email capture</span></div>
+        <mz-signup></mz-signup>
+      </section>
+
+      <!-- ───────────────────── App states ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>App states</b><span>progress &amp; empty</span></div>
+        <mz-grid cols="2" style="align-items: start">
+          <mz-card>
+            <h3 style="margin-bottom: var(--space-5)">This month</h3>
+            <div style="display: grid; gap: var(--space-5)">
+              <mz-progress value="68" label="June payroll"></mz-progress>
+              <mz-progress value="42" label="Onboarding tasks"></mz-progress>
+              <mz-progress value="91" label="Synced records"></mz-progress>
+            </div>
+          </mz-card>
+          <mz-empty heading="No connections yet" cta="Add a connection">Connect Gusto, QuickBooks, or your inbox to let Marzy start handling the work.</mz-empty>
+        </mz-grid>
+      </section>
+
+      <!-- ───────────────────── Invoice ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Invoice</b><span>document</span></div>
+        <mz-invoice></mz-invoice>
+      </section>
+
+      <!-- ───────────────────── Report ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Report</b><span>long-form page</span></div>
+        <mz-report></mz-report>
+      </section>
+
+      <!-- ───────────────────── Contract ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Contract</b><span>agreement template</span></div>
+        <mz-contract></mz-contract>
+      </section>
+
+      <!-- ───────────────────── Footer ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Footer</b><span>marketing</span></div>
+        <mz-footer></mz-footer>
+      </section>
+    </main>
+  </body>
+</html>

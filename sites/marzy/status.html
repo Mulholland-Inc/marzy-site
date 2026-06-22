@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>System status — Marzy</title>
+    <meta name="description" content="Live operational status for Marzy services, connectors, and the client portal." />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/svg+xml" href="../../core/assets/favicon/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="../../core/assets/tokens.css" rel="stylesheet" />
+    <link href="../../core/assets/styles.css" rel="stylesheet" />
+    <script src="site.config.js"></script>
+    <script src="../../core/components/index.js" type="module"></script>
+  </head>
+  <body>
+    <mz-topnav></mz-topnav>
+    <main>
+      <mz-section>
+        <mz-section-head>
+          <h1>System status</h1>
+          <mz-lead>Live status for Marzy's services and connectors. Updated continuously.</mz-lead>
+        </mz-section-head>
+
+        <mz-stack gap="8">
+          <mz-alert variant="success"
+            ><b>All systems operational</b><p>No incidents reported. Last checked just now.</p></mz-alert
+          >
+
+          <mz-stack gap="4">
+            <mz-card>
+              <mz-grid cols="2">
+                <h3>Agent &amp; workflows</h3>
+                <mz-actions align="end"><mz-badge variant="success">Operational</mz-badge></mz-actions>
+              </mz-grid>
+            </mz-card>
+            <mz-card>
+              <mz-grid cols="2">
+                <h3>Client portal</h3>
+                <mz-actions align="end"><mz-badge variant="success">Operational</mz-badge></mz-actions>
+              </mz-grid>
+            </mz-card>
+            <mz-card>
+              <mz-grid cols="2">
+                <h3>Connectors — Gusto, QuickBooks</h3>
+                <mz-actions align="end"><mz-badge variant="success">Operational</mz-badge></mz-actions>
+              </mz-grid>
+            </mz-card>
+            <mz-card>
+              <mz-grid cols="2">
+                <h3>Inbound email processing</h3>
+                <mz-actions align="end"><mz-badge variant="warning">Degraded</mz-badge></mz-actions>
+              </mz-grid>
+            </mz-card>
+            <mz-card>
+              <mz-grid cols="2">
+                <h3>API &amp; webhooks</h3>
+                <mz-actions align="end"><mz-badge variant="success">Operational</mz-badge></mz-actions>
+              </mz-grid>
+            </mz-card>
+          </mz-stack>
+
+          <mz-grid cols="3">
+            <mz-stat value="99.98%" label="uptime, last 90 days"></mz-stat>
+            <mz-stat value="142 ms" label="median API response"></mz-stat>
+            <mz-stat value="1" label="open incident"></mz-stat>
+          </mz-grid>
+        </mz-stack>
+      </mz-section>
+
+      <mz-section bg="soft">
+        <mz-section-head>
+          <h2>Recent incidents</h2>
+        </mz-section-head>
+        <mz-stack gap="4">
+          <mz-card>
+            <mz-stack gap="2">
+              <mz-muted>June 22, 2026 · Investigating</mz-muted>
+              <h3>Delayed inbound email processing</h3>
+              <p>Some inbound emails are taking longer than usual to process. Drafting and filing are unaffected. We're working with our provider on a fix.</p>
+            </mz-stack>
+          </mz-card>
+          <mz-card>
+            <mz-stack gap="2">
+              <mz-muted>June 3, 2026 · Resolved</mz-muted>
+              <h3>QuickBooks token refresh failures</h3>
+              <p>A subset of QuickBooks connections required re-authentication after a provider change. All affected workspaces were notified and restored the same day.</p>
+            </mz-stack>
+          </mz-card>
+          <mz-card>
+            <mz-stack gap="2">
+              <mz-muted>May 19, 2026 · Resolved</mz-muted>
+              <h3>Brief portal latency</h3>
+              <p>Client portals were slow to load for roughly 20 minutes during a deploy. No data was affected.</p>
+            </mz-stack>
+          </mz-card>
+        </mz-stack>
+      </mz-section>
+    </main>
+    <mz-footer></mz-footer>
+  </body>
+</html>
