@@ -800,7 +800,10 @@ textarea.input {
 .auth-brand .brand-stripes svg {
   display: block;
   width: 100%;
-  height: 14px;
+  height: 18px;
+}
+.auth-brand .brand-stripes .mz-pipe {
+  stroke-width: 3;
 }
 .auth-card h2 {
   font-size: var(--text-h3);

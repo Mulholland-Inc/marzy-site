@@ -2,19 +2,26 @@
 import { SPARK } from "./spark.js";
 import { buildPipes } from "./pipe.js";
 
-// A short bundle of three animated pipes flowing left → right, used either
-// side of the mark so flow appears to pass through it.
-const stripes = () =>
-  buildPipes({
-    routes: [[[0, 9], [120, 9]]],
-    width: 120,
-    height: 18,
-    n: 3,
-    spacing: 6,
-    radius: 1,
-    fade: false,
-    preserve: "none",
-  });
+const STRIPE_H = 18;
+
+// Three animated pipes flowing left → right, built at the container's exact
+// pixel width (1:1) so the strokes and dash flow never stretch.
+function fillStripes(el) {
+  const w = Math.round(el.getBoundingClientRect().width);
+  if (!w) return;
+  el.replaceChildren(
+    buildPipes({
+      routes: [[[-12, STRIPE_H / 2], [w + 12, STRIPE_H / 2]]],
+      width: w,
+      height: STRIPE_H,
+      n: 3,
+      spacing: 7,
+      radius: 1,
+      fade: false,
+      preserve: "none",
+    })
+  );
+}
 
 class MzLogin extends HTMLElement {
   connectedCallback() {
@@ -37,8 +44,21 @@ class MzLogin extends HTMLElement {
         <button class="btn btn-outline" type="button" style="width:100%;justify-content:center">Continue with Google</button>
         <p class="auth-foot">New to Marzy? <a class="link" href="#">Request access</a></p>
       </div>`;
-    this.querySelector(".brand-stripes-l").appendChild(stripes());
-    this.querySelector(".brand-stripes-r").appendChild(stripes());
+    const l = this.querySelector(".brand-stripes-l");
+    const r = this.querySelector(".brand-stripes-r");
+    const draw = () => {
+      fillStripes(l);
+      fillStripes(r);
+    };
+    requestAnimationFrame(draw);
+    if ("ResizeObserver" in window) {
+      this._ro = new ResizeObserver(draw);
+      this._ro.observe(this);
+    }
+  }
+
+  disconnectedCallback() {
+    if (this._ro) this._ro.disconnect();
   }
 }
 customElements.define("mz-login", MzLogin);
