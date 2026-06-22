@@ -866,14 +866,18 @@ textarea.input {
 .sidebar-brand .logo .spark {
   color: var(--color-ink);
 }
+/* three horizontal Volt stripes, flush to the sidebar's left edge */
 .brand-stripes {
   display: inline-flex;
+  flex-direction: column;
   gap: 3px;
+  /* pull through the brand + sidebar padding so bars meet the card edge */
+  margin-left: calc(-1 * (var(--space-5) + var(--space-2)));
 }
 .brand-stripes i {
-  width: 3px;
-  height: 18px;
-  border-radius: 2px;
+  width: 16px;
+  height: 3px;
+  border-radius: 0 2px 2px 0;
   background: var(--color-volt);
 }
 .sidebar-section {
