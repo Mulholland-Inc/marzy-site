@@ -791,6 +791,7 @@ textarea.input {
 .auth-brand .auth-mark {
   flex: none;
   width: 28px;
+  color: var(--color-ink);
 }
 .auth-brand .brand-stripes {
   flex: 1 1 0;
