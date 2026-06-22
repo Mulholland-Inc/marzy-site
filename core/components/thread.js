@@ -4,35 +4,45 @@
 // stand on its own.
 import { SPARK } from "./spark.js";
 
-// Each conversation: Marzy (proactive) → operator → Marzy.
+// Each conversation: Marzy (proactive) → operator → Marzy delivers an artifact.
+// The third message is an embedded component ({ embed: "<tag>" }) instead of text.
 const CONVOS = [
   [
     ["marzy", "Pulled the new intake from Dr. Lee's office and verified eligibility."],
     ["op", "The chart too?"],
-    ["marzy", "Already built. Approve it and I'll book the visit."],
+    ["marzy", { embed: "mz-embed-doc" }],
   ],
   [
     ["marzy", "I've closed the March books."],
     ["op", "Anything flagged?"],
-    ["marzy", "3 of 412 transactions. The summary is in your inbox."],
+    ["marzy", { embed: "mz-embed-table" }],
   ],
   [
     ["marzy", "Payroll is drafted from this week's 14 timesheets."],
     ["op", "Hours look right?"],
-    ["marzy", "Matched to every employee. Approve and I'll file it now."],
+    ["marzy", { embed: "mz-embed-checklist" }],
   ],
   [
     ["marzy", "Cleared today's inbox and handled the routine items."],
     ["op", "Exceptions?"],
-    ["marzy", "3 invoices over the limit. Queued for your approval."],
+    ["marzy", { embed: "mz-embed-kanban" }],
   ],
 ];
 
-function msgEl(sender, text) {
+// content is either a string (text bubble) or { embed: "<tag>" } (artifact card).
+function msgEl(sender, content) {
   const isM = sender === "marzy";
   const el = document.createElement("div");
-  el.className = "msg";
-  el.innerHTML = `<span class="msg-avatar ${isM ? "marzy" : "op"}">${isM ? SPARK : "D"}</span><div class="msg-body"><div class="msg-head"><span class="msg-name">${isM ? "Marzy" : "Dana"}</span></div><div class="msg-text">${text}</div></div>`;
+  const avatar = `<span class="msg-avatar ${isM ? "marzy" : "op"}">${isM ? SPARK : "D"}</span>`;
+  const head = `<div class="msg-head"><span class="msg-name">${isM ? "Marzy" : "Dana"}</span></div>`;
+  if (content && typeof content === "object" && content.embed) {
+    el.className = "msg msg-embed";
+    el.innerHTML = `${avatar}<div class="msg-body">${head}</div>`;
+    el.querySelector(".msg-body").appendChild(document.createElement(content.embed));
+  } else {
+    el.className = "msg";
+    el.innerHTML = `${avatar}<div class="msg-body">${head}<div class="msg-text">${content}</div></div>`;
+  }
   return el;
 }
 function typingEl() {

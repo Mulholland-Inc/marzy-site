@@ -2585,6 +2585,10 @@ mz-tab-panel:not([hidden]) {
   justify-content: flex-start;
   gap: var(--space-3);
   min-height: 230px;
+  /* Fixed conversation width so every message is the same width, centered in
+     whatever space it's given. */
+  width: 100%;
+  max-width: 420px;
   margin-inline: auto;
   /* When it sits beside taller content (e.g. the hero copy), center the whole
      conversation vertically rather than top-aligning it. */
@@ -2595,7 +2599,6 @@ mz-tab-panel:not([hidden]) {
   align-items: flex-start;
   gap: var(--space-3);
   width: 100%;
-  max-width: 440px;
   padding: var(--space-4);
   background: var(--color-surface);
   border: var(--border);
@@ -2603,6 +2606,17 @@ mz-tab-panel:not([hidden]) {
   opacity: 0;
   transform: translateY(8px);
   animation: mz-msg-in 0.4s var(--ease) forwards;
+}
+/* A message that delivers an artifact: drop the bubble chrome and let the
+   embedded card stand on its own under Marzy's avatar. */
+.msg-embed {
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+.msg-embed .embed {
+  width: 100%;
+  max-width: 100%;
 }
 .msg-body {
   flex: 1;
