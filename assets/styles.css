@@ -797,11 +797,10 @@ textarea.input {
   flex: 1 1 0;
   margin-left: 0;
 }
-.auth-brand .brand-stripes i {
-  width: auto;
-}
-.auth-brand .brand-stripes-r i {
-  border-radius: 2px 0 0 2px;
+.auth-brand .brand-stripes svg {
+  display: block;
+  width: 100%;
+  height: 14px;
 }
 .auth-card h2 {
   font-size: var(--text-h3);
