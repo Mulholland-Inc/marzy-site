@@ -168,10 +168,11 @@ class MzApp extends HTMLElement {
 
   show(id) {
     const view = VIEWS.find((v) => v.id === id) || VIEWS[0];
-    const action = view.action
-      ? `<mz-actions align="end"><mz-btn variant="primary" size="sm">${view.action}</mz-btn></mz-actions>`
-      : "";
-    this._body.innerHTML = action + view.render();
+    const head = `<header class="app-head">
+        <span class="app-head-title"><span class="app-head-icon" aria-hidden="true">${ICON[view.id]}</span>${view.title}</span>
+        ${view.action ? `<mz-btn variant="primary" size="sm">${view.action}</mz-btn>` : ""}
+      </header>`;
+    this._body.innerHTML = head + view.render();
     this._body.scrollTop = 0;
   }
 }
