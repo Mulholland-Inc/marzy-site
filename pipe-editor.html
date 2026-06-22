@@ -116,8 +116,9 @@
         fill: none;
         stroke-width: 2;
         stroke-linecap: round;
+        stroke-linejoin: round;
         stroke-dasharray: 120 16;
-        animation: mz-pipe-flow linear infinite;
+        animation: mz-pipe-flow 2.6s linear infinite;
         animation-play-state: paused;
       }
       #board.playing .mz-pipe { animation-play-state: running; }
@@ -182,8 +183,6 @@
     <div class="ed-toast" id="toast" hidden></div>
 
     <script type="module">
-      import { buildPipes } from "./components/pipe.js";
-
       const board = document.getElementById("board");
       const toast = document.getElementById("toast");
 
@@ -218,106 +217,95 @@
         board.innerHTML = g;
       }
 
-      // ── Trace the drawn cells into polyline routes ──────────────────────
+      // ── Per-cell rail rendering ─────────────────────────────────────────
+      // Every rail index sits at the SAME offset on any shared edge (a global
+      // convention), so neighbouring cells always line up — straights, corners,
+      // tees and crosses all merge flush, no overpass. Each cell draws only its
+      // own connections; junctions are real merges where rails meet at the
+      // cell's rail-crossing point.
       const NB = [[-1, 0], [0, 1], [1, 0], [0, -1]];
-      const adj = (r, c) =>
-        NB.map(([dr, dc]) => [r + dr, c + dc]).filter(([nr, nc]) => has(nr, nc));
-      const eKey = (a, b) => {
-        const s1 = a[0] * COLS + a[1], s2 = b[0] * COLS + b[1];
-        return s1 < s2 ? s1 + "-" + s2 : s2 + "-" + s1;
-      };
-      const same = (a, b) => a[0] === b[0] && a[1] === b[1];
 
-      // Walk a route, always preferring to continue STRAIGHT — so a route
-      // runs straight through junctions (crosses pass through, tees keep their
-      // main line unbroken). Only turn where the path itself bends (degree 2).
-      function walk(start, first, used) {
-        const path = [start, first];
-        used.add(eKey(start, first));
-        let prev = start, cur = first;
-        while (true) {
-          const inDir = [cur[0] - prev[0], cur[1] - prev[1]];
-          const sCell = [cur[0] + inDir[0], cur[1] + inDir[1]];
-          let next = null;
-          if (has(sCell[0], sCell[1]) && !used.has(eKey(cur, sCell))) {
-            next = sCell; // straight continuation (through junctions)
-          } else if (adj(cur[0], cur[1]).length === 2) {
-            next = adj(cur[0], cur[1]).find(
-              (n) => !same(n, prev) && !used.has(eKey(cur, n))
-            ); // a real bend
-          }
-          if (!next) break;
-          used.add(eKey(cur, next));
-          prev = cur;
-          cur = next;
-          path.push(cur);
-        }
-        return path;
-      }
-
-      const plen = (pts) => {
-        let s = 0;
-        for (let i = 1; i < pts.length; i++)
-          s += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
-        return s;
-      };
-
-      function traceRoutes() {
-        const used = new Set();
-        const list = [...cells].map((k) => k.split(",").map(Number));
-        const routes = [];
-        const start = (r, c) =>
-          adj(r, c).forEach((nb) => {
-            if (!used.has(eKey([r, c], nb))) routes.push(walk([r, c], nb, used));
-          });
-        // 1) from endpoints → maximal straight-through routes (the through line
-        //    of a tee, both arms of a cross). 2) leftover junction segments and
-        //    closed loops.
-        for (const [r, c] of list) if (adj(r, c).length === 1) start(r, c);
-        for (const [r, c] of list) start(r, c);
-        // shorter routes first so longer mains draw ON TOP — branches tee in
-        // cleanly under the main pipe.
-        return routes.map(toPoints).sort((a, b) => plen(a) - plen(b));
-      }
-
-      // cell path → pixel points, dropping collinear midpoints (keep bends)
-      function toPoints(path) {
-        const pts = path.map(([r, c]) => [cx(c), cy(r)]);
-        if (pts.length <= 2) return pts;
-        const out = [pts[0]];
-        for (let i = 1; i < pts.length - 1; i++) {
-          const a = out[out.length - 1], b = pts[i], c2 = pts[i + 1];
-          const colinear =
-            (a[0] === b[0] && b[0] === c2[0]) || (a[1] === b[1] && b[1] === c2[1]);
-          if (!colinear) out.push(b);
-        }
-        out.push(pts[pts.length - 1]);
-        return out;
-      }
-
-      // ── Render ──────────────────────────────────────────────────────────
       function render() {
         const layer = board.querySelector("#pipes");
-        const routes = traceRoutes();
-        let nodes = "";
-        for (const [r, c] of [...cells].map((k) => k.split(",").map(Number))) {
-          if (adj(r, c).length === 0)
-            nodes += `<circle class="ed-node" cx="${cx(c)}" cy="${cy(r)}" r="${lines * spacing / 2 || 3}"/>`;
+        const list = [...cells].map((k) => k.split(",").map(Number));
+        const half = (lines - 1) / 2;
+        const cls = 'class="mz-pipe mz-pipe-v"';
+        let out = "";
+
+        for (const [r, c] of list) {
+          const x0 = c * CELL, y0 = r * CELL;
+          const X = x0 + CELL / 2, Y = y0 + CELL / 2;
+          const N = has(r - 1, c), E = has(r, c + 1), S = has(r + 1, c), W = has(r, c - 1);
+          const deg = N + E + S + W;
+
+          if (deg === 0) {
+            out += `<circle class="ed-node" cx="${X}" cy="${Y}" r="${Math.max(2, lines * spacing * 0.4)}"/>`;
+            continue;
+          }
+
+          for (let i = 0; i < lines; i++) {
+            const o = (i - half) * spacing; // rail offset
+            // rail-i crossing points on each edge + its in-cell junction point
+            const pN = [X + o, y0], pS = [X + o, y0 + CELL];
+            const pE = [x0 + CELL, Y + o], pW = [x0, Y + o];
+            const J = [X + o, Y + o];
+
+            if (deg === 2 && N && S) {
+              out += line(pN, pS, cls);
+            } else if (deg === 2 && E && W) {
+              out += line(pW, pE, cls);
+            } else if (deg === 2) {
+              // corner — smooth Bézier between the two perpendicular edges
+              const a = N ? "N" : "S", b = E ? "E" : "W";
+              out += corner(a, b, o, X, Y, x0, y0, cls);
+            } else if (deg === 1) {
+              // endpoint — flat-capped stub from the edge to the cell centreline
+              if (N) out += line(pN, [X + o, Y], cls);
+              else if (S) out += line(pS, [X + o, Y], cls);
+              else if (E) out += line(pE, [X, Y + o], cls);
+              else out += line(pW, [X, Y + o], cls);
+            } else {
+              // junction (3 or 4) — rails meet flush at J; arms tee/cross in
+              if (N) out += line(J, pN, cls);
+              if (S) out += line(J, pS, cls);
+              if (E) out += line(J, pE, cls);
+              if (W) out += line(J, pW, cls);
+            }
+          }
         }
-        const built = routes.length
-          ? buildPipes({
-              routes,
-              width: W,
-              height: H,
-              n: lines,
-              spacing,
-              radius: Math.max(1, bend),
-              preserve: "none",
-              fade: false,
-            })
-          : null;
-        layer.replaceChildren(...(built ? [...built.childNodes] : []));
-        if (nodes) layer.insertAdjacentHTML("beforeend", nodes);
+        layer.innerHTML = out;
+      }
+
+      // dash flow: phase each segment by its absolute position along the flow
+      // axis so the dashes stay continuous across adjacent collinear cells
+      const PERIOD = 136; // 120 + 16 dash + gap
+      const DUR = 2.6;
+      const delayFor = (coord) => {
+        const d = -(((coord % PERIOD) + PERIOD) % PERIOD) / PERIOD * DUR;
+        return ` style="animation-delay:${d.toFixed(3)}s"`;
+      };
+      const line = (a, b, cls) => {
+        const vert = Math.abs(b[1] - a[1]) >= Math.abs(b[0] - a[0]);
+        return `<path ${cls}${delayFor(vert ? a[1] : a[0])} d="M${a[0]} ${a[1]} L${b[0]} ${b[1]}"/>`;
+      };
+
+      // Smooth corner curve between two perpendicular edges for rail offset o.
+      function corner(d1, d2, o, X, Y, x0, y0, cls) {
+        const pt = (d) =>
+          d === "N" ? [X + o, y0] :
+          d === "S" ? [X + o, y0 + CELL] :
+          d === "E" ? [x0 + CELL, Y + o] : [x0, Y + o];
+        const tan = (d) =>
+          d === "N" ? [0, 1] : d === "S" ? [0, -1] : d === "E" ? [-1, 0] : [1, 0];
+        const P0 = pt(d1), P3 = pt(d2), t1 = tan(d1), t2 = tan(d2);
+        const span = [P3[0] - P0[0], P3[1] - P0[1]];
+        const f = 0.55 * (bend / 15); // Bend slider controls roundness
+        const l1 = f * Math.abs(span[0] * t1[0] + span[1] * t1[1]);
+        const l2 = f * Math.abs(span[0] * t2[0] + span[1] * t2[1]);
+        const c1 = [P0[0] + t1[0] * l1, P0[1] + t1[1] * l1];
+        const c2 = [P3[0] + t2[0] * l2, P3[1] + t2[1] * l2];
+        const delay = delayFor(d1 === "N" || d1 === "S" ? P0[1] : P0[0]);
+        return `<path ${cls}${delay} d="M${P0[0]} ${P0[1]} C${c1[0]} ${c1[1]} ${c2[0]} ${c2[1]} ${P3[0]} ${P3[1]}"/>`;
       }
 
       // ── Painting ────────────────────────────────────────────────────────
