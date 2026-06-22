@@ -35,6 +35,7 @@ import "./family-hero.js";
 import "./thread.js";
 import "./portal-preview.js";
 import "./data-control.js";
+import "./data-clean.js";
 import "./timeline.js";
 import "./embed-table.js";
 import "./embed-doc.js";

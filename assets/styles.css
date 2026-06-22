@@ -2955,6 +2955,128 @@ mz-tab-panel:not([hidden]) {
   font-variant-numeric: tabular-nums;
 }
 
+/* ── Data cleaning / AI-ready ── */
+.dclean {
+  display: grid;
+  grid-template-columns: 1.1fr minmax(0, 380px);
+  gap: clamp(var(--space-8), 5vw, 64px);
+  align-items: center;
+}
+.dclean-title {
+  font-size: var(--text-h2);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-heading);
+  color: var(--color-ink);
+}
+.dclean-copy .lead {
+  margin-top: var(--space-5);
+  max-width: 34rem;
+}
+.dclean-copy .actions {
+  margin-top: var(--space-8);
+}
+.dclean-panel {
+  display: grid;
+  gap: var(--space-3);
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+.dclean-stage {
+  display: grid;
+  gap: var(--space-3);
+}
+.dclean-tag {
+  justify-self: start;
+  font-size: var(--text-12);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+.dclean-tag-volt {
+  color: var(--color-volt);
+}
+.dclean-rows {
+  display: grid;
+  gap: var(--space-2);
+}
+.dclean-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-small);
+}
+.dclean-row.is-raw {
+  background: var(--color-paper);
+  color: var(--color-muted);
+}
+.dclean-row.is-clean {
+  background: var(--color-surface);
+  border-color: var(--color-volt-line);
+  color: var(--color-ink);
+}
+.dclean-mk {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+  color: var(--color-muted);
+  font-size: var(--text-12);
+  font-weight: var(--weight-semibold);
+}
+.dclean-ok {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-pill);
+  background: var(--color-volt);
+  color: #fff;
+}
+.dclean-ok svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.dclean-txt {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+.dclean-txt i {
+  font-style: normal;
+  font-size: var(--text-12);
+  color: var(--color-volt);
+}
+.dclean-flow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-1);
+  color: var(--color-muted);
+  font-size: var(--text-12);
+  font-weight: var(--weight-medium);
+}
+.dclean-spark {
+  display: inline-flex;
+  width: 16px;
+  color: var(--color-volt);
+}
+
 /* ─────────────────────────────────────────── Engagement timeline ──
    Left to right: two entry paths (demo or pilot) converge at a checkpoint,
    then the forward-deployed engagement runs across, card to card, pipes
@@ -3757,7 +3879,8 @@ mz-tab-panel:not([hidden]) {
   .grid-4 {
     grid-template-columns: repeat(2, 1fr);
   }
-  .datactrl {
+  .datactrl,
+  .dclean {
     grid-template-columns: 1fr;
   }
   .nav-links,
