@@ -3582,9 +3582,9 @@ mz-tab-panel:not([hidden]) {
   margin-block: clamp(var(--space-6), 4vw, var(--space-10));
   height: clamp(120px, 15vw, 180px);
 }
-/* Volt on the inside, white on the outside */
+/* Volt on the inside, white on the outside; thicker so the pipes read big */
 .ctabig-pipes .mz-pipe {
-  stroke-width: 2.5;
+  stroke-width: 6;
 }
 .ctabig-pipes .mz-pipe-v {
   stroke: var(--color-volt);

@@ -22,8 +22,9 @@ class MzCtaBig extends HTMLElement {
     inner.innerHTML = `<h2>${heading}</h2><p>${sub}</p>`;
     this.appendChild(inner);
 
-    // Smaller viewBox + slice crops/zooms the serpentine so the pipes read big.
-    const pipes = buildPipes({ routes: [PTS], width: 560, height: 150, n: 7, spacing: 11, radius: 44, preserve: "xMidYMid slice" });
+    // Full serpentine (spans edge to edge like the divider); fewer, wider-spaced
+    // strokes + a thicker stroke make the pipes read big.
+    const pipes = buildPipes({ routes: [PTS], width: 1200, height: 240, n: 5, spacing: 16, radius: 44, preserve: "xMidYMid slice" });
     pipes.classList.add("ctabig-pipes");
     this.appendChild(pipes);
 
