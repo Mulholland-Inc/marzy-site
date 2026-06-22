@@ -2586,6 +2586,9 @@ mz-tab-panel:not([hidden]) {
   gap: var(--space-3);
   min-height: 230px;
   margin-inline: auto;
+  /* When it sits beside taller content (e.g. the hero copy), center the whole
+     conversation vertically rather than top-aligning it. */
+  align-self: center;
 }
 .msg {
   display: flex;
