@@ -2955,7 +2955,7 @@ mz-tab-panel:not([hidden]) {
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Data cleaning · the cleaning table ── */
+/* ── Data cleaning · two tables joined by pipes ── */
 .dclean {
   display: grid;
   gap: clamp(var(--space-8), 5vw, 56px);
@@ -2975,11 +2975,19 @@ mz-tab-panel:not([hidden]) {
   margin-top: var(--space-4);
 }
 
-.dclean-card {
-  max-width: 720px;
+.dclean-flow {
+  display: grid;
+  grid-template-columns: 1fr 96px 1fr;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 860px;
   margin-inline: auto;
   width: 100%;
 }
+.dclean-card {
+  width: 100%;
+}
+
 /* table cells — raw reads muted, clean lands in ink (black) */
 .dclean-table th,
 .dclean-table td {
@@ -3011,30 +3019,21 @@ mz-tab-panel:not([hidden]) {
   font-size: var(--text-12);
   line-height: 1.4;
   color: var(--color-ink-2);
-  vertical-align: middle;
 }
 
-/* connector column — a short animated Volt pipe per row */
-.dclean-pipe {
-  width: 64px;
-  padding-inline: 0 !important;
-  text-align: center;
+/* pipes between the two tables — all Volt, flowing left → right */
+.dclean-pipes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.dclean-pipe svg {
+.dclean-pipes svg {
   display: block;
-  width: 60px;
-  height: 22px;
-  margin-inline: auto;
+  width: 100%;
+  height: auto;
 }
 .dclean .mz-pipe-n {
   stroke: var(--color-volt);
-}
-
-.dclean-foot {
-  border-top: var(--border);
-  padding: var(--space-4) var(--space-5);
-  font-size: var(--text-13);
-  color: var(--color-muted);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3846,6 +3845,13 @@ mz-tab-panel:not([hidden]) {
   }
   .datactrl {
     grid-template-columns: 1fr;
+  }
+  .dclean-flow {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+  .dclean-pipes {
+    display: none;
   }
   .nav-links,
   .nav-signin {

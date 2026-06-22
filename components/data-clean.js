@@ -1,7 +1,7 @@
 // <mz-data-clean></mz-data-clean>, marketing section positioning Marzy as the
-// back-office data cleaner. A proper table: each row is one field whose raw
-// value flows through an animated Volt pipe and arrives AI-ready. Raw values
-// read muted; cleaned values land in ink (black).
+// back-office data cleaner. Two tables — raw records and AI-ready records —
+// with an animated Volt pipe bundle flowing between them. Raw values read
+// muted; cleaned values land in ink (black) with a small note tag.
 import { buildPipes } from "./pipe.js";
 
 // [field, raw value, cleaned value, what Marzy did]
@@ -16,14 +16,14 @@ class MzDataClean extends HTMLElement {
   connectedCallback() {
     this.classList.add("dclean");
 
-    const rows = ROWS.map(
-      ([field, raw, clean, note]) =>
-        `<tr>
-          <td class="dclean-field">${field}</td>
-          <td class="dclean-raw">${raw}</td>
-          <td class="dclean-pipe" aria-hidden="true"></td>
-          <td class="dclean-clean">${clean} <span class="dclean-note">${note}</span></td>
-        </tr>`
+    const rawRows = ROWS.map(
+      ([field, raw]) =>
+        `<tr><td class="dclean-field">${field}</td><td class="dclean-raw">${raw}</td></tr>`
+    ).join("");
+
+    const cleanRows = ROWS.map(
+      ([, , clean, note]) =>
+        `<tr><td class="dclean-clean">${clean} <span class="dclean-note">${note}</span></td></tr>`
     ).join("");
 
     this.innerHTML = `
@@ -31,37 +31,34 @@ class MzDataClean extends HTMLElement {
         <h2 class="dclean-title">We clean your data first.</h2>
         <p class="lead dclean-sub">AI breaks on the back office it inherits — duplicate records, missing fields, dates that don't agree. Marzy reconciles every record before a model ever touches it.</p>
       </div>
-      <div class="dclean-card table-card">
-        <div class="table-scroll">
+      <div class="dclean-flow">
+        <div class="dclean-card table-card">
           <table class="table dclean-table">
-            <thead>
-              <tr>
-                <th>Field</th>
-                <th>Raw record</th>
-                <th></th>
-                <th>AI-ready</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
+            <thead><tr><th>Field</th><th>Raw record</th></tr></thead>
+            <tbody>${rawRows}</tbody>
           </table>
         </div>
-        <p class="dclean-foot">1,284 records reconciled this week — 0 left ambiguous.</p>
+        <div class="dclean-pipes" aria-hidden="true"></div>
+        <div class="dclean-card table-card">
+          <table class="table dclean-table">
+            <thead><tr><th>AI-ready</th></tr></thead>
+            <tbody>${cleanRows}</tbody>
+          </table>
+        </div>
       </div>`;
 
-    // A short animated Volt pipe in each connector cell — raw flows to clean.
-    this.querySelectorAll(".dclean-pipe").forEach((cell) =>
-      cell.appendChild(
-        buildPipes({
-          routes: [[[-12, 11], [72, 11]]],
-          width: 60,
-          height: 22,
-          n: 3,
-          spacing: 5,
-          radius: 1,
-          fade: false,
-          preserve: "xMidYMid meet",
-        })
-      )
+    // Animated Volt pipe bundle flowing left → right, raw into AI-ready.
+    this.querySelector(".dclean-pipes").appendChild(
+      buildPipes({
+        routes: [[[-20, 30], [140, 30]]],
+        width: 120,
+        height: 60,
+        n: 5,
+        spacing: 7,
+        radius: 1,
+        fade: false,
+        preserve: "xMidYMid meet",
+      })
     );
   }
 }
