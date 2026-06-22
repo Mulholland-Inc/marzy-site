@@ -2472,8 +2472,9 @@ mz-tab-panel:not([hidden]) {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  /* Symmetric inset so the corner nav button is equidistant from both edges. */
-  padding: var(--space-3);
+  /* Extra left padding before the month title; nav button keeps its symmetric
+     inset from the top/right corner. */
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-5);
   border-bottom: var(--border);
 }
 .cal-title {
