@@ -2998,10 +2998,17 @@ mz-tab-panel:not([hidden]) {
   white-space: normal;
 }
 .dclean-note {
-  margin-left: var(--space-1);
-  font-weight: var(--weight-regular);
+  display: inline-block;
+  margin-left: var(--space-2);
+  padding: 2px var(--space-2);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+  font-weight: var(--weight-medium);
   font-size: var(--text-12);
-  color: var(--color-muted);
+  line-height: 1.4;
+  color: var(--color-ink-2);
+  vertical-align: middle;
 }
 
 /* connector column — a short animated Volt pipe per row */
