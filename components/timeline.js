@@ -6,15 +6,15 @@
 import { buildPipes } from "./pipe.js";
 
 const ENTRY = [
-  ["2–3 days", "Guided demo", "On sample data."],
-  ["~1 week", "Scoped pilot", "On your real data."],
+  ["2–3 days", "Guided demo", "See Marzy work on sample data."],
+  ["~1 week", "Scoped pilot", "A scoped run on your real data."],
 ];
-const GATE = ["Checkpoint", "You're satisfied", "Pilot approved."];
+const GATE = ["Checkpoint", "You're satisfied", "Happy with the pilot, we begin."];
 const TRAJ = [
-  ["Week 0", "Engineer embeds", "Maps how work moves."],
-  ["Weeks 1–4", "Audit & automate", "Shipped with approval."],
+  ["Week 0", "Engineer embeds", "A Mulholland engineer maps how work moves."],
+  ["Weeks 1–4", "Audit & automate", "Workflows documented, agents shipped behind your approval."],
 ];
-const GATE2 = ["Ongoing", "Review & scale", "Pick what's next."];
+const GATE2 = ["Ongoing", "Review & scale", "We measure impact and pick what's next."];
 
 function cardEl([when, title, desc], cls) {
   const d = document.createElement("div");
