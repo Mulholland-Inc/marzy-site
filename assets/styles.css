@@ -2920,11 +2920,19 @@ mz-tab-panel:not([hidden]) {
 }
 .tl-row {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   gap: 0;
   width: 100%;
   overflow-x: auto;
   padding-bottom: var(--space-3);
+}
+/* the trajectory group — its cards stretch to one another's height only */
+.tl-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
 }
 .tl-step {
   flex: 1 1 0;
@@ -2939,14 +2947,12 @@ mz-tab-panel:not([hidden]) {
 }
 /* two entry cards stacked on the left */
 .tl-entry {
-  flex: 1 1 0;
-  min-width: 132px;
+  flex: 0 0 180px;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
 }
 .tl-entry .tl-step {
-  flex: 1 1 0;
   width: 100%;
   padding: var(--space-3);
 }

@@ -44,13 +44,16 @@ class MzTimeline extends HTMLElement {
     merge.className = "tl-merge-h";
     row.appendChild(merge);
 
-    row.appendChild(cardEl(GATE, "tl-gate"));
+    const main = document.createElement("div");
+    main.className = "tl-main";
+    main.appendChild(cardEl(GATE, "tl-gate"));
     TRAJ.forEach((t) => {
-      row.appendChild(connector());
-      row.appendChild(cardEl(t));
+      main.appendChild(connector());
+      main.appendChild(cardEl(t));
     });
-    row.appendChild(connector());
-    row.appendChild(cardEl(GATE2, "tl-gate"));
+    main.appendChild(connector());
+    main.appendChild(cardEl(GATE2, "tl-gate"));
+    row.appendChild(main);
 
     this.appendChild(row);
     this._entry = entry;
