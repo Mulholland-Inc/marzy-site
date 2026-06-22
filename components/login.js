@@ -3,34 +3,72 @@
 import { SPARK } from "./spark.js";
 import { buildPipes } from "./pipe.js";
 
-// One continuous snake of pipes — a vertical "comb": run down a column,
-// U-turn, run up the next, U-turn, and so on across the width. The U-turns
-// sit INSIDE the viewport (top & bottom), so you see a bend on every column —
-// a maze-like pattern, not just straight lines. Single non-crossing path,
-// rendered as the same thick layered bundle as the site dividers.
-const COL_GAP = 112;
+// One continuous snake of pipes that twists through the whole area like the
+// game Snake. A self-avoiding walk on a coarse grid, steered by Warnsdorff's
+// heuristic (always move to the most-constrained cell) so it fills the space
+// with constant turns and never crosses itself. Rendered as the same thick
+// layered bundle as the site dividers.
+const CELL = 96;
+const NB = [[-1, 0], [0, 1], [1, 0], [0, -1]];
+const rint = (n) => Math.floor(Math.random() * n);
+
+function snakePath(cols, rows) {
+  const seen = new Set();
+  const key = (r, c) => r + "," + c;
+  const inB = (r, c) => r >= 0 && c >= 0 && r < rows && c < cols;
+  const free = (r, c) => inB(r, c) && !seen.has(key(r, c));
+  const onward = (r, c) => NB.reduce((n, [dr, dc]) => n + (free(r + dr, c + dc) ? 1 : 0), 0);
+
+  let r = rint(rows), c = rint(cols);
+  seen.add(key(r, c));
+  const path = [[r, c]];
+  while (true) {
+    const opts = NB.map(([dr, dc]) => [r + dr, c + dc]).filter(([nr, nc]) => free(nr, nc));
+    if (!opts.length) break;
+    // Warnsdorff: step to the neighbour with the fewest onward moves (random
+    // tie-break) — yields long, twisty, near space-filling snakes
+    let min = Infinity, pick = [];
+    for (const [nr, nc] of opts) {
+      const o = onward(nr, nc);
+      if (o < min) { min = o; pick = [[nr, nc]]; }
+      else if (o === min) pick.push([nr, nc]);
+    }
+    [r, c] = pick[rint(pick.length)];
+    seen.add(key(r, c));
+    path.push([r, c]);
+  }
+  return path;
+}
 
 function buildSnake(W, H) {
-  const yTop = 72, yBot = H - 72;
-  const cols = Math.ceil((W + 2 * COL_GAP) / COL_GAP) + 1;
-  const startX = -COL_GAP;
-  const pts = [];
-  for (let j = 0; j < cols; j++) {
-    const x = startX + j * COL_GAP;
-    if (j % 2 === 0) {
-      pts.push([x, yTop], [x, yBot]); // run down
-    } else {
-      pts.push([x, yBot], [x, yTop]); // run up
-    }
-    // the segment to the next column's first point becomes the U-turn
+  // overscan the grid by a ring of cells so the snake bleeds off every edge
+  const cols = Math.ceil(W / CELL) + 3;
+  const rows = Math.ceil(H / CELL) + 3;
+  const total = cols * rows;
+
+  let best = [];
+  for (let t = 0; t < 10 && best.length < total * 0.85; t++) {
+    const p = snakePath(cols, rows);
+    if (p.length > best.length) best = p;
   }
+
+  // grid → pixel points (shifted so the overscan ring is off-screen), keeping
+  // only the turn vertices
+  const raw = best.map(([r, c]) => [c * CELL - CELL, r * CELL - CELL]);
+  const pts = [raw[0]];
+  for (let i = 1; i < raw.length - 1; i++) {
+    const a = pts[pts.length - 1], b = raw[i], d = raw[i + 1];
+    if (!((a[0] === b[0] && b[0] === d[0]) || (a[1] === b[1] && b[1] === d[1]))) pts.push(b);
+  }
+  pts.push(raw[raw.length - 1]);
+
   return buildPipes({
     routes: [pts],
     width: W,
     height: H,
     n: 7,
     spacing: 9,
-    radius: COL_GAP / 2,
+    radius: 34,
     fade: false,
     preserve: "none",
   });
