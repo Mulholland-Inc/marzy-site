@@ -37,7 +37,7 @@ function offsetRoute(pts, d, R) {
 
 // Build an <svg> with one bundle per route. Inner strokes are Volt, outer
 // strokes neutral; each flows via the shared `.mz-pipe` dash animation.
-export function buildPipes({ routes, width, height, n = 7, spacing = 9, radius = 20, preserve = "xMidYMid meet" }) {
+export function buildPipes({ routes, width, height, n = 7, spacing = 9, radius = 20, preserve = "xMidYMid meet", fade = true }) {
   const ns = "http://www.w3.org/2000/svg";
   const svg = document.createElementNS(ns, "svg");
   svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
@@ -51,7 +51,7 @@ export function buildPipes({ routes, width, height, n = 7, spacing = 9, radius =
       const p = document.createElementNS(ns, "path");
       p.setAttribute("d", offsetRoute(route, (i - half) * spacing, radius));
       p.setAttribute("class", `mz-pipe ${inner ? "mz-pipe-v" : "mz-pipe-n"}`);
-      p.style.opacity = inner ? 0.95 - dist * 0.15 : 0.4 + (half - dist) * 0.05;
+      p.style.opacity = fade ? (inner ? 0.95 - dist * 0.15 : 0.4 + (half - dist) * 0.05) : 1;
       p.style.animationDuration = 2.6 + (i % 5) * 0.2 + "s";
       svg.appendChild(p);
     }
