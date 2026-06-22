@@ -1187,7 +1187,7 @@ button.sidebar-item {
    dashboard (cards, grids), so density stays consistent and token-driven. */
 .app {
   --card-pad: var(--space-3); /* 12 */
-  --gap-grid: var(--space-2); /* 8 */
+  --gap-grid: var(--space-3); /* 12 — same gap within grids and between blocks */
 }
 .app-topbar {
   padding: var(--space-2) var(--space-4);
@@ -1197,7 +1197,7 @@ button.sidebar-item {
 }
 .app-body {
   padding: var(--space-4);
-  gap: var(--space-4);
+  gap: var(--gap-grid); /* match the grid gap so spacing is uniform */
 }
 /* denser sidebar */
 .app .sidebar {
