@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pipe editor — Marzy</title>
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/tokens.css" />
+    <style>
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        font-family: var(--font-body);
+        color: var(--color-ink);
+        background: var(--color-paper);
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Toolbar */
+      .ed-bar {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        flex-wrap: wrap;
+        padding: var(--space-3) var(--space-5);
+        background: var(--color-surface);
+        border-bottom: var(--border);
+      }
+      .ed-brand {
+        font-family: var(--font-display);
+        font-weight: var(--weight-bold);
+        font-size: var(--text-18);
+        letter-spacing: var(--tracking-tight);
+      }
+      .ed-group {
+        display: inline-flex;
+        gap: var(--space-2);
+        align-items: center;
+      }
+      .ed-spacer { flex: 1; }
+      .ed-btn {
+        font-family: var(--font-body);
+        font-size: var(--text-small);
+        font-weight: var(--weight-medium);
+        color: var(--color-ink-2);
+        background: var(--color-surface);
+        border: var(--border-strong);
+        border-radius: var(--radius-sm);
+        height: var(--control-h);
+        padding: 0 var(--control-px);
+        cursor: pointer;
+        transition: border-color var(--duration-base) var(--ease),
+          color var(--duration-base) var(--ease);
+      }
+      .ed-btn:hover { border-color: var(--color-ink-2); color: var(--color-ink); }
+      .ed-btn.is-active {
+        background: var(--color-volt);
+        border-color: var(--color-volt);
+        color: #fff;
+      }
+      .ed-btn:focus-visible {
+        outline: 2px solid var(--color-volt);
+        outline-offset: 2px;
+      }
+
+      /* Stage */
+      .ed-stage {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-4);
+        padding: var(--space-8) var(--space-5);
+        overflow: auto;
+      }
+      .ed-canvas-wrap {
+        background: var(--color-surface);
+        border: var(--border);
+        border-radius: var(--radius-lg);
+        padding: var(--space-4);
+        max-width: 100%;
+      }
+      #board {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        touch-action: none;
+        cursor: crosshair;
+      }
+      #board.is-erasing { cursor: cell; }
+
+      .ed-grid line { stroke: var(--color-line); stroke-width: 1; }
+      .pipe {
+        fill: none;
+        stroke: var(--color-volt);
+        stroke-linecap: round;
+      }
+      .pipe-node { fill: var(--color-volt); }
+      #board.playing .pipe {
+        stroke-dasharray: 9 7;
+        animation: ed-flow 0.9s linear infinite;
+      }
+      @keyframes ed-flow { to { stroke-dashoffset: -16; } }
+      @media (prefers-reduced-motion: reduce) {
+        #board.playing .pipe { animation: none; }
+      }
+
+      .ed-hint {
+        margin: 0;
+        font-size: var(--text-small);
+        color: var(--color-muted);
+      }
+
+      /* Toast */
+      .ed-toast {
+        position: fixed;
+        left: 50%;
+        bottom: var(--space-8);
+        transform: translateX(-50%);
+        background: var(--color-ink);
+        color: #fff;
+        font-size: var(--text-small);
+        font-weight: var(--weight-medium);
+        padding: var(--space-3) var(--space-5);
+        border-radius: var(--radius-pill);
+      }
+      .ed-toast[hidden] { display: none; }
+    </style>
+  </head>
+  <body>
+    <header class="ed-bar">
+      <span class="ed-brand">Pipe editor</span>
+      <div class="ed-group" role="group" aria-label="Tool">
+        <button class="ed-btn is-active" data-tool="draw">Draw</button>
+        <button class="ed-btn" data-tool="erase">Erase</button>
+      </div>
+      <div class="ed-group">
+        <button class="ed-btn" id="clear">Clear</button>
+        <button class="ed-btn" id="play" aria-pressed="true">Pause flow</button>
+      </div>
+      <span class="ed-spacer"></span>
+      <div class="ed-group">
+        <button class="ed-btn" id="copySvg">Copy SVG</button>
+        <button class="ed-btn" id="copyJson">Copy data</button>
+      </div>
+    </header>
+
+    <main class="ed-stage">
+      <div class="ed-canvas-wrap">
+        <svg id="board" class="playing" aria-label="Pipe grid"></svg>
+      </div>
+      <p class="ed-hint">
+        Click or drag on the grid to lay pipe. Adjacent segments connect
+        automatically.
+      </p>
+    </main>
+
+    <div class="ed-toast" id="toast" hidden></div>
+
+    <script type="module">
+      const NS = "http://www.w3.org/2000/svg";
+      const board = document.getElementById("board");
+      const toast = document.getElementById("toast");
+
+      const COLS = 30;
+      const ROWS = 18;
+      const CELL = 34;
+      const W = COLS * CELL;
+      const H = ROWS * CELL;
+      const STROKE = Math.round(CELL * 0.3);
+
+      const cells = new Set(); // "r,c"
+      let tool = "draw";
+      let painting = false;
+      let lastKey = null;
+
+      const key = (r, c) => r + "," + c;
+      const has = (r, c) => cells.has(key(r, c));
+      const inBounds = (r, c) => r >= 0 && c >= 0 && r < ROWS && c < COLS;
+
+      function setupBoard() {
+        board.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        board.setAttribute("width", W);
+        board.setAttribute("height", H);
+        let g = '<g class="ed-grid">';
+        for (let c = 0; c <= COLS; c++)
+          g += `<line x1="${c * CELL}" y1="0" x2="${c * CELL}" y2="${H}"/>`;
+        for (let r = 0; r <= ROWS; r++)
+          g += `<line x1="0" y1="${r * CELL}" x2="${W}" y2="${r * CELL}"/>`;
+        g += '</g><g class="ed-pipes" id="pipes"></g>';
+        board.innerHTML = g;
+      }
+
+      // Which orthogonal neighbours are also pipe → this cell connects to them.
+      function connections(r, c) {
+        const d = [];
+        if (has(r - 1, c)) d.push("N");
+        if (has(r, c + 1)) d.push("E");
+        if (has(r + 1, c)) d.push("S");
+        if (has(r, c - 1)) d.push("W");
+        return d;
+      }
+
+      function renderPipes() {
+        const layer = board.querySelector("#pipes");
+        let out = "";
+        for (const k of cells) {
+          const [r, c] = k.split(",").map(Number);
+          const X = c * CELL + CELL / 2;
+          const Y = r * CELL + CELL / 2;
+          const conn = connections(r, c);
+          if (conn.length === 0) {
+            // lone segment → a node
+            out += `<circle class="pipe-node" cx="${X}" cy="${Y}" r="${STROKE * 0.6}"/>`;
+            continue;
+          }
+          // a stub from the cell centre out to each connected edge; stubs from
+          // both sides meet at the shared edge, so pipes join seamlessly
+          for (const dir of conn) {
+            let ex = X, ey = Y;
+            if (dir === "N") ey = r * CELL;
+            else if (dir === "S") ey = (r + 1) * CELL;
+            else if (dir === "E") ex = (c + 1) * CELL;
+            else if (dir === "W") ex = c * CELL;
+            out += `<path class="pipe" d="M${X} ${Y} L${ex} ${ey}" stroke-width="${STROKE}"/>`;
+          }
+        }
+        layer.innerHTML = out;
+      }
+
+      function cellFromEvent(e) {
+        const rect = board.getBoundingClientRect();
+        const scale = rect.width / W; // uniform (height:auto preserves aspect)
+        const x = (e.clientX - rect.left) / scale;
+        const y = (e.clientY - rect.top) / scale;
+        return { r: Math.floor(y / CELL), c: Math.floor(x / CELL) };
+      }
+
+      function apply(r, c) {
+        if (!inBounds(r, c)) return;
+        const k = key(r, c);
+        if (tool === "draw") {
+          if (cells.has(k)) return;
+          cells.add(k);
+        } else {
+          if (!cells.has(k)) return;
+          cells.delete(k);
+        }
+        renderPipes();
+      }
+
+      board.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        painting = true;
+        board.setPointerCapture(e.pointerId);
+        const { r, c } = cellFromEvent(e);
+        lastKey = key(r, c);
+        apply(r, c);
+      });
+      board.addEventListener("pointermove", (e) => {
+        if (!painting) return;
+        const { r, c } = cellFromEvent(e);
+        const k = key(r, c);
+        if (k === lastKey) return;
+        lastKey = k;
+        apply(r, c);
+      });
+      const stop = () => {
+        painting = false;
+        lastKey = null;
+      };
+      board.addEventListener("pointerup", stop);
+      board.addEventListener("pointercancel", stop);
+
+      // Tool toggle
+      document.querySelectorAll("[data-tool]").forEach((b) =>
+        b.addEventListener("click", () => {
+          tool = b.dataset.tool;
+          document
+            .querySelectorAll("[data-tool]")
+            .forEach((x) => x.classList.toggle("is-active", x === b));
+          board.classList.toggle("is-erasing", tool === "erase");
+        })
+      );
+
+      document.getElementById("clear").addEventListener("click", () => {
+        cells.clear();
+        renderPipes();
+      });
+
+      const play = document.getElementById("play");
+      play.addEventListener("click", () => {
+        const on = board.classList.toggle("playing");
+        play.textContent = on ? "Pause flow" : "Play flow";
+        play.setAttribute("aria-pressed", String(on));
+      });
+
+      // Keyboard: d = draw, e = erase
+      window.addEventListener("keydown", (e) => {
+        if (e.target.matches("input, textarea")) return;
+        if (e.key === "d" || e.key === "e") {
+          const b = document.querySelector(`[data-tool="${e.key === "d" ? "draw" : "erase"}"]`);
+          b && b.click();
+        }
+      });
+
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.hidden = false;
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => (toast.hidden = true), 1500);
+      }
+
+      async function copy(text, msg) {
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast(msg);
+        } catch {
+          showToast("Copy failed — clipboard blocked");
+        }
+      }
+
+      document.getElementById("copySvg").addEventListener("click", () => {
+        const pipes = board.querySelector("#pipes").innerHTML;
+        const svg =
+          `<svg xmlns="${NS}" viewBox="0 0 ${W} ${H}" fill="none">` +
+          `<style>.pipe{stroke:#1b43ff;stroke-linecap:round}.pipe-node{fill:#1b43ff}</style>` +
+          pipes +
+          `</svg>`;
+        copy(svg, "SVG copied to clipboard");
+      });
+
+      document.getElementById("copyJson").addEventListener("click", () => {
+        const data = {
+          cols: COLS,
+          rows: ROWS,
+          cells: [...cells].map((k) => k.split(",").map(Number)),
+        };
+        copy(JSON.stringify(data), "Pipe data copied to clipboard");
+      });
+
+      setupBoard();
+      renderPipes();
+    </script>
+  </body>
+</html>
