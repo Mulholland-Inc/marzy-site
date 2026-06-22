@@ -2982,7 +2982,7 @@ mz-tab-panel:not([hidden]) {
   align-items: stretch;
   width: 100%;
   background: var(--color-surface);
-  border: 1px solid var(--color-ink);
+  border: var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
@@ -3890,11 +3890,12 @@ mz-tab-panel:not([hidden]) {
   .dclean-flow {
     grid-template-columns: 1fr;
   }
+  /* stacked: pipe field becomes a horizontal band of vertical pipes between
+     the two tables */
   .dclean-pipes {
-    display: none;
-  }
-  .dclean-rows-table {
-    border-top: var(--border);
+    height: 64px;
+    border-inline: 0;
+    border-block: var(--border);
   }
   .nav-links,
   .nav-signin {

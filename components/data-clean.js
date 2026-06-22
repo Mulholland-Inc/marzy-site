@@ -54,7 +54,30 @@ class MzDataClean extends HTMLElement {
     // Build the pipe field at the grid's exact measured pixel height so the
     // viewBox is 1:1 with the element — no scaling, no distortion, no clip.
     const SPACING = 10;
+    const mql = window.matchMedia("(max-width: 900px)");
+    // Build the pipe field at exact measured px (1:1 viewBox) so it never
+    // distorts. Desktop: horizontal pipes flowing left→right between the two
+    // side-by-side tables. Mobile (stacked): a band of vertical pipes flowing
+    // top→bottom between them.
     const draw = () => {
+      if (mql.matches) {
+        const w = Math.round(pipes.getBoundingClientRect().width);
+        const h = Math.round(pipes.getBoundingClientRect().height);
+        if (!w || !h) return;
+        pipes.replaceChildren(
+          buildPipes({
+            routes: [[[w / 2, -12], [w / 2, h + 12]]],
+            width: w,
+            height: h,
+            n: Math.ceil(w / SPACING) + 3,
+            spacing: SPACING,
+            radius: 1,
+            fade: false,
+            preserve: "none",
+          })
+        );
+        return;
+      }
       const h = Math.round(grid.getBoundingClientRect().height);
       if (!h) return;
       pipes.replaceChildren(
@@ -62,8 +85,8 @@ class MzDataClean extends HTMLElement {
           routes: [[[-12, h / 2], [PIPE_W + 12, h / 2]]],
           width: PIPE_W,
           height: h,
-          // overfill so the bundle runs past the top/bottom edges (cropped),
-          // leaving no white gap above or below the field
+          // overfill so the bundle runs past the edges (cropped), leaving no
+          // white gap at the ends of the field
           n: Math.ceil(h / SPACING) + 3,
           spacing: SPACING,
           radius: 1,
@@ -76,7 +99,7 @@ class MzDataClean extends HTMLElement {
     requestAnimationFrame(draw);
     if ("ResizeObserver" in window) {
       this._ro = new ResizeObserver(draw);
-      this._ro.observe(grid);
+      this._ro.observe(this);
     }
   }
 
