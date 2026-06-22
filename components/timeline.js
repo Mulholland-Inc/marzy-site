@@ -15,7 +15,7 @@ const SPLIT = [
   ["Weeks 1–2", "You audit", "You flag what's safe to automate."],
   ["Weeks 3–4", "We automate", "Agents shipped behind your approval."],
 ];
-const GATE2 = ["Ongoing", "Margins keep improving", "Each automation compounds your savings."];
+const GATE2 = ["Ongoing", "Margins keep improving", "Each automation compounds."];
 
 function cardEl([when, title, desc], cls) {
   const d = document.createElement("div");
