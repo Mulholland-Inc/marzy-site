@@ -783,8 +783,24 @@ textarea.input {
 }
 .auth-brand {
   display: flex;
-  justify-content: center;
-  margin-bottom: var(--space-6);
+  align-items: center;
+  gap: var(--space-4);
+  /* span into the card padding so stripes reach both edges */
+  margin: 0 calc(-1 * var(--space-8)) var(--space-6);
+}
+.auth-brand .auth-mark {
+  flex: none;
+  width: 28px;
+}
+.auth-brand .brand-stripes {
+  flex: 1 1 0;
+  margin-left: 0;
+}
+.auth-brand .brand-stripes i {
+  width: auto;
+}
+.auth-brand .brand-stripes-r i {
+  border-radius: 2px 0 0 2px;
 }
 .auth-card h2 {
   font-size: var(--text-h3);

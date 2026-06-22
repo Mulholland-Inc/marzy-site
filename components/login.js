@@ -6,7 +6,7 @@ class MzLogin extends HTMLElement {
     this.classList.add("auth");
     this.innerHTML = `
       <div class="auth-card">
-        <div class="auth-brand"><span class="logo"><span class="spark" aria-hidden="true">${SPARK}</span><span>Marzy</span></span></div>
+        <div class="auth-brand"><span class="brand-stripes brand-stripes-l" aria-hidden="true"><i></i><i></i><i></i></span><span class="spark auth-mark" aria-hidden="true">${SPARK}</span><span class="brand-stripes brand-stripes-r" aria-hidden="true"><i></i><i></i><i></i></span></div>
         <h2>Sign in to Marzy</h2>
         <p class="auth-sub">Welcome back. Pick up where your workflows left off.</p>
         <form class="auth-form" onsubmit="return false">
