@@ -28,7 +28,7 @@ class MzFamilyHero extends HTMLElement {
         out.textContent = word.slice(0, ci);
         if (ci >= word.length) {
           deleting = true;
-          return setTimeout(tick, rand(2600, 3400));
+          return setTimeout(tick, rand(1200, 1700));
         }
         setTimeout(tick, rand(55, 145) + (Math.random() < 0.12 ? 230 : 0));
       } else {
@@ -42,7 +42,7 @@ class MzFamilyHero extends HTMLElement {
         setTimeout(tick, rand(38, 95));
       }
     };
-    setTimeout(tick, 2600);
+    setTimeout(tick, 1400);
   }
 }
 customElements.define("mz-family-hero", MzFamilyHero);
