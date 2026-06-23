@@ -2861,6 +2861,48 @@ mz-tab-panel:not([hidden]) {
   font-variant-numeric: tabular-nums;
 }
 
+/* let month cells shrink so chips ellipsis instead of forcing overflow */
+.cal-cell {
+  min-width: 0;
+}
+
+/* ── Calendar on mobile ── */
+@media (max-width: 640px) {
+  /* stack the header: title on top, controls wrap below */
+  .cal-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+  .cal-nav {
+    flex-wrap: wrap;
+  }
+  .cal-tz {
+    flex: 1 1 auto;
+  }
+  /* tighter month cells + smaller event chips */
+  .cal-cell {
+    min-height: 64px;
+    padding: var(--space-1);
+  }
+  .cal-weekdays span {
+    font-size: 11px;
+  }
+  /* narrower time gutter so the 7 day columns fit without horizontal scroll */
+  .cal-week-body,
+  .cal-week-head {
+    grid-template-columns: 40px repeat(7, 1fr);
+  }
+  .cal-hour {
+    font-size: 11px;
+    padding-inline: 4px;
+  }
+  .cal-wday {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
 /* ─────────────────────────────────────────── Kanban ── */
 .kanban {
   display: flex;
