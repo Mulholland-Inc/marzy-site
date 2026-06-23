@@ -24,6 +24,45 @@ export const initials = (name) =>
 
 export const byId = (id) => RECORDS.find((r) => String(r.id) === String(id));
 
+// Distinct filter options, derived from the data.
+export const ASSIGNEES = [...new Set(RECORDS.map((r) => r.assignee))];
+export const TAGS = [...new Set(RECORDS.map((r) => r.tag))];
+export const PRIORITIES = ["high", "medium", "low"];
+
+// Sortable fields the toolbar offers.
+export const SORTS = [
+  ["due", "Due date"],
+  ["priority", "Priority"],
+  ["title", "Title"],
+  ["assignee", "Assignee"],
+];
+
+const PRIO_ORDER = { high: 0, medium: 1, low: 2 };
+
+// Apply a toolbar query (search + filters + sort) to the shared records.
+// q = { search, status:[], priority:[], assignee:[], tag:[], sort, dir }
+export function queryRecords(q = {}) {
+  const { search = "", status = [], priority = [], assignee = [], tag = [], sort = null, dir = "asc" } = q;
+  const term = search.trim().toLowerCase();
+  let rs = RECORDS.filter((r) => {
+    if (term && !`${r.title} ${r.assignee} ${r.tag} ${r.status}`.toLowerCase().includes(term)) return false;
+    if (status.length && !status.includes(r.status)) return false;
+    if (priority.length && !priority.includes(r.priority)) return false;
+    if (assignee.length && !assignee.includes(r.assignee)) return false;
+    if (tag.length && !tag.includes(r.tag)) return false;
+    return true;
+  });
+  if (sort) {
+    const sign = dir === "desc" ? -1 : 1;
+    rs = [...rs].sort((a, b) => {
+      const av = sort === "priority" ? PRIO_ORDER[a.priority] : a[sort];
+      const bv = sort === "priority" ? PRIO_ORDER[b.priority] : b[sort];
+      return (av > bv ? 1 : av < bv ? -1 : 0) * sign;
+    });
+  }
+  return rs;
+}
+
 // Views dispatch this when an object is opened; mz-collection shows the detail.
 export function emitSelect(el, record) {
   el.dispatchEvent(new CustomEvent("mz-select", { detail: record, bubbles: true }));

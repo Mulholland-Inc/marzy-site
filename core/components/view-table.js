@@ -1,7 +1,5 @@
 // <mz-view-table></mz-view-table>, the table perspective — a Notion-style
-// database table: icon column headers, the row checkbox lives inside the first
-// (title) column, colored-dot category cells, a status select, light grid
-// lines, and muted "done" rows.
+// database table. Renders from this._records (set via setData), default RECORDS.
 import { RECORDS, byId, emitSelect, whoHTML } from "./data.js";
 import { icon } from "./icons.js";
 
@@ -21,6 +19,19 @@ const COLS = [
 class MzViewTable extends HTMLElement {
   connectedCallback() {
     this.classList.add("view");
+    this.addEventListener("click", (e) => {
+      if (e.target.closest("input")) return; // let checkboxes toggle
+      const tr = e.target.closest("tr[data-id]");
+      if (tr) emitSelect(this, byId(tr.dataset.id));
+    });
+    this.render();
+  }
+  setData(records) {
+    this._records = records;
+    this.render();
+  }
+  render() {
+    const recs = this._records || RECORDS;
     this.innerHTML = `<div class="table-card"><div class="table-scroll"><table class="table table-db">
       <thead><tr>
         ${COLS.map(
@@ -30,22 +41,19 @@ class MzViewTable extends HTMLElement {
               : `<th><span class="th">${icon(ic)}${label}</span></th>`
         ).join("")}
       </tr></thead>
-      <tbody>${RECORDS.map((r) => {
-        const done = r.status === "Done";
-        return `<tr data-id="${r.id}"${done ? ' class="is-muted"' : ""}>
+      <tbody>${recs
+        .map((r) => {
+          const done = r.status === "Done";
+          return `<tr data-id="${r.id}"${done ? ' class="is-muted"' : ""}>
           <td class="cell-title"><input type="checkbox" class="checkbox" aria-label="Select row"${done ? " checked" : ""} /><span class="cell-title-text">${r.title}</span></td>
           <td>${tagHTML(r.tag)}</td>
           <td>${statusHTML(r.status)}</td>
           <td>${whoHTML(r.assignee)}</td>
           <td class="cell-muted">${r.due}</td>
         </tr>`;
-      }).join("")}</tbody>
-    </table></div></div>`;
-    this.addEventListener("click", (e) => {
-      if (e.target.closest("input")) return; // let checkboxes toggle
-      const tr = e.target.closest("tr[data-id]");
-      if (tr) emitSelect(this, byId(tr.dataset.id));
-    });
+        })
+        .join("")}</tbody>
+    </table>${recs.length ? "" : '<div class="table-empty">No items match the current filters.</div>'}</div></div>`;
   }
 }
 customElements.define("mz-view-table", MzViewTable);

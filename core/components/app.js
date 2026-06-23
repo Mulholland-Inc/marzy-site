@@ -19,12 +19,6 @@ const PENCIL = icon("pencil");
 const COPY = icon("copy");
 const TRASH = icon("trash-2");
 
-const STATS = [
-  ["14", "tasks awaiting review"],
-  ["3 hrs", "avg time to filed"],
-  ["6", "connected systems"],
-  ["99.9%", "workflow uptime"],
-];
 const people = [...new Set(RECORDS.map((r) => r.assignee))];
 
 const VIEWS = [
@@ -32,9 +26,6 @@ const VIEWS = [
     id: "overview",
     label: "Overview",
     render: () => `
-      <mz-grid cols="4">
-        ${STATS.map(([v, l]) => `<mz-card><mz-stat value="${v}" label="${l}"></mz-stat></mz-card>`).join("")}
-      </mz-grid>
       <mz-grid cols="2" align="start">
         <mz-card>
           <h3>This week</h3>
@@ -44,10 +35,7 @@ const VIEWS = [
             <mz-progress value="91" label="Synced records"></mz-progress>
           </mz-stack>
         </mz-card>
-        <mz-card>
-          <h3>Recent activity</h3>
-          <mz-activity></mz-activity>
-        </mz-card>
+        <mz-activity></mz-activity>
       </mz-grid>`,
   },
   { id: "tasks", label: "Tasks", collection: { singular: "task", view: "board", views: "board,table,grid,gallery,todo,calendar" } },
