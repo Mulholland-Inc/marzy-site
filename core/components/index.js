@@ -66,6 +66,7 @@ import "./view-board.js";
 import "./view-grid.js";
 import "./view-gallery.js";
 import "./view-todo.js";
+import "./workspace.js";
 import "./collection.js";
 import "./app.js";
 import "./login.js";

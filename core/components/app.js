@@ -2,8 +2,6 @@
 // working navigation and a scrollable main area whose content switches per
 // view. Object pages render an <mz-collection> (archive + create + detail pane);
 // other pages render their own content.
-import { SPARK } from "./spark.js";
-
 const ICON = {
   overview:
     '<svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>',
@@ -121,13 +119,8 @@ class MzApp extends HTMLElement {
     ).join("");
     this.innerHTML = `
       <aside class="sidebar">
-        <div class="sidebar-brand"><span class="logo"><span class="spark" aria-hidden="true">${SPARK}</span><span>Marzy</span></span></div>
+        <mz-workspace></mz-workspace>
         <nav class="sidebar-nav" aria-label="Sidebar">${nav}</nav>
-        <div class="sidebar-spacer"></div>
-        <div class="sidebar-user">
-          <span class="sidebar-avatar" aria-hidden="true">H</span>
-          <span class="sidebar-user-meta"><b>Houdini</b><span>mulholland.inc</span></span>
-        </div>
       </aside>
       <div class="app-main">
         <div class="app-body" tabindex="-1"></div>
