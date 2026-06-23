@@ -1695,6 +1695,7 @@ button.sidebar-item {
 .checkbox {
   width: 16px;
   height: 16px;
+  margin: 0; /* drop native UA margin so it sits flush in cells/rows */
   accent-color: var(--color-volt);
   cursor: pointer;
 }
