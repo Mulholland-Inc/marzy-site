@@ -3124,7 +3124,7 @@ mz-tab-panel:not([hidden]) {
 .app-pane {
   flex: 0 0 320px;
   border-left: var(--border);
-  background: var(--color-surface);
+  background: var(--color-bg-soft);
   overflow-y: auto;
   padding: var(--space-4);
 }
