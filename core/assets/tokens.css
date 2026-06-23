@@ -122,8 +122,8 @@
   --nav-height: 72px;
 
   /* ─────────────────────────────────────────── Borders & radius ── */
-  --border: 1px solid var(--color-line);
-  --border-strong: 1px solid var(--color-line-strong);
+  --border: 2px solid var(--color-line);
+  --border-strong: 2px solid var(--color-line-strong);
   /* Radius — concentric ladder, 4px steps: control → card → panel.
      A panel (16) padded by 4 holds a control (8 + ... ) concentrically;
      the segmented control encodes it literally: 12 = 8 + 4. */

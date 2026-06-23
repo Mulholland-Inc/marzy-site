@@ -350,7 +350,7 @@ p {
 }
 
 .divider {
-  height: 1px;
+  height: 2px;
   border: 0;
   background: var(--color-line);
 }
@@ -1068,8 +1068,8 @@ button.sidebar-item {
   color: var(--color-ink);
 }
 .sidebar-item.is-active {
-  background: var(--color-volt-soft);
-  color: var(--color-volt);
+  background: var(--color-surface);
+  color: var(--color-ink);
 }
 .sidebar-spacer {
   flex: 1;
@@ -1694,12 +1694,35 @@ button.sidebar-item {
   background: var(--color-surface-2);
   color: var(--color-ink-2);
 }
+/* custom checkbox — token-driven box, border, radius; Volt when checked */
 .checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: 0 0 auto;
   width: 16px;
   height: 16px;
-  margin: 0; /* drop native UA margin so it sits flush in cells/rows */
-  accent-color: var(--color-volt);
+  margin: 0;
+  border: var(--border-strong);
+  border-radius: calc(var(--radius-sm) / 2);
+  background: var(--color-surface);
+  display: inline-grid;
+  place-content: center;
   cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease);
+}
+.checkbox:hover {
+  border-color: var(--color-ink-2);
+}
+.checkbox:checked {
+  border-color: var(--color-volt);
+  background: var(--color-volt) center / 11px no-repeat
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+}
+.checkbox:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-volt-soft);
 }
 
 /* ─────────────────────────────────────────── Table ── */
@@ -3252,7 +3275,7 @@ mz-tab-panel:not([hidden]) {
 }
 .ios-section-label {
   display: block;
-  padding: 0 var(--space-3) var(--space-2);
+  padding: 0 0 var(--space-2);
   font-size: var(--text-13);
   color: var(--color-muted);
 }
@@ -3341,7 +3364,8 @@ mz-tab-panel:not([hidden]) {
 .chain-card {
   flex: 1;
   min-width: 0;
-  background: var(--color-bg-soft);
+  background: var(--color-surface);
+  border: var(--border);
   border-radius: var(--radius-sm);
   padding: var(--space-3);
 }
