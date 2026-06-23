@@ -976,6 +976,10 @@ textarea.input {
   color: var(--color-muted);
   margin-top: var(--space-6);
 }
+.auth-google {
+  width: 100%;
+  justify-content: center;
+}
 
 /* ─────────────────────────────────────────── Sidebar (mz-app) ── */
 .sidebar {
@@ -2797,7 +2801,7 @@ mz-tab-panel:not([hidden]) {
   border-right: 0;
 }
 .table-db th {
-  background: var(--color-surface);
+  background: var(--color-bg-soft);
   color: var(--color-ink-2);
 }
 /* compact header row; label fills the cell and flex-centers — avoids the

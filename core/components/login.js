@@ -62,13 +62,15 @@ function buildSnake(W, H) {
 class MzLogin extends HTMLElement {
   connectedCallback() {
     this.classList.add("auth");
+    // where to go after a (mock) successful sign-in
+    const next = this.getAttribute("next") || "index.html";
     this.innerHTML = `
       <div class="auth-bg" aria-hidden="true"></div>
       <div class="auth-card">
         <div class="auth-brand"><span class="spark auth-mark" aria-hidden="true">${SPARK}</span></div>
         <h2>Sign in to Marzy</h2>
         <p class="auth-sub">Welcome back. Pick up where your workflows left off.</p>
-        <form class="auth-form" onsubmit="return false">
+        <form class="auth-form">
           <mz-field label="Email" type="email" placeholder="you@company.com" for="mz-email"></mz-field>
           <mz-field label="Password" type="password" placeholder="••••••••" for="mz-pass"></mz-field>
           <div class="auth-row">
@@ -78,9 +80,17 @@ class MzLogin extends HTMLElement {
           <button class="btn btn-primary" type="submit">Sign in</button>
         </form>
         <div class="auth-divider">or</div>
-        <button class="btn btn-outline" type="button" style="width:100%;justify-content:center">Continue with Google</button>
+        <button class="btn btn-outline auth-google" type="button">Continue with Google</button>
         <p class="auth-foot">New to Marzy? <a class="link" href="${ROUTES.contact || "#"}">Request access</a></p>
       </div>`;
+
+    // mock auth: any submit (or Google) proceeds to the app
+    const go = (e) => {
+      e.preventDefault();
+      window.location.href = next;
+    };
+    this.querySelector(".auth-form").addEventListener("submit", go);
+    this.querySelector(".auth-google").addEventListener("click", go);
 
     const bg = this.querySelector(".auth-bg");
     let lw = 0, lh = 0;

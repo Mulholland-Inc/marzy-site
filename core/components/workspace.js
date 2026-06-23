@@ -68,6 +68,10 @@ class MzWorkspace extends HTMLElement {
         this.render(); // rebuilds with the new active workspace, menu closed
         return;
       }
+      if (e.target.closest('[data-act="signout"]')) {
+        window.location.href = "login.html";
+        return;
+      }
       if (e.target.closest(".ws-action")) this.close();
     });
   }
