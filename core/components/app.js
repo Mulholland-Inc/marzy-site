@@ -116,7 +116,7 @@ class MzApp extends HTMLElement {
         </header>
         <div class="app-body" tabindex="-1"></div>
       </div>
-      <aside class="app-pane" aria-label="Details" hidden></aside>
+      <aside class="app-pane" aria-label="Details"></aside>
       <div class="app-scrim" hidden></div>`;
 
     this._body = this.querySelector(".app-body");
@@ -156,12 +156,11 @@ class MzApp extends HTMLElement {
     this.syncScrim();
   }
   hidePane() {
-    this._pane.hidden = true;
+    // keep the element rendered (transform handles hide) so it can slide out
     this.classList.remove("pane-open");
     this.syncScrim();
   }
   showPane() {
-    this._pane.hidden = false;
     this.classList.add("pane-open");
     this.syncScrim();
   }
@@ -200,12 +199,37 @@ class MzApp extends HTMLElement {
       </div>
 
       <div class="ios-section">
-        <span class="ios-section-label">History</span>
+        <span class="ios-section-label">Activity</span>
         <ol class="chain">
-          <li class="chain-item"><span class="chain-dot"></span><div class="chain-body"><b>Status set to ${r.status}</b><span>Marzy · 2h ago</span></div></li>
-          <li class="chain-item"><span class="chain-dot"></span><div class="chain-body"><b>Assigned to ${r.assignee}</b><span>Marzy · 1d ago</span></div></li>
-          <li class="chain-item"><span class="chain-dot"></span><div class="chain-body"><b>Priority set to ${PRIO[r.priority]}</b><span>${r.assignee} · 3d ago</span></div></li>
-          <li class="chain-item"><span class="chain-dot"></span><div class="chain-body"><b>Created</b><span>${r.assignee} · ${r.due}</span></div></li>
+          <li class="chain-item">
+            <span class="chain-dot"></span>
+            <div class="chain-card">
+              <div class="chain-card-head"><b>Status set to ${r.status}</b><time>2h ago</time></div>
+              <p>Marzy moved this ${this._singular} after the review queue cleared.</p>
+              <span class="chain-who">${whoHTML("Marzy")}</span>
+            </div>
+          </li>
+          <li class="chain-item">
+            <span class="chain-dot"></span>
+            <div class="chain-card">
+              <div class="chain-card-head"><b>Assigned to ${r.assignee}</b><time>1d ago</time></div>
+              <span class="chain-who">${whoHTML("Marzy")}</span>
+            </div>
+          </li>
+          <li class="chain-item">
+            <span class="chain-dot"></span>
+            <div class="chain-card">
+              <div class="chain-card-head"><b>Priority set to ${PRIO[r.priority]}</b><time>3d ago</time></div>
+              <span class="chain-who">${whoHTML(r.assignee)}</span>
+            </div>
+          </li>
+          <li class="chain-item">
+            <span class="chain-dot"></span>
+            <div class="chain-card">
+              <div class="chain-card-head"><b>Created</b><time>${r.due}</time></div>
+              <span class="chain-who">${whoHTML(r.assignee)}</span>
+            </div>
+          </li>
         </ol>
       </div>
 

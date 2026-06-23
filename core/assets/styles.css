@@ -1328,7 +1328,9 @@ button.sidebar-item {
 }
 .app .sidebar {
   flex: 0 0 208px;
-  border-right: var(--border);
+  /* softer: same gray as the body, no hard divider */
+  background: var(--color-bg-soft);
+  border-right: 0;
   overflow-y: auto;
 }
 .app-main {
@@ -1343,12 +1345,12 @@ button.sidebar-item {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: var(--space-4);
+  padding: var(--space-8);
   background: var(--color-paper);
   display: grid;
   /* cap the column to the available width so wide views scroll inside */
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--gap-grid);
+  gap: var(--space-6);
   align-content: start;
 }
 .app-body:focus {
@@ -1413,7 +1415,15 @@ button.sidebar-item {
   font-size: var(--text-15);
   color: var(--color-ink);
 }
+/* click-catcher behind the floating drawer (transparent on desktop, so the
+   drawer hovers without dimming; dimmed on mobile) */
 .app-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-modal) - 1);
+  background: transparent;
+}
+.app-scrim[hidden] {
   display: none;
 }
 @media (max-width: 900px) {
@@ -1448,14 +1458,7 @@ button.sidebar-item {
     transform: none;
   }
   .app-scrim {
-    display: block;
-    position: fixed;
-    inset: 0;
-    z-index: calc(var(--z-modal) - 1);
     background: rgba(11, 13, 18, 0.4);
-  }
-  .app-scrim[hidden] {
-    display: none;
   }
 }
 
@@ -2863,36 +2866,48 @@ mz-tab-panel:not([hidden]) {
 /* Notion-style database table (mz-view-table) */
 .table-db th,
 .table-db td {
+  /* uniform horizontal padding; vertical centering via fixed height */
+  height: 44px;
+  padding: 0 var(--space-3);
   border-right: var(--border);
+  vertical-align: middle;
 }
 .table-db th:last-child,
 .table-db td:last-child {
   border-right: 0;
 }
-.table-db td {
-  height: 38px;
-}
-.th-check,
-.td-check {
-  width: 44px;
-  text-align: center;
+.table-db th {
+  background: var(--color-surface);
+  color: var(--color-ink-2);
 }
 .table-db .th {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-2);
+  line-height: 1;
 }
 .table-db .th svg {
   flex: 0 0 auto;
-  width: 14px;
-  height: 14px;
-  color: var(--color-line-strong);
-}
-.table-db tr.is-muted td,
-.table-db tr.is-muted .cell-title {
+  width: 15px;
+  height: 15px;
   color: var(--color-muted);
 }
-/* select / category cell: colored dot + label */
+/* the row checkbox lives inside the first (title) column, evenly inset */
+.cell-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-ink);
+}
+.cell-title .checkbox,
+.th-first .checkbox {
+  flex: 0 0 auto;
+}
+.table-db tr.is-muted td,
+.table-db tr.is-muted .cell-title-text {
+  color: var(--color-muted);
+}
+/* select / category cell: dot + label (ink + Volt palette only) */
 .tag {
   display: inline-flex;
   align-items: center;
@@ -2906,17 +2921,17 @@ mz-tab-panel:not([hidden]) {
   border-radius: 50%;
   background: var(--color-line-strong);
 }
-.cat-finance { background: var(--color-success); }
-.cat-people { background: var(--color-warning); }
-.cat-ops { background: var(--color-volt); }
-.cat-payroll { background: var(--color-warning); }
+.cat-finance { background: var(--color-volt); }
+.cat-people { background: var(--color-ink-2); }
+.cat-ops { background: var(--color-muted); }
+.cat-payroll { background: var(--color-volt-300); }
 .cat-eng { background: var(--color-ink); }
-.cat-legal { background: var(--color-muted); }
-.cat-clinic { background: var(--color-danger); }
+.cat-legal { background: var(--color-line-strong); }
+.cat-clinic { background: var(--color-volt-700); }
 .s-backlog { background: var(--color-line-strong); }
-.s-in-progress { background: var(--color-warning); }
-.s-review { background: var(--color-volt); }
-.s-done { background: var(--color-success); }
+.s-in-progress { background: var(--color-ink-2); }
+.s-review { background: var(--color-volt-300); }
+.s-done { background: var(--color-volt); }
 
 .prio {
   display: inline-flex;
@@ -3192,17 +3207,26 @@ mz-tab-panel:not([hidden]) {
 .collection-main {
   min-width: 0;
 }
-/* Full-height detail pane on the right of the app, like the left sidebar —
-   the middle content is narrower to make room. Lives at the .app flex level. */
+/* Detail drawer: a hovering rounded pane that floats over the content on the
+   right (the content keeps its full width) and slides in when opened. */
 .app-pane {
-  flex: 0 0 320px;
-  border-left: var(--border);
-  background: var(--color-bg-soft);
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: var(--z-modal);
+  width: 360px;
+  max-width: calc(100vw - 2 * var(--space-4));
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
   overflow-y: auto;
-  padding: var(--space-4);
+  transform: translateX(calc(100% + var(--space-5)));
+  transition: transform var(--duration-slow) var(--ease);
 }
-.app-pane[hidden] {
-  display: none;
+.app.pane-open .app-pane {
+  transform: none;
 }
 
 /* Apple-style grouped lists (iOS Settings / SwiftUI insetGrouped). */
@@ -3216,8 +3240,7 @@ mz-tab-panel:not([hidden]) {
   color: var(--color-muted);
 }
 .ios-group {
-  background: var(--color-surface);
-  border: var(--border);
+  background: var(--color-bg-soft);
   border-radius: var(--radius);
   overflow: hidden;
 }
@@ -3255,26 +3278,27 @@ mz-tab-panel:not([hidden]) {
   line-height: var(--leading-relaxed);
   color: var(--color-muted);
 }
-/* audit / edit history chain (right pane) */
+/* audit / activity history: a timeline of cards (right pane) */
 .chain {
   list-style: none;
   margin: 0;
-  padding: 0 var(--space-2);
+  padding: 0;
 }
 .chain-item {
   position: relative;
   display: flex;
   gap: var(--space-3);
-  padding-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
 }
 .chain-item:last-child {
   padding-bottom: 0;
 }
+/* connecting line down the dots */
 .chain-item::before {
   content: "";
   position: absolute;
   left: 4px;
-  top: 6px;
+  top: 14px;
   bottom: -4px;
   width: 2px;
   background: var(--color-line);
@@ -3288,7 +3312,7 @@ mz-tab-panel:not([hidden]) {
   flex: 0 0 auto;
   width: 10px;
   height: 10px;
-  margin-top: 3px;
+  margin-top: 10px;
   border-radius: 50%;
   background: var(--color-surface);
   border: 2px solid var(--color-line-strong);
@@ -3297,18 +3321,39 @@ mz-tab-panel:not([hidden]) {
   background: var(--color-volt);
   border-color: var(--color-volt);
 }
-.chain-body {
+.chain-card {
+  flex: 1;
   min-width: 0;
+  background: var(--color-bg-soft);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
 }
-.chain-body b {
-  display: block;
+.chain-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.chain-card-head b {
   font-size: var(--text-13);
   font-weight: var(--weight-medium);
   color: var(--color-ink);
 }
-.chain-body span {
+.chain-card-head time {
+  flex: 0 0 auto;
   font-size: var(--text-12);
   color: var(--color-muted);
+}
+.chain-card p {
+  margin-top: 4px;
+  font-size: var(--text-12);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-2);
+}
+.chain-who {
+  display: inline-flex;
+  margin-top: var(--space-2);
+  font-size: var(--text-12);
 }
 /* detail-pane actions: ghost buttons stacked below each other, left-aligned */
 .pane-actions {
@@ -3410,15 +3455,10 @@ mz-tab-panel:not([hidden]) {
   flex-direction: column;
   gap: var(--space-4);
 }
-@media (max-width: 900px) {
-  /* the pane becomes a right-side overlay drawer on mobile */
+@media (max-width: 720px) {
+  /* fill more of the screen on small phones */
   .app-pane {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    z-index: var(--z-modal);
-    width: min(440px, 88vw);
+    width: calc(100vw - 2 * var(--space-4));
   }
 }
 

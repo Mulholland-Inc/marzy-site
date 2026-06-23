@@ -1,6 +1,7 @@
 // <mz-view-table></mz-view-table>, the table perspective — a Notion-style
-// database table: icon column headers, a leading checkbox column, colored-dot
-// category cells, a status select, light grid lines, and muted "done" rows.
+// database table: icon column headers, the row checkbox lives inside the first
+// (title) column, colored-dot category cells, a status select, light grid
+// lines, and muted "done" rows.
 import { RECORDS, byId, emitSelect, whoHTML } from "./data.js";
 import { icon } from "./icons.js";
 
@@ -22,19 +23,23 @@ class MzViewTable extends HTMLElement {
     this.classList.add("view");
     this.innerHTML = `<div class="table-card"><div class="table-scroll"><table class="table table-db">
       <thead><tr>
-        <th class="th-check"><input type="checkbox" class="checkbox" aria-label="Select all" /></th>
-        ${COLS.map(([label, ic]) => `<th><span class="th">${icon(ic)}${label}</span></th>`).join("")}
+        ${COLS.map(
+          ([label, ic], i) =>
+            i === 0
+              ? `<th><span class="th th-first"><input type="checkbox" class="checkbox" aria-label="Select all" />${icon(ic)}${label}</span></th>`
+              : `<th><span class="th">${icon(ic)}${label}</span></th>`
+        ).join("")}
       </tr></thead>
-      <tbody>${RECORDS.map(
-        (r) => `<tr data-id="${r.id}"${r.status === "Done" ? ' class="is-muted"' : ""}>
-          <td class="td-check"><input type="checkbox" class="checkbox" aria-label="Select row"${r.status === "Done" ? " checked" : ""} /></td>
-          <td class="cell-title">${r.title}</td>
+      <tbody>${RECORDS.map((r) => {
+        const done = r.status === "Done";
+        return `<tr data-id="${r.id}"${done ? ' class="is-muted"' : ""}>
+          <td class="cell-title"><input type="checkbox" class="checkbox" aria-label="Select row"${done ? " checked" : ""} /><span class="cell-title-text">${r.title}</span></td>
           <td>${tagHTML(r.tag)}</td>
           <td>${statusHTML(r.status)}</td>
           <td>${whoHTML(r.assignee)}</td>
           <td class="cell-muted">${r.due}</td>
-        </tr>`
-      ).join("")}</tbody>
+        </tr>`;
+      }).join("")}</tbody>
     </table></div></div>`;
     this.addEventListener("click", (e) => {
       if (e.target.closest("input")) return; // let checkboxes toggle
