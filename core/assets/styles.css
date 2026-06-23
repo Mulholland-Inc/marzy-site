@@ -3035,19 +3035,16 @@ mz-tab-panel:not([hidden]) {
 }
 
 /* To-do view — checklist rows. */
+/* plain list — no container; rows split by hairlines (a simple checklist) */
 .todo {
   display: flex;
   flex-direction: column;
-  background: var(--color-surface);
-  border: var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
 }
 .todo-item {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3);
+  padding: var(--space-3) 0;
   border-top: var(--border);
 }
 .todo-item:first-child {
