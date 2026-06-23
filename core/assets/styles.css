@@ -1751,6 +1751,9 @@ button.sidebar-item {
 .cell-muted {
   color: var(--color-muted);
 }
+.cell-title {
+  color: var(--color-ink);
+}
 .row-actions {
   display: flex;
   gap: var(--space-2);
@@ -2896,7 +2899,7 @@ mz-tab-panel:not([hidden]) {
 }
 .vcard-title {
   font-size: var(--text-15);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-regular);
   color: var(--color-ink);
   line-height: var(--leading-snug);
 }
@@ -2979,10 +2982,28 @@ mz-tab-panel:not([hidden]) {
   flex-wrap: wrap;
 }
 .viewseg {
+  position: relative;
   flex-wrap: wrap;
   height: auto;
 }
+/* sliding highlight behind the active view button */
+.seg-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: var(--control-h-sm);
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    left var(--duration-slow) var(--ease),
+    top var(--duration-slow) var(--ease),
+    width var(--duration-slow) var(--ease);
+}
 .seg-btn {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -2996,9 +3017,7 @@ mz-tab-panel:not([hidden]) {
   height: var(--control-h-sm);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition:
-    background var(--duration-base) var(--ease),
-    color var(--duration-base) var(--ease);
+  transition: color var(--duration-base) var(--ease);
 }
 .seg-btn svg {
   width: 14px;
@@ -3013,32 +3032,22 @@ mz-tab-panel:not([hidden]) {
   color: var(--color-ink);
 }
 .seg-btn.is-active {
-  background: var(--color-surface);
   color: var(--color-ink);
 }
-.collection-body {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-4);
-  min-width: 0;
-}
 .collection-main {
-  flex: 1 1 auto;
   min-width: 0;
 }
-/* Persistent detail sidebar: always open on the right; the main view is
-   cropped to make room. Sticks in view as the main scrolls. */
-.collection-pane {
+/* Full-height detail pane on the right of the app, like the left sidebar —
+   the middle content is narrower to make room. Lives at the .app flex level. */
+.app-pane {
   flex: 0 0 320px;
-  position: sticky;
-  top: 0;
-  align-self: flex-start;
-  max-height: calc(100dvh - 2 * var(--space-4));
-  overflow-y: auto;
+  border-left: var(--border);
   background: var(--color-surface);
-  border: var(--border);
-  border-radius: var(--radius-lg);
+  overflow-y: auto;
   padding: var(--space-5);
+}
+.app-pane[hidden] {
+  display: none;
 }
 .pane-empty {
   display: grid;
@@ -3129,15 +3138,9 @@ mz-tab-panel:not([hidden]) {
   flex-direction: column;
   gap: var(--space-4);
 }
-@media (max-width: 720px) {
-  .collection-body {
-    flex-direction: column;
-  }
-  .collection-pane {
-    position: static;
-    flex: 1 1 auto;
-    width: 100%;
-    max-height: none;
+@media (max-width: 900px) {
+  .app-pane {
+    display: none;
   }
 }
 

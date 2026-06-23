@@ -1,12 +1,8 @@
 // <mz-collection view="board" views="board,table,grid,gallery,todo,calendar"
 //                singular="task"></mz-collection>
-// The WordPress-style archive: a view-switcher over the shared data with a
-// persistent detail sidebar on the right. The main view is cropped to make
-// room. Selecting an object fills the sidebar; "New" shows a create form;
-// otherwise the sidebar shows an empty state.
-import { SPARK } from "./spark.js";
-import { STATUSES, RECORDS, PRIO, prioHTML, whoHTML } from "./data.js";
-
+// The archive: a view-switcher (with a sliding highlight) over the shared data.
+// Selecting an object emits mz-select and "New" emits mz-new; <mz-app> owns the
+// detail pane and responds to both.
 const VIEW_TAG = {
   table: "mz-view-table",
   board: "mz-view-board",
@@ -32,9 +28,6 @@ const VICON = {
   calendar: '<svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17M8 3v3M16 3v3"/></svg>',
 };
 
-const CLOSE = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>';
-const people = [...new Set(RECORDS.map((r) => r.assignee))];
-
 class MzCollection extends HTMLElement {
   connectedCallback() {
     this.classList.add("collection");
@@ -51,87 +44,52 @@ class MzCollection extends HTMLElement {
 
     this.innerHTML = `
       <div class="collection-tools">
-        <div class="seg viewseg" role="tablist">${seg}</div>
+        <div class="seg viewseg" role="tablist"><span class="seg-thumb" aria-hidden="true"></span>${seg}</div>
         <button type="button" class="btn btn-primary btn-sm collection-new">New ${this._singular}</button>
       </div>
-      <div class="collection-body">
-        <div class="collection-main"></div>
-        <aside class="collection-pane"></aside>
-      </div>`;
+      <div class="collection-main"></div>`;
 
     this._main = this.querySelector(".collection-main");
-    this._pane = this.querySelector(".collection-pane");
+    this._seg = this.querySelector(".viewseg");
+    this._thumb = this.querySelector(".seg-thumb");
 
-    this.querySelector(".viewseg").addEventListener("click", (e) => {
+    this._seg.addEventListener("click", (e) => {
       const btn = e.target.closest(".seg-btn");
       if (!btn) return;
       this._view = btn.dataset.view;
       this.querySelectorAll(".seg-btn").forEach((b) => b.classList.toggle("is-active", b === btn));
+      this.moveThumb(btn);
       this.renderView();
     });
-    this.querySelector(".collection-new").addEventListener("click", () => this.openCreate());
-    this._main.addEventListener("mz-select", (e) => this.openDetail(e.detail));
-    this._pane.addEventListener("click", (e) => {
-      if (e.target.closest(".pane-new")) return this.openCreate();
-      if (e.target.closest(".pane-close") || e.target.closest(".pane-cancel")) this.renderEmpty();
-    });
+    this.querySelector(".collection-new").addEventListener("click", () =>
+      this.dispatchEvent(new CustomEvent("mz-new", { bubbles: true }))
+    );
+
+    const settle = () => this.moveThumb(this._seg.querySelector(".seg-btn.is-active"));
+    requestAnimationFrame(settle);
+    if ("ResizeObserver" in window) {
+      this._ro = new ResizeObserver(settle);
+      this._ro.observe(this._seg);
+    }
 
     this.renderView();
-    this.renderEmpty();
+  }
+
+  disconnectedCallback() {
+    this._ro?.disconnect();
+  }
+
+  moveThumb(btn) {
+    if (!btn || !this._thumb) return;
+    this._thumb.style.left = `${btn.offsetLeft}px`;
+    this._thumb.style.top = `${btn.offsetTop}px`;
+    this._thumb.style.width = `${btn.offsetWidth}px`;
+    this._thumb.style.height = `${btn.offsetHeight}px`;
+    this._thumb.style.opacity = "1";
   }
 
   renderView() {
     this._main.innerHTML = `<${VIEW_TAG[this._view]}></${VIEW_TAG[this._view]}>`;
   }
-
-  renderEmpty() {
-    this._pane.innerHTML = `
-      <div class="pane-empty">
-        <span class="pane-empty-mark" aria-hidden="true">${SPARK}</span>
-        <p>Select a ${this._singular} to see its details, or create a new one.</p>
-        <mz-btn variant="outline" size="sm" class="pane-new">New ${this._singular}</mz-btn>
-      </div>`;
-  }
-
-  openDetail(r) {
-    this._pane.innerHTML = `
-      <div class="pane-head">
-        <span class="pane-eyebrow">${r.tag}</span>
-        <button type="button" class="pane-close" aria-label="Clear">${CLOSE}</button>
-      </div>
-      <h3 class="pane-title">${r.title}</h3>
-      <dl class="pane-fields">
-        <div class="pane-field"><dt>Status</dt><dd><span class="badge badge-neutral">${r.status}</span></dd></div>
-        <div class="pane-field"><dt>Priority</dt><dd>${prioHTML(r.priority)}</dd></div>
-        <div class="pane-field"><dt>Assignee</dt><dd>${whoHTML(r.assignee)}</dd></div>
-        <div class="pane-field"><dt>Due</dt><dd>${r.due}</dd></div>
-      </dl>
-      <p class="pane-desc">Marzy keeps the full trail for this ${this._singular}: every action, its source, and the exact change — auditable end to end.</p>
-      <div class="pane-actions">
-        <mz-btn variant="outline" size="sm">Edit</mz-btn>
-        <mz-btn variant="ghost" size="sm">Delete</mz-btn>
-      </div>`;
-  }
-
-  openCreate() {
-    this._pane.innerHTML = `
-      <div class="pane-head">
-        <span class="pane-eyebrow">New ${this._singular}</span>
-        <button type="button" class="pane-close" aria-label="Clear">${CLOSE}</button>
-      </div>
-      <form class="pane-form" onsubmit="return false">
-        <mz-field label="Title" placeholder="Untitled ${this._singular}" for="nc-title"></mz-field>
-        <mz-select label="Status">${STATUSES.map((s) => `<option>${s}</option>`).join("")}</mz-select>
-        <mz-select label="Assignee">${people.map((p) => `<option>${p}</option>`).join("")}</mz-select>
-        <mz-select label="Priority">${Object.values(PRIO).map((p) => `<option>${p}</option>`).join("")}</mz-select>
-        <mz-field label="Due date" type="date" for="nc-due"></mz-field>
-        <mz-field label="Notes" type="textarea" placeholder="Anything worth noting…" for="nc-notes"></mz-field>
-        <mz-actions align="end">
-          <mz-btn variant="ghost" class="pane-cancel">Cancel</mz-btn>
-          <mz-btn variant="primary">Create ${this._singular}</mz-btn>
-        </mz-actions>
-      </form>`;
-  }
 }
-
 customElements.define("mz-collection", MzCollection);

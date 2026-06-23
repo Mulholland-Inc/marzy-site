@@ -8,7 +8,7 @@ class MzViewTable extends HTMLElement {
       <thead><tr><th>Title</th><th>Status</th><th>Priority</th><th>Assignee</th><th>Due</th></tr></thead>
       <tbody>${RECORDS.map(
         (r) => `<tr data-id="${r.id}">
-          <td><b>${r.title}</b></td>
+          <td class="cell-title">${r.title}</td>
           <td><span class="badge badge-neutral">${r.status}</span></td>
           <td>${prioHTML(r.priority)}</td>
           <td>${whoHTML(r.assignee)}</td>
