@@ -1421,6 +1421,9 @@ button.sidebar-item {
     display: none;
   }
   .app .sidebar {
+    /* override the global `.sidebar { display:none }` from the marketing
+       responsive rules — here it's an off-canvas drawer, not hidden */
+    display: flex;
     position: fixed;
     top: 0;
     left: 0;
@@ -3181,55 +3184,6 @@ mz-tab-panel:not([hidden]) {
   font-size: var(--text-13);
   line-height: var(--leading-relaxed);
   color: var(--color-muted);
-}
-/* Detail-pane actions: separate simple buttons (plain icon, no icon container) */
-.pane-actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-.pane-action {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  width: 100%;
-  min-height: 38px;
-  padding: var(--space-2) var(--space-3);
-  background: var(--color-surface);
-  border: var(--border);
-  border-radius: var(--radius-sm);
-  font: inherit;
-  font-size: var(--text-small);
-  color: var(--color-ink);
-  text-align: left;
-  cursor: pointer;
-  transition:
-    background var(--duration-base) var(--ease),
-    border-color var(--duration-base) var(--ease);
-}
-.pane-action:hover {
-  border-color: var(--color-line-strong);
-  background: var(--color-surface-2);
-}
-.pane-action-ico {
-  flex: 0 0 auto;
-  display: inline-flex;
-  color: var(--color-volt);
-}
-.pane-action-ico svg {
-  width: var(--icon-sm);
-  height: var(--icon-sm);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.9;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.pane-action-danger {
-  color: var(--color-ink-2);
-}
-.pane-action-danger .pane-action-ico {
-  color: var(--color-ink-2);
 }
 .pane-empty {
   display: grid;
