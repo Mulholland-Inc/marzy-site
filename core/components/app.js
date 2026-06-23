@@ -194,9 +194,19 @@ class MzApp extends HTMLElement {
           <div class="ios-row"><span class="ios-row-label">Status</span><span class="ios-row-value"><span class="badge badge-neutral">${r.status}</span></span></div>
           <div class="ios-row"><span class="ios-row-label">Priority</span><span class="ios-row-value">${prioHTML(r.priority)}</span></div>
           <div class="ios-row"><span class="ios-row-label">Assignee</span><span class="ios-row-value">${whoHTML(r.assignee)}</span></div>
+          <div class="ios-row"><span class="ios-row-label">Team</span><span class="ios-row-value">${r.tag}</span></div>
           <div class="ios-row"><span class="ios-row-label">Due</span><span class="ios-row-value">${r.due}</span></div>
         </div>
-        <span class="ios-footnote">Marzy keeps the full trail for this ${this._singular}: every action, its source, and the exact change — auditable end to end.</span>
+      </div>
+
+      <div class="ios-section">
+        <span class="ios-section-label">History</span>
+        <ol class="chain">
+          <li class="chain-item"><span class="chain-dot"></span><div class="chain-body"><b>Status set to ${r.status}</b><span>Marzy · 2h ago</span></div></li>
+          <li class="chain-item"><span class="chain-dot"></span><div class="chain-body"><b>Assigned to ${r.assignee}</b><span>Marzy · 1d ago</span></div></li>
+          <li class="chain-item"><span class="chain-dot"></span><div class="chain-body"><b>Priority set to ${PRIO[r.priority]}</b><span>${r.assignee} · 3d ago</span></div></li>
+          <li class="chain-item"><span class="chain-dot"></span><div class="chain-body"><b>Created</b><span>${r.assignee} · ${r.due}</span></div></li>
+        </ol>
       </div>
 
       <div class="pane-actions">
