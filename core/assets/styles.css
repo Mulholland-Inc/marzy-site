@@ -3195,6 +3195,7 @@ mz-tab-panel:not([hidden]) {
   position: relative;
   flex-wrap: wrap;
   height: auto;
+  padding: 0; /* match the New button height (no segmented-track inset) */
 }
 /* sliding highlight behind the active view button */
 .seg-thumb {
