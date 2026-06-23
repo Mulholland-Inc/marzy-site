@@ -32,11 +32,11 @@ class MzWorkspace extends HTMLElement {
   }
 
   render() {
-    const [name, sub] = WORKSPACES[this._i];
+    const [name] = WORKSPACES[this._i];
     this.innerHTML = `
       <button type="button" class="ws-btn" aria-haspopup="true" aria-expanded="false">
         <span class="ws-av">${name.charAt(0)}</span>
-        <span class="ws-meta"><b>${name}</b><span>${USER} · ${sub}</span></span>
+        <span class="ws-meta"><b>${name}</b><span>${USER}</span></span>
         <span class="ws-caret" aria-hidden="true">${CHEVRON}</span>
       </button>
       <div class="ws-menu" hidden role="menu">
