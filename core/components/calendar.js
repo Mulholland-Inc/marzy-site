@@ -23,7 +23,7 @@ const EVENTS = [
   { id: "e8", day: 26, start: 13, end: 15, title: "Close the books", kind: "volt", assignee: "Priya Anand", tag: "Finance", priority: "high" },
 ];
 
-const HOURS = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]; // week grid range
+const HOURS = Array.from({ length: 24 }, (_, i) => i); // full day, midnight → midnight
 const HOUR_H = 48; // px per hour
 const WEEK = [21, 22, 23, 24, 25, 26, 27]; // the week containing TODAY
 
