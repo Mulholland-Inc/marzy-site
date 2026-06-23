@@ -21,6 +21,9 @@ const ICON = {
     '<svg viewBox="0 0 24 24"><path d="M3 8h12"/><circle cx="18" cy="8" r="2.4"/><path d="M21 16H9"/><circle cx="6" cy="16" r="2.4"/></svg>',
 };
 const BURGER = '<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
+const PENCIL = '<svg viewBox="0 0 24 24"><path d="M5 19h3l9-9-3-3-9 9z"/><path d="m14 6 3 3"/></svg>';
+const COPY = '<svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V5a1 1 0 0 1 1-1h11"/></svg>';
+const TRASH = '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg>';
 
 const STATS = [
   ["14", "tasks awaiting review"],
@@ -202,11 +205,11 @@ class MzApp extends HTMLElement {
         <span class="ios-footnote">Marzy keeps the full trail for this ${this._singular}: every action, its source, and the exact change — auditable end to end.</span>
       </div>
 
-      <mz-actions>
-        <mz-btn variant="ghost" size="sm">Edit ${this._singular}</mz-btn>
-        <mz-btn variant="ghost" size="sm">Duplicate</mz-btn>
-        <mz-btn variant="ghost" size="sm">Delete</mz-btn>
-      </mz-actions>`;
+      <div class="pane-actions">
+        <mz-btn variant="ghost" size="sm">${PENCIL}Edit ${this._singular}</mz-btn>
+        <mz-btn variant="ghost" size="sm">${COPY}Duplicate</mz-btn>
+        <mz-btn variant="ghost" size="sm">${TRASH}Delete</mz-btn>
+      </div>`;
     this.showPane();
   }
 

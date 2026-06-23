@@ -399,6 +399,17 @@ p {
 .btn:active {
   transform: translateY(1px);
 }
+/* leading icon inside a button */
+.btn > svg {
+  flex: 0 0 auto;
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 .btn-primary {
   background: var(--color-volt);
   color: #fff;
@@ -3184,6 +3195,17 @@ mz-tab-panel:not([hidden]) {
   font-size: var(--text-13);
   line-height: var(--leading-relaxed);
   color: var(--color-muted);
+}
+/* detail-pane actions: ghost buttons stacked below each other, left-aligned */
+.pane-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-1);
+}
+.pane-actions .btn {
+  width: 100%;
+  justify-content: flex-start;
 }
 .pane-empty {
   display: grid;
