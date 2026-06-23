@@ -1362,7 +1362,7 @@ button.sidebar-item {
   display: grid;
   /* cap the column to the available width so wide views scroll inside */
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-5);
+  gap: var(--space-3);
   align-content: start;
 }
 .app-body:focus {
