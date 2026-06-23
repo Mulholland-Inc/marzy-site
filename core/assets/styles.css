@@ -1346,7 +1346,8 @@ button.sidebar-item {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: var(--space-4);
+  /* extra room above the page title; tighter on the sides/bottom */
+  padding: var(--space-8) var(--space-4) var(--space-4);
   background: var(--color-paper);
   display: grid;
   /* cap the column to the available width so wide views scroll inside */
@@ -2863,6 +2864,12 @@ mz-tab-panel:not([hidden]) {
 .view {
   display: block;
   min-width: 0;
+}
+
+/* clickable view items get a pointer cursor on hover */
+.table-db tbody tr,
+.gal-item {
+  cursor: pointer;
 }
 
 /* Notion-style database table (mz-view-table) */
