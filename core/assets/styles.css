@@ -2671,18 +2671,138 @@ mz-tab-panel:not([hidden]) {
   color: var(--color-ink);
 }
 .cal-event {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  width: 100%;
+  font: inherit;
   font-size: var(--text-12);
   padding: 2px 6px;
+  border: 0;
   border-radius: 6px;
   background: var(--color-volt-soft);
   color: var(--color-volt);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: left;
+  cursor: pointer;
 }
 .cal-event.muted {
   background: var(--color-surface-2);
   color: var(--color-ink-2);
+}
+.cal-event-time {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+}
+
+/* ── Calendar: Month/Week toggle + week time-grid ── */
+.cal-modes {
+  height: var(--control-h-sm);
+}
+.cal-modes .seg-btn {
+  height: var(--control-h-sm);
+}
+.cal-week {
+  display: flex;
+  flex-direction: column;
+  max-height: 640px;
+}
+.cal-week-head {
+  display: grid;
+  grid-template-columns: 56px repeat(7, 1fr);
+  border-bottom: var(--border);
+}
+.cal-week-gutter {
+  border-right: var(--border);
+}
+.cal-wday {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  padding: var(--space-2) 0;
+  border-right: var(--border);
+  font-size: var(--text-12);
+  color: var(--color-muted);
+}
+.cal-wday:last-child {
+  border-right: 0;
+}
+.cal-wday b {
+  font-family: var(--font-display);
+  font-size: var(--text-15);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+.cal-wday.today b {
+  color: var(--color-volt);
+}
+.cal-week-body {
+  display: grid;
+  grid-template-columns: 56px repeat(7, 1fr);
+  overflow-y: auto;
+}
+.cal-week-times {
+  display: flex;
+  flex-direction: column;
+  border-right: var(--border);
+}
+.cal-hour {
+  height: var(--hour-h);
+  padding: 2px var(--space-2) 0;
+  text-align: right;
+  font-size: var(--text-12);
+  color: var(--color-muted);
+  transform: translateY(-7px); /* sit the label on the hour line */
+}
+.cal-col {
+  position: relative;
+  border-right: var(--border);
+}
+.cal-col:last-child {
+  border-right: 0;
+}
+.cal-slot {
+  height: var(--hour-h);
+  border-bottom: var(--border);
+}
+.cal-block {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow: hidden;
+  padding: 4px 6px;
+  border: 0;
+  border-left: 2px solid var(--color-volt);
+  border-radius: 5px;
+  background: var(--color-volt-soft);
+  color: var(--color-volt);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.cal-block-muted {
+  border-left-color: var(--color-line-strong);
+  background: var(--color-surface-2);
+  color: var(--color-ink-2);
+}
+.cal-block-title {
+  font-size: var(--text-12);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cal-block-time {
+  font-size: 11px;
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ─────────────────────────────────────────── Kanban ── */
