@@ -3158,8 +3158,8 @@ mz-tab-panel:not([hidden]) {
 }
 .cn-logo {
   flex: 0 0 auto;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
 }
 /* monogram fallback (only if a logo fails to load) */
@@ -3182,6 +3182,7 @@ mz-tab-panel:not([hidden]) {
   font-size: var(--text-15);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-tight);
+  line-height: 1.2;
   color: var(--color-ink);
 }
 .cn-desc {
@@ -3189,11 +3190,15 @@ mz-tab-panel:not([hidden]) {
   font-size: var(--text-13);
   line-height: var(--leading-snug);
   color: var(--color-muted);
+  /* single line so every card is the same height and gaps stay uniform */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .cn-action {
   flex: 0 0 auto;
-  /* match the logo height so the card's gaps are uniform on all sides */
-  height: var(--control-h);
+  /* same height as the logo so the card's gaps are uniform on all sides */
+  height: var(--control-h-sm);
   padding: 0 var(--space-4);
 }
 
