@@ -393,6 +393,7 @@ p {
     transform var(--duration-fast) var(--ease),
     background var(--duration-fast) var(--ease),
     border-color var(--duration-fast) var(--ease),
+    box-shadow var(--duration-fast) var(--ease),
     color var(--duration-fast) var(--ease);
   white-space: nowrap;
 }
@@ -413,17 +414,21 @@ p {
 .btn-primary {
   background: var(--color-volt);
   color: #fff;
+  box-shadow: var(--shadow-sm);
 }
 .btn-primary:hover {
   background: var(--color-volt-700);
+  box-shadow: var(--shadow-md);
 }
 .btn-outline {
-  background: transparent;
+  background: var(--color-surface);
   color: var(--color-ink);
   border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-xs);
 }
 .btn-outline:hover {
   border-color: var(--color-ink);
+  box-shadow: var(--shadow-sm);
 }
 .btn-ghost {
   background: transparent;
@@ -852,6 +857,7 @@ p {
   background: var(--color-surface);
   border: var(--border-strong);
   border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-xs);
   height: var(--control-h);
   padding: 0 var(--control-px);
   transition:
@@ -1125,11 +1131,13 @@ button.sidebar-item {
   background: var(--color-surface);
   border: var(--border);
   border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
   text-align: left;
   cursor: pointer;
   transition:
     background var(--duration-base) var(--ease),
-    border-color var(--duration-base) var(--ease);
+    border-color var(--duration-base) var(--ease),
+    box-shadow var(--duration-base) var(--ease);
 }
 .ws-btn:hover {
   background: var(--color-bg-soft);
@@ -1191,6 +1199,7 @@ button.sidebar-item {
   background: var(--color-surface);
   border: var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
   padding: var(--space-2);
 }
 .ws-menu[hidden] {
@@ -3264,6 +3273,7 @@ mz-tab-panel:not([hidden]) {
   background: var(--color-surface);
   border: var(--border);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   padding: var(--space-5);
   overflow-y: auto;
   transform: translateX(calc(100% + var(--space-5)));
@@ -3451,6 +3461,21 @@ mz-tab-panel:not([hidden]) {
 .pane-eyebrow {
   font-size: var(--text-12);
   color: var(--color-muted);
+}
+.pane-tools {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+/* borderless icon actions in the drawer header */
+.pane-tools .btn-icon {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+.pane-tools .btn-icon:hover {
+  background: var(--color-bg-soft);
+  border-color: transparent;
+  color: var(--color-ink);
 }
 .pane-close {
   display: grid;

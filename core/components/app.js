@@ -184,7 +184,14 @@ class MzApp extends HTMLElement {
 
   openDetail(r) {
     this._pane.innerHTML = `
-      <div class="pane-head"><span class="pane-eyebrow">${r.tag}</span></div>
+      <div class="pane-head">
+        <span class="pane-eyebrow">${r.tag}</span>
+        <div class="pane-tools">
+          <button type="button" class="btn-icon" title="Edit ${this._singular}" aria-label="Edit">${PENCIL}</button>
+          <button type="button" class="btn-icon" title="Duplicate" aria-label="Duplicate">${COPY}</button>
+          <button type="button" class="btn-icon" title="Delete" aria-label="Delete">${TRASH}</button>
+        </div>
+      </div>
       <h3 class="pane-title">${r.title}</h3>
 
       <div class="ios-section">
@@ -242,12 +249,6 @@ class MzApp extends HTMLElement {
             </div>
           </li>
         </ol>
-      </div>
-
-      <div class="pane-actions">
-        <mz-btn variant="ghost" size="sm">${PENCIL}Edit ${this._singular}</mz-btn>
-        <mz-btn variant="ghost" size="sm">${COPY}Duplicate</mz-btn>
-        <mz-btn variant="ghost" size="sm">${TRASH}Delete</mz-btn>
       </div>`;
     this.showPane();
   }
