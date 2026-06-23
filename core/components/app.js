@@ -3,27 +3,21 @@
 // only when an object is open. On mobile the sidebar becomes a hamburger drawer
 // and the pane becomes an overlay. Object pages render an <mz-collection>; the
 // app owns the pane and fills it from collections' mz-select / mz-new events.
-import { SPARK } from "./spark.js";
 import { STATUSES, RECORDS, PRIO, prioHTML, whoHTML } from "./data.js";
+import { icon } from "./icons.js";
 
 const ICON = {
-  overview:
-    '<svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>',
-  tasks:
-    '<svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="5" height="15" rx="1.2"/><rect x="9.75" y="4.5" width="5" height="10" rx="1.2"/><rect x="16" y="4.5" width="5" height="13" rx="1.2"/></svg>',
-  projects:
-    '<svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>',
-  inbox:
-    '<svg viewBox="0 0 24 24"><path d="M3.5 13 6 5.5h12L20.5 13v5.5a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1z"/><path d="M3.5 13H8l1.5 2.5h5L16 13h4.5"/></svg>',
-  calendar:
-    '<svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17M8 3v3M16 3v3"/></svg>',
-  settings:
-    '<svg viewBox="0 0 24 24"><path d="M3 8h12"/><circle cx="18" cy="8" r="2.4"/><path d="M21 16H9"/><circle cx="6" cy="16" r="2.4"/></svg>',
+  overview: icon("layout-dashboard"),
+  tasks: icon("square-kanban"),
+  projects: icon("layout-grid"),
+  inbox: icon("inbox"),
+  calendar: icon("calendar"),
+  settings: icon("settings"),
 };
-const BURGER = '<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
-const PENCIL = '<svg viewBox="0 0 24 24"><path d="M5 19h3l9-9-3-3-9 9z"/><path d="m14 6 3 3"/></svg>';
-const COPY = '<svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V5a1 1 0 0 1 1-1h11"/></svg>';
-const TRASH = '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg>';
+const BURGER = icon("menu");
+const PENCIL = icon("pencil");
+const COPY = icon("copy");
+const TRASH = icon("trash-2");
 
 const STATS = [
   ["14", "tasks awaiting review"],

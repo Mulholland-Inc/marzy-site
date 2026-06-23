@@ -3,6 +3,8 @@
 // The archive: a view-switcher (with a sliding highlight) over the shared data.
 // Selecting an object emits mz-select and "New" emits mz-new; <mz-app> owns the
 // detail pane and responds to both.
+import { icon } from "./icons.js";
+
 const VIEW_TAG = {
   table: "mz-view-table",
   board: "mz-view-board",
@@ -20,12 +22,12 @@ const VIEW_LABEL = {
   calendar: "Calendar",
 };
 const VICON = {
-  table: '<svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 9.5h17M3.5 14h17M9 9.5V19"/></svg>',
-  board: '<svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="5" height="15" rx="1.2"/><rect x="9.75" y="4.5" width="5" height="10" rx="1.2"/><rect x="16" y="4.5" width="5" height="13" rx="1.2"/></svg>',
-  grid: '<svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>',
-  gallery: '<svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="m4 17 5-4 4 3 3-2.5 4 3.5"/></svg>',
-  todo: '<svg viewBox="0 0 24 24"><path d="M4 6.5 6 8.5 9.5 5"/><path d="M4 13.5 6 15.5 9.5 12"/><path d="M13 7h7M13 14h7"/></svg>',
-  calendar: '<svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17M8 3v3M16 3v3"/></svg>',
+  table: icon("table"),
+  board: icon("square-kanban"),
+  grid: icon("layout-grid"),
+  gallery: icon("image"),
+  todo: icon("list-todo"),
+  calendar: icon("calendar"),
 };
 
 class MzCollection extends HTMLElement {
