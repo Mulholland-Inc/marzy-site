@@ -2604,6 +2604,7 @@ mz-tab-panel:not([hidden]) {
   gap: var(--space-4);
   /* compact header; small left inset before the month, nav stays in the corner */
   padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  background: var(--color-bg-soft);
   border-bottom: var(--border);
 }
 .cal-title {
