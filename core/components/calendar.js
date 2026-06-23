@@ -144,6 +144,12 @@ class MzCalendar extends HTMLElement {
         ? `${new Date(YEAR, MONTH, WEEK[0]).toLocaleString("en-US", { month: "long" })} ${WEEK[0]}–${WEEK[6]}, ${YEAR}`
         : `${new Date(YEAR, MONTH, 1).toLocaleString("en-US", { month: "long" })} ${YEAR}`;
     this._body.innerHTML = this._mode === "week" ? this.week() : this.month();
+    if (this._mode === "week") {
+      // keep the day headers aligned with the body's horizontal scroll (mobile)
+      const sb = this._body.querySelector(".cal-week-body");
+      const sh = this._body.querySelector(".cal-week-head");
+      if (sb && sh) sb.addEventListener("scroll", () => (sh.scrollLeft = sb.scrollLeft));
+    }
   }
 
   month() {

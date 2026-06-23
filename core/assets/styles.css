@@ -2888,10 +2888,16 @@ mz-tab-panel:not([hidden]) {
   .cal-weekdays span {
     font-size: 11px;
   }
-  /* narrower time gutter so the 7 day columns fit without horizontal scroll */
+  /* fixed, readable columns + horizontal scroll (headers mirror the body via JS) */
   .cal-week-body,
   .cal-week-head {
-    grid-template-columns: 40px repeat(7, 1fr);
+    grid-template-columns: 44px repeat(7, 96px);
+  }
+  .cal-week-body {
+    overflow-x: auto;
+  }
+  .cal-week-head {
+    overflow-x: hidden;
   }
   .cal-hour {
     font-size: 11px;
