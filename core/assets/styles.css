@@ -1376,14 +1376,53 @@ button.sidebar-item {
   padding-block: var(--space-2) var(--space-4);
   padding-inline-start: var(--space-2);
 }
-.app-head-title {
+/* breadcrumb: workspace › current view (with icon) */
+.crumbs {
   display: inline-flex;
   align-items: center;
+  gap: var(--space-2);
   font-family: var(--font-display);
-  font-weight: var(--weight-semibold);
-  font-size: var(--text-28);
-  letter-spacing: var(--tracking-heading);
+  font-size: var(--text-16);
+  letter-spacing: var(--tracking-tight);
+}
+.crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.crumb-muted {
+  color: var(--color-muted);
+  font-weight: var(--weight-medium);
+}
+.crumb-current {
   color: var(--color-ink);
+  font-weight: var(--weight-semibold);
+}
+.crumb-ico {
+  display: inline-flex;
+  color: var(--color-muted);
+}
+.crumb-ico svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.crumb-sep {
+  display: inline-flex;
+  color: var(--color-line-strong);
+}
+.crumb-sep svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .app-head-icon {
   display: inline-flex;

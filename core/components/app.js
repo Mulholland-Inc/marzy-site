@@ -172,7 +172,11 @@ class MzApp extends HTMLElement {
     const view = VIEWS.find((v) => v.id === id) || VIEWS[0];
     this._barTitle.textContent = view.label;
     const head = `<header class="app-head">
-        <span class="app-head-title">${view.label}</span>
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <span class="crumb crumb-muted">Mulholland</span>
+          <span class="crumb-sep" aria-hidden="true">${icon("chevron-right")}</span>
+          <span class="crumb crumb-current"><span class="crumb-ico" aria-hidden="true">${ICON[view.id]}</span>${view.label}</span>
+        </nav>
       </header>`;
     this._singular = view.collection ? view.collection.singular : "item";
     this._body.innerHTML = view.collection
@@ -195,7 +199,6 @@ class MzApp extends HTMLElement {
       <h3 class="pane-title">${r.title}</h3>
 
       <div class="ios-section">
-        <span class="ios-section-label">Details</span>
         <div class="ios-group">
           <div class="ios-row"><span class="ios-row-label">Status</span><span class="ios-row-value"><span class="badge badge-neutral">${r.status}</span></span></div>
           <div class="ios-row"><span class="ios-row-label">Priority</span><span class="ios-row-value">${prioHTML(r.priority)}</span></div>
@@ -206,7 +209,6 @@ class MzApp extends HTMLElement {
       </div>
 
       <div class="ios-section">
-        <span class="ios-section-label">Activity</span>
         <ol class="chain">
           <li class="chain-item">
             <span class="chain-dot"></span>
