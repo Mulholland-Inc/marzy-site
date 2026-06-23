@@ -3162,10 +3162,6 @@ mz-tab-panel:not([hidden]) {
   height: 40px;
   object-fit: contain;
 }
-/* the Simple Icons marks are black — fade to a muted gray */
-img.cn-logo {
-  opacity: 0.5;
-}
 /* monogram fallback (only if a logo fails to load) */
 .cn-mono {
   display: grid;
