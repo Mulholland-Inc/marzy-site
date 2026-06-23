@@ -206,12 +206,10 @@ class MzApp extends HTMLElement {
         <span class="ios-footnote">Marzy keeps the full trail for this ${this._singular}: every action, its source, and the exact change — auditable end to end.</span>
       </div>
 
-      <div class="ios-section">
-        <div class="ios-group">
-          <button type="button" class="ios-row ios-link"><span class="ios-ico">${PENCIL}</span><span class="ios-link-label">Edit ${this._singular}</span><span class="ios-chev" aria-hidden="true">${CHEV}</span></button>
-          <button type="button" class="ios-row ios-link"><span class="ios-ico">${COPY}</span><span class="ios-link-label">Duplicate</span><span class="ios-chev" aria-hidden="true">${CHEV}</span></button>
-          <button type="button" class="ios-row ios-link ios-danger"><span class="ios-ico">${TRASH}</span><span class="ios-link-label">Delete</span><span class="ios-chev" aria-hidden="true">${CHEV}</span></button>
-        </div>
+      <div class="pane-actions">
+        <button type="button" class="pane-action"><span class="pane-action-ico" aria-hidden="true">${PENCIL}</span>Edit ${this._singular}</button>
+        <button type="button" class="pane-action"><span class="pane-action-ico" aria-hidden="true">${COPY}</span>Duplicate</button>
+        <button type="button" class="pane-action pane-action-danger"><span class="pane-action-ico" aria-hidden="true">${TRASH}</span>Delete</button>
       </div>`;
     this.showPane();
   }

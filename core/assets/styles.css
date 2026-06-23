@@ -3182,59 +3182,53 @@ mz-tab-panel:not([hidden]) {
   line-height: var(--leading-relaxed);
   color: var(--color-muted);
 }
-/* iOS Settings-style tappable rows: tinted icon, label, trailing chevron */
-.ios-link {
-  justify-content: flex-start;
-  gap: var(--space-3);
+/* Detail-pane actions: separate simple buttons (plain icon, no icon container) */
+.pane-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.pane-action {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 38px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: var(--text-small);
+  color: var(--color-ink);
+  text-align: left;
   cursor: pointer;
-  transition: background var(--duration-base) var(--ease);
+  transition:
+    background var(--duration-base) var(--ease),
+    border-color var(--duration-base) var(--ease);
 }
-.ios-link:hover {
-  background: var(--color-bg-soft);
+.pane-action:hover {
+  border-color: var(--color-line-strong);
+  background: var(--color-surface-2);
 }
-.ios-ico {
+.pane-action-ico {
   flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
-  background: var(--color-volt-soft);
+  display: inline-flex;
   color: var(--color-volt);
 }
-.ios-ico svg {
-  width: 15px;
-  height: 15px;
+.pane-action-ico svg {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
   fill: none;
   stroke: currentColor;
   stroke-width: 1.9;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.ios-link-label {
-  flex: 1;
-  min-width: 0;
-  color: var(--color-ink);
-}
-.ios-chev {
-  flex: 0 0 auto;
-  display: inline-flex;
-  color: var(--color-line-strong);
-}
-.ios-chev svg {
-  width: var(--icon-sm);
-  height: var(--icon-sm);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.ios-danger .ios-ico {
-  background: var(--color-surface-2);
+.pane-action-danger {
   color: var(--color-ink-2);
 }
-.ios-danger .ios-link-label {
+.pane-action-danger .pane-action-ico {
   color: var(--color-ink-2);
 }
 .pane-empty {
