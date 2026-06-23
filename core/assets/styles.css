@@ -2862,13 +2862,25 @@ mz-tab-panel:not([hidden]) {
   flex: 1 1 auto;
   min-width: 0;
 }
+/* Detail / create drawer: slides in from the right edge, over the content. */
 .collection-pane {
-  flex: 0 0 320px;
-  align-self: stretch;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: var(--z-modal);
+  width: 380px;
+  max-width: 92vw;
+  height: 100vh;
+  height: 100dvh;
   background: var(--color-surface);
-  border: var(--border);
-  border-radius: var(--radius-lg);
+  border-left: var(--border);
   padding: var(--space-5);
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform var(--duration-slow) var(--ease);
+}
+.collection-pane.is-open {
+  transform: none;
 }
 .pane-head {
   display: flex;
@@ -2949,12 +2961,9 @@ mz-tab-panel:not([hidden]) {
   gap: var(--space-4);
 }
 @media (max-width: 720px) {
-  .collection-body {
-    flex-direction: column;
-  }
   .collection-pane {
-    flex: 1 1 auto;
     width: 100%;
+    max-width: 100%;
   }
 }
 

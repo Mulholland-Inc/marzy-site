@@ -54,8 +54,8 @@ class MzCollection extends HTMLElement {
       </div>
       <div class="collection-body">
         <div class="collection-main"></div>
-        <aside class="collection-pane" hidden></aside>
-      </div>`;
+      </div>
+      <aside class="collection-pane" aria-hidden="true"></aside>`;
 
     this._main = this.querySelector(".collection-main");
     this._pane = this.querySelector(".collection-pane");
@@ -73,8 +73,21 @@ class MzCollection extends HTMLElement {
     this._pane.addEventListener("click", (e) => {
       if (e.target.closest(".pane-close") || e.target.closest(".pane-cancel")) this.closePane();
     });
+    this._onKey = (e) => {
+      if (e.key === "Escape") this.closePane();
+    };
+    document.addEventListener("keydown", this._onKey);
 
     this.renderView();
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener("keydown", this._onKey);
+  }
+
+  openPane() {
+    this._pane.classList.add("is-open");
+    this._pane.setAttribute("aria-hidden", "false");
   }
 
   renderView() {
@@ -99,7 +112,7 @@ class MzCollection extends HTMLElement {
         <mz-btn variant="outline" size="sm">Edit</mz-btn>
         <mz-btn variant="ghost" size="sm">Delete</mz-btn>
       </div>`;
-    this._pane.hidden = false;
+    this.openPane();
   }
 
   openCreate() {
@@ -120,12 +133,12 @@ class MzCollection extends HTMLElement {
           <mz-btn variant="primary">Create ${this._singular}</mz-btn>
         </mz-actions>
       </form>`;
-    this._pane.hidden = false;
+    this.openPane();
   }
 
   closePane() {
-    this._pane.hidden = true;
-    this._pane.innerHTML = "";
+    this._pane.classList.remove("is-open");
+    this._pane.setAttribute("aria-hidden", "true");
   }
 }
 customElements.define("mz-collection", MzCollection);
