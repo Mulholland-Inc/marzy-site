@@ -172,7 +172,7 @@ class MzApp extends HTMLElement {
     const view = VIEWS.find((v) => v.id === id) || VIEWS[0];
     this._barTitle.textContent = view.label;
     const head = `<header class="app-head">
-        <span class="app-head-title"><span class="app-head-icon" aria-hidden="true">${ICON[view.id]}</span>${view.label}</span>
+        <span class="app-head-title">${view.label}</span>
       </header>`;
     this._singular = view.collection ? view.collection.singular : "item";
     this._body.innerHTML = view.collection

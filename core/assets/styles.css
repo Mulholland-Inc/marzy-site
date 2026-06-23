@@ -1358,21 +1358,22 @@ button.sidebar-item {
 .app-body:focus {
   outline: none;
 }
-/* per-view header: icon + title on the left, action on the right */
+/* per-view header: the page title, with vertical breathing room */
 .app-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
+  padding-block: var(--space-2) var(--space-4);
+  padding-inline-start: var(--space-2);
 }
 .app-head-title {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
   font-family: var(--font-display);
   font-weight: var(--weight-semibold);
-  font-size: var(--text-18);
-  letter-spacing: var(--tracking-tight);
+  font-size: var(--text-28);
+  letter-spacing: var(--tracking-heading);
   color: var(--color-ink);
 }
 .app-head-icon {
@@ -3195,7 +3196,9 @@ mz-tab-panel:not([hidden]) {
   position: relative;
   flex-wrap: wrap;
   height: auto;
-  padding: 0; /* match the New button height (no segmented-track inset) */
+  /* keep the segmented-track inset, but with shorter buttons the whole control
+     is still 32px tall (24 + 2*4) — matching the New button */
+  padding: var(--space-1);
 }
 /* sliding highlight behind the active view button */
 .seg-thumb {
@@ -3225,7 +3228,7 @@ mz-tab-panel:not([hidden]) {
   font-weight: var(--weight-medium);
   color: var(--color-muted);
   padding: 0 var(--space-3);
-  height: var(--control-h-sm);
+  height: 24px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: color var(--duration-base) var(--ease);
