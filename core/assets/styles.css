@@ -418,7 +418,7 @@ p {
 }
 .btn-primary:hover {
   background: var(--color-volt-700);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 .btn-outline {
   background: var(--color-surface);
@@ -1199,7 +1199,7 @@ button.sidebar-item {
   background: var(--color-surface);
   border: var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   padding: var(--space-2);
 }
 .ws-menu[hidden] {
@@ -3273,7 +3273,7 @@ mz-tab-panel:not([hidden]) {
   background: var(--color-surface);
   border: var(--border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-sm);
   padding: var(--space-5);
   overflow-y: auto;
   transform: translateX(calc(100% + var(--space-5)));
