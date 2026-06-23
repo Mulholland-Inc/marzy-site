@@ -122,6 +122,59 @@
         <mz-dashboard></mz-dashboard>
       </section>
 
+      <!-- ═════════════════════ Workspace app (dashboard system) ═════════════════════ -->
+      <section class="preview">
+        <div class="preview-cap"><b>Workspace app</b><span>full-screen shell · mz-app</span></div>
+        <mz-card>
+          <mz-spark></mz-spark>
+          <h3>Full dashboard</h3>
+          <p>The complete app shell, composed from the components below: workspace switcher, sidebar nav, breadcrumb, collection views, and the detail drawer. It runs full-screen, so open it on its own.</p>
+          <mz-actions><mz-btn variant="primary" href="../dashboard/index.html" arrow>Open the dashboard</mz-btn></mz-actions>
+        </mz-card>
+      </section>
+
+      <section class="preview">
+        <div class="preview-cap"><b>Workspace switcher</b><span>mz-workspace · Slack-style dropdown</span></div>
+        <div style="max-width: 240px; padding: var(--space-3); background: var(--color-bg-soft); border-radius: var(--radius-lg)">
+          <mz-workspace></mz-workspace>
+        </div>
+      </section>
+
+      <section class="preview">
+        <div class="preview-cap"><b>Collection</b><span>mz-collection · view switcher + toolbar over one dataset</span></div>
+        <mz-collection singular="task" view="board" views="board,table,grid,gallery,todo,calendar"></mz-collection>
+      </section>
+
+      <section class="preview">
+        <div class="preview-cap"><b>View toolbar</b><span>mz-toolbar · search · filter · sort · display · export</span></div>
+        <mz-toolbar></mz-toolbar>
+      </section>
+
+      <section class="preview">
+        <div class="preview-cap"><b>Table view</b><span>mz-view-table</span></div>
+        <mz-view-table></mz-view-table>
+      </section>
+
+      <section class="preview">
+        <div class="preview-cap"><b>Board view</b><span>mz-view-board · Trello-style columns</span></div>
+        <mz-view-board></mz-view-board>
+      </section>
+
+      <section class="preview">
+        <div class="preview-cap"><b>Grid view</b><span>mz-view-grid</span></div>
+        <mz-view-grid></mz-view-grid>
+      </section>
+
+      <section class="preview">
+        <div class="preview-cap"><b>Gallery view</b><span>mz-view-gallery</span></div>
+        <mz-view-gallery></mz-view-gallery>
+      </section>
+
+      <section class="preview">
+        <div class="preview-cap"><b>To-do view</b><span>mz-view-todo</span></div>
+        <mz-view-todo></mz-view-todo>
+      </section>
+
       <!-- ───────────────────── Environment: data table ───────────────────── -->
       <section class="preview">
         <div class="preview-cap"><b>Data table</b><span>search · filter · sort · select · paginate</span></div>
@@ -130,7 +183,7 @@
 
       <!-- ───────────────────── Recent activity ───────────────────── -->
       <section class="preview">
-        <div class="preview-cap"><b>Recent activity</b><span>feed</span></div>
+        <div class="preview-cap"><b>Activity timeline</b><span>mz-activity · actor · action · detail · time</span></div>
         <mz-activity></mz-activity>
       </section>
 
@@ -442,6 +495,39 @@
       <section class="preview">
         <div class="preview-cap"><b>Contract</b><span>agreement template</span></div>
         <mz-contract></mz-contract>
+      </section>
+
+      <!-- ───────────────────── Badges ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Badges</b><span>status pills</span></div>
+        <div class="specimen-row">
+          <mz-badge variant="neutral">Neutral</mz-badge>
+          <mz-badge variant="info">Info</mz-badge>
+          <mz-badge variant="success">Success</mz-badge>
+          <mz-badge variant="warning">Warning</mz-badge>
+          <mz-badge variant="danger">Danger</mz-badge>
+        </div>
+      </section>
+
+      <!-- ───────────────────── Stats ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Stats</b><span>mz-stat · metric figures</span></div>
+        <mz-grid cols="4">
+          <mz-card><mz-stat value="40+" label="connected systems"></mz-stat></mz-card>
+          <mz-card><mz-stat value="3 hrs" label="avg inbox to filed"></mz-stat></mz-card>
+          <mz-card><mz-stat value="99.9%" label="workflow uptime"></mz-stat></mz-card>
+          <mz-card><mz-stat value="100%" label="actions audited"></mz-stat></mz-card>
+        </mz-grid>
+      </section>
+
+      <!-- ───────────────────── Blog / post card ───────────────────── -->
+      <section class="preview">
+        <div class="preview-cap"><b>Post card</b><span>mz-post-card · blog archive block</span></div>
+        <mz-grid cols="3">
+          <mz-post-card href="#" date="June 18, 2026 · 6 min read" title="Putting the back office on autopilot">Hand the routine to an agent, and let people decide only what needs deciding.</mz-post-card>
+          <mz-post-card href="#" date="June 9, 2026 · 5 min read" title="The audit trail that pays for itself">Why we attach reasoning to every action.</mz-post-card>
+          <mz-post-card href="#" date="May 27, 2026 · 4 min read" title="Why we clean your data first">AI breaks on the back office it inherits.</mz-post-card>
+        </mz-grid>
       </section>
 
       <!-- ───────────────────── Footer ───────────────────── -->
