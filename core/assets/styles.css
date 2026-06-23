@@ -1186,7 +1186,7 @@ button.sidebar-item {
   display: none;
 }
 .ws-menu-head {
-  padding: var(--space-1) var(--space-2) var(--space-2);
+  padding: 2px var(--space-2) var(--space-1);
   font-size: var(--text-12);
   color: var(--color-muted);
 }
@@ -1245,9 +1245,11 @@ button.sidebar-item {
   margin: var(--space-1) 0;
 }
 .ws-action {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   width: 100%;
-  padding: var(--space-2);
+  padding: 5px var(--space-2);
   border: 0;
   background: none;
   border-radius: var(--radius-sm);
@@ -1261,6 +1263,20 @@ button.sidebar-item {
 .ws-action:hover {
   background: var(--color-bg-soft);
   color: var(--color-ink);
+}
+.ws-action-ico {
+  flex: 0 0 auto;
+  display: inline-flex;
+  color: var(--color-muted);
+}
+.ws-action-ico svg {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .appshell-main {
@@ -1357,8 +1373,74 @@ button.sidebar-item {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+/* Mobile top bar + scrim (desktop: hidden) */
+.app-bar {
+  display: none;
+}
+.app-burger {
+  display: grid;
+  place-items: center;
+  width: var(--control-h-sm);
+  height: var(--control-h-sm);
+  border: 0;
+  background: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+.app-burger svg {
+  width: var(--icon);
+  height: var(--icon);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.app-bar-title {
+  font-family: var(--font-display);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-15);
+  color: var(--color-ink);
+}
+.app-scrim {
+  display: none;
+}
 @media (max-width: 900px) {
+  .app-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 0 0 auto;
+    height: 52px;
+    padding: 0 var(--space-3);
+    border-bottom: var(--border);
+    background: var(--color-surface);
+  }
+  /* the bar carries the page title on mobile */
+  .app-head {
+    display: none;
+  }
   .app .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: var(--z-modal);
+    width: 264px;
+    transform: translateX(-100%);
+    transition: transform var(--duration-slow) var(--ease);
+  }
+  .app.nav-open .sidebar {
+    transform: none;
+  }
+  .app-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-modal) - 1);
+    background: rgba(11, 13, 18, 0.4);
+  }
+  .app-scrim[hidden] {
     display: none;
   }
 }
@@ -3042,12 +3124,73 @@ mz-tab-panel:not([hidden]) {
 .app-pane {
   flex: 0 0 320px;
   border-left: var(--border);
-  background: var(--color-surface);
+  background: var(--color-bg-soft);
   overflow-y: auto;
   padding: var(--space-5);
 }
 .app-pane[hidden] {
   display: none;
+}
+
+/* Apple-style grouped lists (iOS Settings / SwiftUI insetGrouped). */
+.ios-section {
+  margin-bottom: var(--space-5);
+}
+.ios-section-label {
+  display: block;
+  padding: 0 var(--space-3) var(--space-2);
+  font-size: var(--text-13);
+  color: var(--color-muted);
+}
+.ios-group {
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.ios-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  width: 100%;
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  border-top: var(--border);
+  background: none;
+  font: inherit;
+  font-size: var(--text-small);
+  color: var(--color-ink);
+  text-align: left;
+}
+.ios-row:first-child {
+  border-top: 0;
+}
+.ios-row-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-muted);
+}
+.ios-footnote {
+  display: block;
+  padding: var(--space-2) var(--space-3) 0;
+  font-size: var(--text-13);
+  line-height: var(--leading-relaxed);
+  color: var(--color-muted);
+}
+.ios-action {
+  justify-content: flex-start;
+  color: var(--color-volt);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  transition: background var(--duration-base) var(--ease);
+}
+.ios-action:hover {
+  background: var(--color-bg-soft);
+}
+.ios-action-muted {
+  color: var(--color-ink-2);
 }
 .pane-empty {
   display: grid;
@@ -3139,8 +3282,14 @@ mz-tab-panel:not([hidden]) {
   gap: var(--space-4);
 }
 @media (max-width: 900px) {
+  /* the pane becomes a right-side overlay drawer on mobile */
   .app-pane {
-    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: var(--z-modal);
+    width: min(440px, 88vw);
   }
 }
 

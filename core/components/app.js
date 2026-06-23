@@ -1,7 +1,8 @@
-// <mz-app></mz-app>, a full-screen dashboard application: a fixed left sidebar,
-// a scrollable main area, and a full-height detail pane on the right (shown for
-// object/collection pages). Object pages render an <mz-collection>; the app owns
-// the right pane and fills it from the collection's mz-select / mz-new events.
+// <mz-app></mz-app>, a full-screen dashboard application: a left sidebar, a
+// scrollable main area, and a full-height detail pane on the right that appears
+// only when an object is open. On mobile the sidebar becomes a hamburger drawer
+// and the pane becomes an overlay. Object pages render an <mz-collection>; the
+// app owns the pane and fills it from collections' mz-select / mz-new events.
 import { SPARK } from "./spark.js";
 import { STATUSES, RECORDS, PRIO, prioHTML, whoHTML } from "./data.js";
 
@@ -19,7 +20,7 @@ const ICON = {
   settings:
     '<svg viewBox="0 0 24 24"><path d="M3 8h12"/><circle cx="18" cy="8" r="2.4"/><path d="M21 16H9"/><circle cx="6" cy="16" r="2.4"/></svg>',
 };
-const CLOSE = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+const BURGER = '<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
 
 const STATS = [
   ["14", "tasks awaiting review"],
@@ -112,86 +113,108 @@ class MzApp extends HTMLElement {
         <nav class="sidebar-nav" aria-label="Sidebar">${nav}</nav>
       </aside>
       <div class="app-main">
+        <header class="app-bar">
+          <button type="button" class="app-burger" aria-label="Menu">${BURGER}</button>
+          <span class="app-bar-title"></span>
+        </header>
         <div class="app-body" tabindex="-1"></div>
       </div>
-      <aside class="app-pane" aria-label="Details" hidden></aside>`;
+      <aside class="app-pane" aria-label="Details" hidden></aside>
+      <div class="app-scrim" hidden></div>`;
 
     this._body = this.querySelector(".app-body");
     this._nav = this.querySelector(".sidebar-nav");
     this._pane = this.querySelector(".app-pane");
+    this._scrim = this.querySelector(".app-scrim");
+    this._barTitle = this.querySelector(".app-bar-title");
 
     this._nav.addEventListener("click", (e) => {
       const btn = e.target.closest(".sidebar-item");
       if (!btn) return;
       this._nav.querySelectorAll(".sidebar-item").forEach((b) => b.classList.toggle("is-active", b === btn));
+      this.closeNav();
       this.show(btn.dataset.view);
+    });
+    this.querySelector(".app-burger").addEventListener("click", () => this.toggleNav());
+    this._scrim.addEventListener("click", () => {
+      this.closeNav();
+      this.hidePane();
     });
     // collections + views bubble these up to the app, which owns the pane
     this.addEventListener("mz-select", (e) => this.openDetail(e.detail));
     this.addEventListener("mz-new", () => this.openCreate());
     this._pane.addEventListener("click", (e) => {
-      if (e.target.closest(".pane-new")) return this.openCreate();
-      if (e.target.closest(".pane-close") || e.target.closest(".pane-cancel")) this.renderEmpty();
+      if (e.target.closest(".pane-cancel")) this.hidePane();
     });
 
     this.show(VIEWS[0].id);
   }
 
+  toggleNav() {
+    this.classList.toggle("nav-open");
+    this.syncScrim();
+  }
+  closeNav() {
+    this.classList.remove("nav-open");
+    this.syncScrim();
+  }
+  hidePane() {
+    this._pane.hidden = true;
+    this.classList.remove("pane-open");
+    this.syncScrim();
+  }
+  showPane() {
+    this._pane.hidden = false;
+    this.classList.add("pane-open");
+    this.syncScrim();
+  }
+  syncScrim() {
+    this._scrim.hidden = !(this.classList.contains("nav-open") || this.classList.contains("pane-open"));
+  }
+
   show(id) {
     const view = VIEWS.find((v) => v.id === id) || VIEWS[0];
+    this._barTitle.textContent = view.label;
     const head = `<header class="app-head">
         <span class="app-head-title"><span class="app-head-icon" aria-hidden="true">${ICON[view.id]}</span>${view.label}</span>
       </header>`;
-    if (view.collection) {
-      this._singular = view.collection.singular;
-      this._body.innerHTML = head + `<mz-collection singular="${view.collection.singular}" view="${view.collection.view}" views="${view.collection.views}"></mz-collection>`;
-      this._pane.hidden = false;
-      this.renderEmpty();
-    } else {
-      this._body.innerHTML = head + view.render();
-      this._pane.hidden = true;
-      this._pane.innerHTML = "";
-    }
+    this._singular = view.collection ? view.collection.singular : "item";
+    this._body.innerHTML = view.collection
+      ? head + `<mz-collection singular="${view.collection.singular}" view="${view.collection.view}" views="${view.collection.views}"></mz-collection>`
+      : head + view.render();
     this._body.scrollTop = 0;
-  }
-
-  renderEmpty() {
-    this._pane.innerHTML = `
-      <div class="pane-empty">
-        <span class="pane-empty-mark" aria-hidden="true">${SPARK}</span>
-        <p>Select a ${this._singular} to see its details, or create a new one.</p>
-        <mz-btn variant="outline" size="sm" class="pane-new">New ${this._singular}</mz-btn>
-      </div>`;
+    this.hidePane(); // nothing open yet
   }
 
   openDetail(r) {
-    this._pane.hidden = false;
     this._pane.innerHTML = `
-      <div class="pane-head">
-        <span class="pane-eyebrow">${r.tag}</span>
-        <button type="button" class="pane-close" aria-label="Clear">${CLOSE}</button>
-      </div>
+      <div class="pane-head"><span class="pane-eyebrow">${r.tag}</span></div>
       <h3 class="pane-title">${r.title}</h3>
-      <dl class="pane-fields">
-        <div class="pane-field"><dt>Status</dt><dd><span class="badge badge-neutral">${r.status}</span></dd></div>
-        <div class="pane-field"><dt>Priority</dt><dd>${prioHTML(r.priority)}</dd></div>
-        <div class="pane-field"><dt>Assignee</dt><dd>${whoHTML(r.assignee)}</dd></div>
-        <div class="pane-field"><dt>Due</dt><dd>${r.due}</dd></div>
-      </dl>
-      <p class="pane-desc">Marzy keeps the full trail for this ${this._singular}: every action, its source, and the exact change — auditable end to end.</p>
-      <div class="pane-actions">
-        <mz-btn variant="outline" size="sm">Edit</mz-btn>
-        <mz-btn variant="ghost" size="sm">Delete</mz-btn>
+
+      <div class="ios-section">
+        <span class="ios-section-label">Details</span>
+        <div class="ios-group">
+          <div class="ios-row"><span class="ios-row-label">Status</span><span class="ios-row-value"><span class="badge badge-neutral">${r.status}</span></span></div>
+          <div class="ios-row"><span class="ios-row-label">Priority</span><span class="ios-row-value">${prioHTML(r.priority)}</span></div>
+          <div class="ios-row"><span class="ios-row-label">Assignee</span><span class="ios-row-value">${whoHTML(r.assignee)}</span></div>
+          <div class="ios-row"><span class="ios-row-label">Due</span><span class="ios-row-value">${r.due}</span></div>
+        </div>
+        <span class="ios-footnote">Marzy keeps the full trail for this ${this._singular}: every action, its source, and the exact change — auditable end to end.</span>
+      </div>
+
+      <div class="ios-section">
+        <div class="ios-group">
+          <button type="button" class="ios-row ios-action">Edit ${this._singular}</button>
+          <button type="button" class="ios-row ios-action">Duplicate</button>
+          <button type="button" class="ios-row ios-action ios-action-muted">Delete</button>
+        </div>
       </div>`;
+    this.showPane();
   }
 
   openCreate() {
-    this._pane.hidden = false;
     this._pane.innerHTML = `
-      <div class="pane-head">
-        <span class="pane-eyebrow">New ${this._singular}</span>
-        <button type="button" class="pane-close" aria-label="Clear">${CLOSE}</button>
-      </div>
+      <div class="pane-head"><span class="pane-eyebrow">New ${this._singular}</span></div>
       <form class="pane-form" onsubmit="return false">
         <mz-field label="Title" placeholder="Untitled ${this._singular}" for="nc-title"></mz-field>
         <mz-select label="Status">${STATUSES.map((s) => `<option>${s}</option>`).join("")}</mz-select>
@@ -204,6 +227,7 @@ class MzApp extends HTMLElement {
           <mz-btn variant="primary">Create ${this._singular}</mz-btn>
         </mz-actions>
       </form>`;
+    this.showPane();
   }
 }
 customElements.define("mz-app", MzApp);

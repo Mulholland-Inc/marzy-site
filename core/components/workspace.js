@@ -3,6 +3,8 @@
 // switch workspaces.
 const CHEVRON = '<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>';
 const CHECK = '<svg viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg>';
+const ADD = '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>';
+const SIGNOUT = '<svg viewBox="0 0 24 24"><path d="M15 4h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3"/><path d="M10 8l-4 4 4 4M6 12h10"/></svg>';
 
 const WORKSPACES = [
   ["Mulholland", "mulholland.inc"],
@@ -50,8 +52,8 @@ class MzWorkspace extends HTMLElement {
             </button>`
         ).join("")}
         <div class="ws-menu-div"></div>
-        <button type="button" class="ws-action" data-act="add">Add a workspace</button>
-        <button type="button" class="ws-action" data-act="signout">Sign out</button>
+        <button type="button" class="ws-action" data-act="add"><span class="ws-action-ico" aria-hidden="true">${ADD}</span>Add a workspace</button>
+        <button type="button" class="ws-action" data-act="signout"><span class="ws-action-ico" aria-hidden="true">${SIGNOUT}</span>Sign out</button>
       </div>`;
 
     this._btn = this.querySelector(".ws-btn");
