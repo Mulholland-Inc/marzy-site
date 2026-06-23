@@ -12,6 +12,7 @@ const ICON = {
   projects: icon("layout-grid"),
   inbox: icon("inbox"),
   calendar: icon("calendar"),
+  connectors: icon("plug"),
   settings: icon("settings"),
 };
 const BURGER = icon("menu");
@@ -42,6 +43,7 @@ const VIEWS = [
   { id: "projects", label: "Projects", collection: { singular: "project", view: "grid", views: "grid,gallery,table,board" } },
   { id: "inbox", label: "Inbox", collection: { singular: "item", view: "todo", views: "todo,table" } },
   { id: "calendar", label: "Calendar", render: () => `<mz-calendar></mz-calendar>` },
+  { id: "connectors", label: "Connectors", render: () => `<mz-connectors></mz-connectors>` },
   {
     id: "settings",
     label: "Settings",

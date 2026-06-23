@@ -36,6 +36,7 @@ const P = {
   "arrow-up-down": '<path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/>',
   "sliders-horizontal": '<path d="M10 5H3"/><path d="M21 5h-7"/><path d="M14 5a2 2 0 1 0 4 0 2 2 0 1 0-4 0"/><path d="M7 12H3"/><path d="M21 12h-11"/><path d="M7 12a2 2 0 1 0 4 0 2 2 0 1 0-4 0"/><path d="M14 19H3"/><path d="M21 19h-7"/><path d="M14 19a2 2 0 1 0 4 0 2 2 0 1 0-4 0"/>',
   download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>',
+  plug: '<path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/>',
   x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
   "chevron-down": '<path d="m6 9 6 6 6-6"/>',
   "chevron-right": '<path d="m9 18 6-6-6-6"/>',

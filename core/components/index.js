@@ -67,6 +67,7 @@ import "./view-todo.js";
 import "./workspace.js";
 import "./toolbar.js";
 import "./collection.js";
+import "./connectors.js";
 import "./app.js";
 import "./login.js";
 
