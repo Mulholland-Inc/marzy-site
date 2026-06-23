@@ -1345,7 +1345,7 @@ button.sidebar-item {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: var(--space-8);
+  padding: var(--space-6);
   background: var(--color-paper);
   display: grid;
   /* cap the column to the available width so wide views scroll inside */
