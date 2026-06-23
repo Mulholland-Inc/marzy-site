@@ -24,7 +24,7 @@ const EVENTS = [
 ];
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i); // full day, midnight → midnight
-const HOUR_H = 34; // px per hour (compact)
+const HOUR_H = 48; // px per hour (fits a title + time in a 1h block)
 const WEEK = [21, 22, 23, 24, 25, 26, 27]; // the week containing TODAY
 
 const pad = (n) => String(n).padStart(2, "0");
