@@ -1346,8 +1346,8 @@ button.sidebar-item {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  /* extra room above the page title; tighter on the sides/bottom */
-  padding: var(--space-8) var(--space-4) var(--space-4);
+  /* extra room above the page title; tight to the sidebar on the left */
+  padding: var(--space-8) var(--space-4) var(--space-4) var(--space-2);
   background: var(--color-paper);
   display: grid;
   /* cap the column to the available width so wide views scroll inside */
@@ -3181,7 +3181,7 @@ mz-tab-panel:not([hidden]) {
 .collection {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-3);
   min-width: 0;
 }
 .collection-tools {
@@ -3339,7 +3339,7 @@ mz-tab-panel:not([hidden]) {
   content: "";
   position: absolute;
   left: 4px;
-  top: 16px;
+  top: 18px;
   bottom: -2px;
   width: 2px;
   background: var(--color-line);
@@ -3353,7 +3353,7 @@ mz-tab-panel:not([hidden]) {
   flex: 0 0 auto;
   width: 10px;
   height: 10px;
-  margin-top: 3px;
+  margin-top: 5px;
   border-radius: 50%;
   background: var(--color-surface);
   border: 2px solid var(--color-line-strong);
