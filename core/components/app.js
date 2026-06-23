@@ -203,31 +203,42 @@ class MzApp extends HTMLElement {
         <ol class="chain">
           <li class="chain-item">
             <span class="chain-dot"></span>
-            <div class="chain-card">
-              <div class="chain-card-head"><b>Status set to ${r.status}</b><time>2h ago</time></div>
-              <p>Marzy moved this ${this._singular} after the review queue cleared.</p>
-              <span class="chain-who">${whoHTML("Marzy")}</span>
+            <div class="chain-content">
+              <div class="chain-head"><b>Status changed</b><time>2h ago</time></div>
+              <div class="chain-card">
+                <span class="chain-diff"><span class="chain-from">In progress</span>→<span class="chain-to">${r.status}</span></span>
+                <span class="chain-who">${whoHTML("Marzy")}</span>
+              </div>
             </div>
           </li>
           <li class="chain-item">
             <span class="chain-dot"></span>
-            <div class="chain-card">
-              <div class="chain-card-head"><b>Assigned to ${r.assignee}</b><time>1d ago</time></div>
-              <span class="chain-who">${whoHTML("Marzy")}</span>
+            <div class="chain-content">
+              <div class="chain-head"><b>Assignee changed</b><time>1d ago</time></div>
+              <div class="chain-card">
+                <span class="chain-diff"><span class="chain-from">Unassigned</span>→<span class="chain-to">${r.assignee}</span></span>
+                <span class="chain-who">${whoHTML("Marzy")}</span>
+              </div>
             </div>
           </li>
           <li class="chain-item">
             <span class="chain-dot"></span>
-            <div class="chain-card">
-              <div class="chain-card-head"><b>Priority set to ${PRIO[r.priority]}</b><time>3d ago</time></div>
-              <span class="chain-who">${whoHTML(r.assignee)}</span>
+            <div class="chain-content">
+              <div class="chain-head"><b>Priority changed</b><time>3d ago</time></div>
+              <div class="chain-card">
+                <span class="chain-diff"><span class="chain-from">Low</span>→<span class="chain-to">${PRIO[r.priority]}</span></span>
+                <span class="chain-who">${whoHTML(r.assignee)}</span>
+              </div>
             </div>
           </li>
           <li class="chain-item">
             <span class="chain-dot"></span>
-            <div class="chain-card">
-              <div class="chain-card-head"><b>Created</b><time>${r.due}</time></div>
-              <span class="chain-who">${whoHTML(r.assignee)}</span>
+            <div class="chain-content">
+              <div class="chain-head"><b>Created</b><time>${r.due}</time></div>
+              <div class="chain-card">
+                <span class="chain-diff">${r.title}</span>
+                <span class="chain-who">${whoHTML(r.assignee)}</span>
+              </div>
             </div>
           </li>
         </ol>

@@ -350,7 +350,7 @@ p {
 }
 
 .divider {
-  height: 2px;
+  height: 1px;
   border: 0;
   background: var(--color-line);
 }
@@ -3280,7 +3280,8 @@ mz-tab-panel:not([hidden]) {
   color: var(--color-muted);
 }
 .ios-group {
-  background: var(--color-bg-soft);
+  background: var(--color-surface);
+  border: var(--border);
   border-radius: var(--radius);
   overflow: hidden;
 }
@@ -3318,7 +3319,8 @@ mz-tab-panel:not([hidden]) {
   line-height: var(--leading-relaxed);
   color: var(--color-muted);
 }
-/* audit / activity history: a timeline of cards (right pane) */
+/* audit / activity history: a timeline (dot + connecting line) where each entry
+   has a black title + date above a card holding the change (diff) and the actor */
 .chain {
   list-style: none;
   margin: 0;
@@ -3328,18 +3330,17 @@ mz-tab-panel:not([hidden]) {
   position: relative;
   display: flex;
   gap: var(--space-3);
-  padding-bottom: var(--space-3);
+  padding-bottom: var(--space-4);
 }
 .chain-item:last-child {
   padding-bottom: 0;
 }
-/* connecting line down the dots */
 .chain-item::before {
   content: "";
   position: absolute;
   left: 4px;
-  top: 14px;
-  bottom: -4px;
+  top: 16px;
+  bottom: -2px;
   width: 2px;
   background: var(--color-line);
 }
@@ -3352,7 +3353,7 @@ mz-tab-panel:not([hidden]) {
   flex: 0 0 auto;
   width: 10px;
   height: 10px;
-  margin-top: 10px;
+  margin-top: 3px;
   border-radius: 50%;
   background: var(--color-surface);
   border: 2px solid var(--color-line-strong);
@@ -3361,39 +3362,57 @@ mz-tab-panel:not([hidden]) {
   background: var(--color-volt);
   border-color: var(--color-volt);
 }
-.chain-card {
+.chain-content {
   flex: 1;
   min-width: 0;
-  background: var(--color-surface);
-  border: var(--border);
-  border-radius: var(--radius-sm);
-  padding: var(--space-3);
 }
-.chain-card-head {
+.chain-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-3);
+  margin-bottom: var(--space-2);
 }
-.chain-card-head b {
+.chain-head b {
   font-size: var(--text-13);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-semibold);
   color: var(--color-ink);
 }
-.chain-card-head time {
+.chain-head time {
   flex: 0 0 auto;
   font-size: var(--text-12);
   color: var(--color-muted);
 }
-.chain-card p {
-  margin-top: 4px;
-  font-size: var(--text-12);
-  line-height: var(--leading-relaxed);
-  color: var(--color-ink-2);
+.chain-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+}
+.chain-diff {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  font-size: var(--text-13);
+  color: var(--color-muted);
+}
+.chain-from {
+  color: var(--color-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--color-line-strong);
+}
+.chain-to {
+  color: var(--color-ink);
+  font-weight: var(--weight-medium);
 }
 .chain-who {
+  flex: 0 0 auto;
   display: inline-flex;
-  margin-top: var(--space-2);
   font-size: var(--text-12);
 }
 /* detail-pane actions: ghost buttons stacked below each other, left-aligned */
