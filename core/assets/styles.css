@@ -1355,8 +1355,9 @@ button.sidebar-item {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  /* extra room above the page title; tight to the sidebar on the left */
-  padding: var(--space-8) var(--space-4) var(--space-4) var(--space-2);
+  /* top matches the sidebar inset so the breadcrumb lines up with the
+     workspace card; tight to the sidebar on the left */
+  padding: var(--space-3) var(--space-4) var(--space-4) var(--space-2);
   background: var(--color-paper);
   display: grid;
   /* cap the column to the available width so wide views scroll inside */
@@ -1373,7 +1374,10 @@ button.sidebar-item {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  padding-block: var(--space-2) var(--space-4);
+  /* zero block padding + min-height so the breadcrumb band centers on the
+     workspace card across the gutter */
+  padding-block: 0;
+  min-height: 48px;
   padding-inline-start: var(--space-2);
 }
 /* breadcrumb: workspace › current view (with icon) */
@@ -2757,15 +2761,15 @@ mz-tab-panel:not([hidden]) {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  /* Extra left padding before the month title; nav button keeps its symmetric
-     inset from the top/right corner. */
-  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-5);
+  /* compact header; small left inset before the month, nav stays in the corner */
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
   border-bottom: var(--border);
 }
 .cal-title {
   font-family: var(--font-display);
-  font-size: var(--text-20);
+  font-size: var(--text-16);
   font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
   color: var(--color-ink);
 }
 .cal-nav {
@@ -3070,19 +3074,25 @@ mz-tab-panel:not([hidden]) {
 /* Board view (Trello-style) — columns scroll horizontally inside the page. */
 .board {
   display: flex;
-  gap: var(--space-3);
+  gap: 0;
   overflow-x: auto;
   padding-bottom: var(--space-2);
 }
+/* columns are separated by hairline dividers, no container/fill */
 .board-col {
-  flex: 0 0 260px;
+  flex: 0 0 248px;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-3);
-  background: var(--color-bg-soft);
-  border: var(--border);
-  border-radius: var(--radius);
+  padding: 0 var(--space-4);
+  border-left: var(--border);
+}
+.board-col:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.board-col:last-child {
+  padding-right: 0;
 }
 .board-col-head {
   display: flex;
