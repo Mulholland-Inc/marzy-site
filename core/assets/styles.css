@@ -2807,6 +2807,26 @@ mz-tab-panel:not([hidden]) {
 .cal-slot:last-child {
   border-bottom: 0;
 }
+/* live current-time line in the today column */
+.cal-now {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 2px solid var(--color-volt);
+  z-index: 2;
+  pointer-events: none;
+}
+.cal-now::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: -4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-volt);
+}
 .cal-block {
   position: absolute;
   left: 3px;

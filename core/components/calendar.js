@@ -105,6 +105,27 @@ class MzCalendar extends HTMLElement {
 
     this.renderBody();
     requestAnimationFrame(() => this.moveThumb());
+
+    // live "now" line — nudge it every 30s
+    this._clock = setInterval(() => this.updateNow(), 30000);
+  }
+
+  disconnectedCallback() {
+    clearInterval(this._clock);
+  }
+
+  // current wall-clock time-of-day (in the selected tz) as decimal hours
+  nowHours() {
+    const now = new Date();
+    const utc = now.getUTCHours() + now.getUTCMinutes() / 60;
+    return (((utc + this._tz) % 24) + 24) % 24;
+  }
+  nowTop() {
+    return (this.nowHours() - HOURS[0]) * HOUR_H;
+  }
+  updateNow() {
+    const el = this.querySelector(".cal-now");
+    if (el) el.style.top = `${this.nowTop()}px`;
   }
 
   moveThumb() {
@@ -169,7 +190,8 @@ class MzCalendar extends HTMLElement {
           </button>`;
         })
         .join("");
-      return `<div class="cal-col">${slots}${blocks}</div>`;
+      const now = d === TODAY ? `<div class="cal-now" style="top:${this.nowTop()}px"></div>` : "";
+      return `<div class="cal-col">${slots}${blocks}${now}</div>`;
     }).join("");
     return `
       <div class="cal-week">
