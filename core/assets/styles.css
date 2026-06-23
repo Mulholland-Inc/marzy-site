@@ -886,6 +886,8 @@ textarea.input {
   position: relative;
   display: grid;
   place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
   padding: clamp(32px, 6vw, 72px) var(--gutter);
   background: var(--color-bg-soft);
   overflow: hidden;
