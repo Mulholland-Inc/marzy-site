@@ -59,8 +59,6 @@ import "./empty.js";
 import "./doc.js";
 import "./footer.js";
 import "./topnav.js";
-import "./sidebar.js";
-import "./dashboard.js";
 import "./view-table.js";
 import "./view-board.js";
 import "./view-grid.js";

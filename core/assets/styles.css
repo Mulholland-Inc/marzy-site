@@ -58,8 +58,6 @@ mz-lead,
 mz-meta,
 mz-field,
 mz-login,
-mz-sidebar,
-mz-appshell,
 mz-table,
 mz-tabs,
 mz-tab-panel,
@@ -89,7 +87,6 @@ mz-topnav,
 mz-family-hero,
 mz-thread,
 mz-portal-preview,
-mz-dashboard,
 mz-data-control,
 mz-timeline,
 mz-embed-table,
@@ -980,56 +977,13 @@ textarea.input {
   margin-top: var(--space-6);
 }
 
-/* ─────────────────────────────────────────── App shell + sidebar ── */
-.appshell {
-  display: grid;
-  grid-template-columns: 256px 1fr;
-  min-height: 540px;
-  background: var(--color-surface);
-  border: var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
+/* ─────────────────────────────────────────── Sidebar (mz-app) ── */
 .sidebar {
   display: flex;
   flex-direction: column;
   padding: var(--space-4);
   background: var(--color-surface);
   border-right: var(--border);
-}
-.sidebar-brand {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-1) var(--space-2) var(--space-3);
-}
-.sidebar-brand .logo {
-  font-size: var(--text-18);
-}
-/* black mark in the sidebar — stripes carry the Volt accent instead */
-.sidebar-brand .logo .spark {
-  color: var(--color-ink);
-}
-/* three horizontal Volt stripes, flush to the sidebar's left edge */
-.brand-stripes {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 3px;
-  /* pull through the brand + sidebar padding so bars meet the card edge */
-  margin-left: calc(-1 * (var(--space-4) + var(--space-2)));
-}
-.brand-stripes i {
-  width: 16px;
-  height: 3px;
-  border-radius: 0 2px 2px 0;
-  background: var(--color-volt);
-}
-.sidebar-section {
-  margin: var(--space-3) 0 var(--space-1);
-  padding-inline: var(--space-3);
-  font-size: var(--text-12);
-  font-weight: var(--weight-semibold);
-  color: var(--color-muted);
 }
 .sidebar-nav {
   display: flex;
@@ -1076,44 +1030,6 @@ button.sidebar-item {
 .sidebar-item.is-active {
   background: var(--color-surface);
   color: var(--color-ink);
-}
-.sidebar-spacer {
-  flex: 1;
-}
-.sidebar-user {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border-radius: var(--radius-sm);
-  border: var(--border);
-  background: var(--color-surface);
-}
-.sidebar-avatar {
-  flex: 0 0 auto;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--color-volt);
-  color: #fff;
-  display: grid;
-  place-items: center;
-  font-size: var(--text-13);
-  font-weight: var(--weight-semibold);
-}
-.sidebar-user-meta {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.25;
-}
-.sidebar-user-meta b {
-  font-size: var(--text-small);
-  font-weight: var(--weight-semibold);
-  color: var(--color-ink);
-}
-.sidebar-user-meta span {
-  font-size: var(--text-12);
-  color: var(--color-muted);
 }
 
 /* ─────────────────────────────────────────── Workspace switcher (mz-workspace) ── */
@@ -1297,34 +1213,6 @@ button.sidebar-item {
   stroke-width: 1.9;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-
-.appshell-main {
-  display: flex;
-  flex-direction: column;
-}
-.appshell-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  /* Symmetric inset (matches the body's padding) so the corner action sits
-     equidistant from the top and right edges. */
-  padding: var(--space-4);
-  border-bottom: var(--border);
-}
-.appshell-title {
-  font-family: var(--font-display);
-  font-weight: var(--weight-semibold);
-  font-size: var(--text-18);
-  color: var(--color-ink);
-}
-.appshell-body {
-  flex: 1;
-  padding: var(--space-5);
-  display: grid;
-  gap: var(--space-5);
-  align-content: start;
-  background: var(--color-paper);
 }
 
 /* ─────────────────────────────────────────── Full-screen app (mz-app) ── */
@@ -1515,113 +1403,6 @@ button.sidebar-item {
   .app-scrim {
     background: rgba(11, 13, 18, 0.4);
   }
-}
-
-/* Status cards */
-.dash-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--gap-grid);
-}
-.dash-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--card-pad);
-  background: var(--color-surface);
-  border: var(--border);
-  border-radius: var(--radius);
-}
-.dash-card-label {
-  font-family: var(--font-display);
-  font-size: var(--text-16);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-tight);
-  color: var(--color-ink);
-}
-.dash-card-meta {
-  flex: 1;
-  font-size: var(--text-small);
-  line-height: 1.5;
-  color: var(--color-muted);
-}
-.dash-status {
-  align-self: flex-start;
-  margin-top: var(--space-2);
-  padding: 3px 10px;
-  border-radius: var(--radius-pill);
-  font-size: var(--text-12);
-  font-weight: var(--weight-medium);
-}
-.dash-status-pending {
-  background: var(--color-surface-2);
-  color: var(--color-muted);
-}
-.dash-status-done {
-  background: var(--color-volt-soft);
-  color: var(--color-volt);
-}
-
-/* Activity feed */
-.dash-feed {
-  background: var(--color-surface);
-  border: var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.dash-feed-head {
-  padding: var(--space-3) var(--card-pad);
-  border-bottom: var(--border);
-  font-family: var(--font-display);
-  font-size: var(--text-15);
-  font-weight: var(--weight-semibold);
-  color: var(--color-ink);
-}
-.dash-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--card-pad);
-}
-.dash-row + .dash-row {
-  border-top: var(--border);
-}
-.dash-row-spark {
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  padding: 7px;
-  border-radius: var(--radius-sm);
-  background: var(--color-volt);
-  color: #fff;
-}
-.dash-row-dot {
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-}
-.dash-row-dot::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-line-strong);
-}
-.dash-row-text {
-  flex: 1;
-  min-width: 0;
-  font-size: var(--text-small);
-  color: var(--color-ink-2);
-}
-.dash-row-time {
-  flex: 0 0 auto;
-  font-family: var(--font-mono);
-  font-size: var(--text-12);
-  color: var(--color-muted);
 }
 
 /* ─────────────────────────────────────────── Marketing CTA panel ── */
@@ -5441,15 +5222,6 @@ mz-tab-panel:not([hidden]) {
   }
   .footer-brand {
     grid-column: 1 / -1;
-  }
-  .appshell {
-    grid-template-columns: 1fr;
-  }
-  .sidebar {
-    display: none;
-  }
-  .dash-cards {
-    grid-template-columns: 1fr;
   }
   .pricing {
     grid-template-columns: 1fr;
