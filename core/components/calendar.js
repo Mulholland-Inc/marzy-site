@@ -5,8 +5,10 @@ import { emitSelect } from "./data.js";
 
 const PREV = '<svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg>';
 const NEXT = '<svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg>';
+const GLOBE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18"/></svg>';
 
 const YEAR = 2026, MONTH = 5, TODAY = 21; // June 2026
+const BASE_TZ = -5; // events are authored in Eastern (ET)
 
 // Sample events. start/end are 24h decimal hours. Shaped so the detail pane
 // (title, status, priority, assignee, tag, due) renders cleanly.
@@ -40,53 +42,91 @@ const fmtTime = (h) => {
   return m ? `${hr}:${pad(m)} ${ap}` : `${hr} ${ap}`;
 };
 const weekdayShort = (d) => new Date(YEAR, MONTH, d).toLocaleString("en-US", { weekday: "short" });
-const recordFor = (ev) => ({
+const recordFor = (ev, dz = 0) => ({
   ...ev,
   status: "Scheduled",
-  due: `${new Date(YEAR, MONTH, ev.day).toLocaleString("en-US", { month: "short" })} ${ev.day} · ${fmtTime(ev.start)}`,
+  due: `${new Date(YEAR, MONTH, ev.day).toLocaleString("en-US", { month: "short" })} ${ev.day} · ${fmtTime(ev.start + dz)}`,
 });
 
 class MzCalendar extends HTMLElement {
   connectedCallback() {
     this.classList.add("calendar");
     this._mode = "month";
-    this.addEventListener("click", (e) => {
-      const mode = e.target.closest("[data-mode]");
-      if (mode) {
-        this._mode = mode.dataset.mode;
-        this.render();
-        return;
-      }
-      const ev = e.target.closest("[data-ev]");
-      if (ev) emitSelect(this, recordFor(EVENTS.find((x) => x.id === ev.dataset.ev)));
-    });
-    this.render();
-  }
-
-  head() {
-    const title =
-      this._mode === "week"
-        ? `${new Date(YEAR, MONTH, WEEK[0]).toLocaleString("en-US", { month: "long" })} ${WEEK[0]}–${WEEK[6]}, ${YEAR}`
-        : `${new Date(YEAR, MONTH, 1).toLocaleString("en-US", { month: "long" })} ${YEAR}`;
-    return `
+    this._tz = BASE_TZ;
+    // build the chrome once so the switcher thumb can slide on toggle
+    this.innerHTML = `
       <div class="cal-head">
-        <div class="cal-title">${title}</div>
+        <div class="cal-title"></div>
         <div class="cal-nav">
-          <div class="seg cal-modes">
-            <button type="button" class="seg-btn${this._mode === "month" ? " is-active" : ""}" data-mode="month">Month</button>
-            <button type="button" class="seg-btn${this._mode === "week" ? " is-active" : ""}" data-mode="week">Week</button>
+          <label class="cal-tz">
+            <span class="cal-tz-ico" aria-hidden="true">${GLOBE}</span>
+            <select class="cal-tz-select" aria-label="Timezone">
+              <option value="-8">Pacific · PT</option>
+              <option value="-7">Mountain · MT</option>
+              <option value="-6">Central · CT</option>
+              <option value="-5" selected>Eastern · ET</option>
+              <option value="0">UTC</option>
+              <option value="1">Central Europe · CET</option>
+            </select>
+          </label>
+          <div class="seg viewseg cal-modes" role="tablist">
+            <span class="seg-thumb" aria-hidden="true"></span>
+            <button type="button" class="seg-btn is-active" data-mode="month"><span>Month</span></button>
+            <button type="button" class="seg-btn" data-mode="week"><span>Week</span></button>
           </div>
           <button class="btn-icon" type="button" aria-label="Previous">${PREV}</button>
           <button class="btn-icon" type="button" aria-label="Next">${NEXT}</button>
         </div>
-      </div>`;
+      </div>
+      <div class="cal-body"></div>`;
+
+    this._title = this.querySelector(".cal-title");
+    this._body = this.querySelector(".cal-body");
+    this._seg = this.querySelector(".viewseg");
+    this._thumb = this.querySelector(".seg-thumb");
+
+    this.querySelector(".cal-tz-select").addEventListener("change", (e) => {
+      this._tz = Number(e.target.value);
+      this.renderBody();
+    });
+
+    this.addEventListener("click", (e) => {
+      const mode = e.target.closest("[data-mode]");
+      if (mode) {
+        this._mode = mode.dataset.mode;
+        this._seg.querySelectorAll(".seg-btn").forEach((b) => b.classList.toggle("is-active", b === mode));
+        this.moveThumb();
+        this.renderBody();
+        return;
+      }
+      const ev = e.target.closest("[data-ev]");
+      if (ev) emitSelect(this, recordFor(EVENTS.find((x) => x.id === ev.dataset.ev), this._tz - BASE_TZ));
+    });
+
+    this.renderBody();
+    requestAnimationFrame(() => this.moveThumb());
   }
 
-  render() {
-    this.innerHTML = this.head() + (this._mode === "week" ? this.week() : this.month());
+  moveThumb() {
+    const btn = this._seg.querySelector(".seg-btn.is-active");
+    if (!btn) return;
+    this._thumb.style.left = `${btn.offsetLeft}px`;
+    this._thumb.style.top = `${btn.offsetTop}px`;
+    this._thumb.style.width = `${btn.offsetWidth}px`;
+    this._thumb.style.height = `${btn.offsetHeight}px`;
+    this._thumb.style.opacity = "1";
+  }
+
+  renderBody() {
+    this._title.textContent =
+      this._mode === "week"
+        ? `${new Date(YEAR, MONTH, WEEK[0]).toLocaleString("en-US", { month: "long" })} ${WEEK[0]}–${WEEK[6]}, ${YEAR}`
+        : `${new Date(YEAR, MONTH, 1).toLocaleString("en-US", { month: "long" })} ${YEAR}`;
+    this._body.innerHTML = this._mode === "week" ? this.week() : this.month();
   }
 
   month() {
+    const dz = this._tz - BASE_TZ; // hours to shift event times for the chosen tz
     const first = new Date(YEAR, MONTH, 1).getDay();
     const daysIn = new Date(YEAR, MONTH + 1, 0).getDate();
     const prevDays = new Date(YEAR, MONTH, 0).getDate();
@@ -102,7 +142,7 @@ class MzCalendar extends HTMLElement {
       const chips = evs
         .map(
           (e) =>
-            `<button type="button" class="cal-event${e.kind === "muted" ? " muted" : ""}" data-ev="${e.id}"><span class="cal-event-time">${fmtTime(e.start)}</span>${e.title}</button>`
+            `<button type="button" class="cal-event${e.kind === "muted" ? " muted" : ""}" data-ev="${e.id}"><span class="cal-event-time">${fmtTime(e.start + dz)}</span>${e.title}</button>`
         )
         .join("");
       cells.push(`<div class="cal-cell${out ? " out" : ""}${isToday ? " today" : ""}"><span class="cal-daynum">${n}</span>${chips}</div>`);
@@ -112,6 +152,7 @@ class MzCalendar extends HTMLElement {
   }
 
   week() {
+    const dz = this._tz - BASE_TZ;
     const dayHead = WEEK.map(
       (d) => `<span class="cal-wday${d === TODAY ? " today" : ""}"><span>${weekdayShort(d)}</span><b>${d}</b></span>`
     ).join("");
@@ -120,11 +161,11 @@ class MzCalendar extends HTMLElement {
       const slots = HOURS.map(() => `<div class="cal-slot"></div>`).join("");
       const blocks = EVENTS.filter((e) => e.day === d)
         .map((e) => {
-          const top = (e.start - HOURS[0]) * HOUR_H;
+          const top = (e.start + dz - HOURS[0]) * HOUR_H;
           const h = (e.end - e.start) * HOUR_H;
           return `<button type="button" class="cal-block cal-block-${e.kind}" data-ev="${e.id}" style="top:${top}px;height:${h}px">
             <span class="cal-block-title">${e.title}</span>
-            <span class="cal-block-time">${fmtTime(e.start)}–${fmtTime(e.end)}</span>
+            <span class="cal-block-time">${fmtTime(e.start + dz)}–${fmtTime(e.end + dz)}</span>
           </button>`;
         })
         .join("");
