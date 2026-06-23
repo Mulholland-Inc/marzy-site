@@ -64,29 +64,30 @@ class MzToolbar extends HTMLElement {
       );
     }
     if (id === "sort") {
+      // two groups (field + order) → both labelled
       return (
         `<div class="tb-pop-head">Sort by</div>` +
         SORTS.map(
           ([key, lbl]) =>
             `<button type="button" class="tb-opt" data-sort="${key}"><span>${lbl}</span><span class="tb-opt-check" aria-hidden="true">${icon("check")}</span></button>`
         ).join("") +
-        `<div class="tb-pop-div"></div>
+        `<div class="tb-pop-head">Order</div>
          <button type="button" class="tb-opt" data-dir="asc"><span>Ascending</span><span class="tb-opt-check" aria-hidden="true">${icon("check")}</span></button>
          <button type="button" class="tb-opt" data-dir="desc"><span>Descending</span><span class="tb-opt-check" aria-hidden="true">${icon("check")}</span></button>`
       );
     }
     if (id === "display") {
+      // single group → no type header
       return (
-        `<div class="tb-pop-head">Display</div>
-         <label class="tb-switch"><span>Show completed</span><input type="checkbox" class="checkbox" checked data-display="completed" /></label>
+        `<label class="tb-switch"><span>Show completed</span><input type="checkbox" class="checkbox" checked data-display="completed" /></label>
          <label class="tb-switch"><span>Compact rows</span><input type="checkbox" class="checkbox" data-display="compact" /></label>
          <label class="tb-switch"><span>Show avatars</span><input type="checkbox" class="checkbox" checked data-display="avatars" /></label>`
       );
     }
     if (id === "export") {
+      // single group → no type header
       return (
-        `<div class="tb-pop-head">Export</div>
-         <button type="button" class="tb-opt" data-export="csv"><span>Export as CSV</span></button>
+        `<button type="button" class="tb-opt" data-export="csv"><span>Export as CSV</span></button>
          <button type="button" class="tb-opt" data-export="pdf"><span>Export as PDF</span></button>
          <button type="button" class="tb-opt" data-export="print"><span>Print…</span></button>`
       );
