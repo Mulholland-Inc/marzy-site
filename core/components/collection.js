@@ -1,8 +1,10 @@
 // <mz-collection view="board" views="board,table,grid,gallery,todo,calendar"
 //                singular="task"></mz-collection>
-// The WordPress-style archive: a view-switcher over the shared data, a "New"
-// button that opens a create form in a right-hand pane, and a detail pane that
-// opens when an object is selected from any view.
+// The WordPress-style archive: a view-switcher over the shared data with a
+// persistent detail sidebar on the right. The main view is cropped to make
+// room. Selecting an object fills the sidebar; "New" shows a create form;
+// otherwise the sidebar shows an empty state.
+import { SPARK } from "./spark.js";
 import { STATUSES, RECORDS, PRIO, prioHTML, whoHTML } from "./data.js";
 
 const VIEW_TAG = {
@@ -29,8 +31,8 @@ const VICON = {
   todo: '<svg viewBox="0 0 24 24"><path d="M4 6.5 6 8.5 9.5 5"/><path d="M4 13.5 6 15.5 9.5 12"/><path d="M13 7h7M13 14h7"/></svg>',
   calendar: '<svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17M8 3v3M16 3v3"/></svg>',
 };
-const CLOSE = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>';
 
+const CLOSE = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>';
 const people = [...new Set(RECORDS.map((r) => r.assignee))];
 
 class MzCollection extends HTMLElement {
@@ -54,8 +56,8 @@ class MzCollection extends HTMLElement {
       </div>
       <div class="collection-body">
         <div class="collection-main"></div>
-      </div>
-      <aside class="collection-pane" aria-hidden="true"></aside>`;
+        <aside class="collection-pane"></aside>
+      </div>`;
 
     this._main = this.querySelector(".collection-main");
     this._pane = this.querySelector(".collection-pane");
@@ -68,37 +70,34 @@ class MzCollection extends HTMLElement {
       this.renderView();
     });
     this.querySelector(".collection-new").addEventListener("click", () => this.openCreate());
-    // views bubble mz-select up to here
     this._main.addEventListener("mz-select", (e) => this.openDetail(e.detail));
     this._pane.addEventListener("click", (e) => {
-      if (e.target.closest(".pane-close") || e.target.closest(".pane-cancel")) this.closePane();
+      if (e.target.closest(".pane-new")) return this.openCreate();
+      if (e.target.closest(".pane-close") || e.target.closest(".pane-cancel")) this.renderEmpty();
     });
-    this._onKey = (e) => {
-      if (e.key === "Escape") this.closePane();
-    };
-    document.addEventListener("keydown", this._onKey);
 
     this.renderView();
-  }
-
-  disconnectedCallback() {
-    document.removeEventListener("keydown", this._onKey);
-  }
-
-  openPane() {
-    this._pane.classList.add("is-open");
-    this._pane.setAttribute("aria-hidden", "false");
+    this.renderEmpty();
   }
 
   renderView() {
     this._main.innerHTML = `<${VIEW_TAG[this._view]}></${VIEW_TAG[this._view]}>`;
   }
 
+  renderEmpty() {
+    this._pane.innerHTML = `
+      <div class="pane-empty">
+        <span class="pane-empty-mark" aria-hidden="true">${SPARK}</span>
+        <p>Select a ${this._singular} to see its details, or create a new one.</p>
+        <mz-btn variant="outline" size="sm" class="pane-new">New ${this._singular}</mz-btn>
+      </div>`;
+  }
+
   openDetail(r) {
     this._pane.innerHTML = `
       <div class="pane-head">
         <span class="pane-eyebrow">${r.tag}</span>
-        <button type="button" class="pane-close" aria-label="Close">${CLOSE}</button>
+        <button type="button" class="pane-close" aria-label="Clear">${CLOSE}</button>
       </div>
       <h3 class="pane-title">${r.title}</h3>
       <dl class="pane-fields">
@@ -112,14 +111,13 @@ class MzCollection extends HTMLElement {
         <mz-btn variant="outline" size="sm">Edit</mz-btn>
         <mz-btn variant="ghost" size="sm">Delete</mz-btn>
       </div>`;
-    this.openPane();
   }
 
   openCreate() {
     this._pane.innerHTML = `
       <div class="pane-head">
         <span class="pane-eyebrow">New ${this._singular}</span>
-        <button type="button" class="pane-close" aria-label="Close">${CLOSE}</button>
+        <button type="button" class="pane-close" aria-label="Clear">${CLOSE}</button>
       </div>
       <form class="pane-form" onsubmit="return false">
         <mz-field label="Title" placeholder="Untitled ${this._singular}" for="nc-title"></mz-field>
@@ -133,12 +131,7 @@ class MzCollection extends HTMLElement {
           <mz-btn variant="primary">Create ${this._singular}</mz-btn>
         </mz-actions>
       </form>`;
-    this.openPane();
-  }
-
-  closePane() {
-    this._pane.classList.remove("is-open");
-    this._pane.setAttribute("aria-hidden", "true");
   }
 }
+
 customElements.define("mz-collection", MzCollection);

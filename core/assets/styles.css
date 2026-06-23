@@ -2862,25 +2862,30 @@ mz-tab-panel:not([hidden]) {
   flex: 1 1 auto;
   min-width: 0;
 }
-/* Detail / create drawer: slides in from the right edge, over the content. */
+/* Persistent detail sidebar: always open on the right; the main view is
+   cropped to make room. Sticks in view as the main scrolls. */
 .collection-pane {
-  position: fixed;
+  flex: 0 0 320px;
+  position: sticky;
   top: 0;
-  right: 0;
-  z-index: var(--z-modal);
-  width: 380px;
-  max-width: 92vw;
-  height: 100vh;
-  height: 100dvh;
-  background: var(--color-surface);
-  border-left: var(--border);
-  padding: var(--space-5);
+  align-self: flex-start;
+  max-height: calc(100dvh - 2 * var(--space-4));
   overflow-y: auto;
-  transform: translateX(100%);
-  transition: transform var(--duration-slow) var(--ease);
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
 }
-.collection-pane.is-open {
-  transform: none;
+.pane-empty {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  color: var(--color-muted);
+  font-size: var(--text-13);
+}
+.pane-empty-mark {
+  width: 24px;
+  color: var(--color-line-strong);
 }
 .pane-head {
   display: flex;
@@ -2961,9 +2966,14 @@ mz-tab-panel:not([hidden]) {
   gap: var(--space-4);
 }
 @media (max-width: 720px) {
+  .collection-body {
+    flex-direction: column;
+  }
   .collection-pane {
+    position: static;
+    flex: 1 1 auto;
     width: 100%;
-    max-width: 100%;
+    max-height: none;
   }
 }
 
