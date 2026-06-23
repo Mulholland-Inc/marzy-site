@@ -1111,15 +1111,18 @@ button.sidebar-item {
   gap: var(--space-2);
   width: 100%;
   padding: var(--space-2);
-  background: none;
-  border: 0;
+  background: var(--color-surface);
+  border: var(--border);
   border-radius: var(--radius-sm);
   text-align: left;
   cursor: pointer;
-  transition: background var(--duration-base) var(--ease);
+  transition:
+    background var(--duration-base) var(--ease),
+    border-color var(--duration-base) var(--ease);
 }
 .ws-btn:hover {
   background: var(--color-bg-soft);
+  border-color: var(--color-line-strong);
 }
 .ws-av {
   flex: 0 0 auto;
