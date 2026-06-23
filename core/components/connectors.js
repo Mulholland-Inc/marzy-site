@@ -3,29 +3,28 @@
 // (logo, name, kind, status, Connect/Manage). Search + category filter live.
 import { icon } from "./icons.js";
 
-// Real brand logos via Simple Icons (simpleicons.org, CC0), served as raw SVGs
-// from the jsDelivr CDN — monochrome (near-black) marks that sit on palette on
-// the light logo tile. Falls back to a letter monogram if a logo can't load.
-const LOGO = (slug) => `https://cdn.jsdelivr.net/npm/simple-icons@13/icons/${slug}.svg`;
+// Real, full-colour brand logos via DuckDuckGo's favicon service (free, no
+// auth), keyed by domain. Falls back to a letter monogram if one can't load.
+const LOGO = (domain) => `https://icons.duckduckgo.com/ip3/${domain}.ico`;
 
-// [name, slug, kind, category, description, connected]
+// [name, domain, kind, category, description, connected]
 const CONNECTORS = [
-  ["Gusto", "gusto", "App", "Finance", "Payroll & benefits", true],
-  ["QuickBooks", "quickbooks", "App", "Finance", "Billing & ledger", true],
-  ["Gmail", "gmail", "App", "Comms", "Inbox & email", true],
-  ["Slack", "slack", "App", "Comms", "Notifications & alerts", true],
-  ["Google Drive", "googledrive", "App", "Productivity", "Files & storage", true],
-  ["Stripe", "stripe", "API", "Payments", "Payments & payouts", false],
-  ["Plaid", "plaid", "API", "Finance", "Bank connections", false],
-  ["Notion", "notion", "MCP", "Productivity", "Docs, wikis & databases", false],
-  ["Salesforce", "salesforce", "App", "Records", "Customer relationships", false],
-  ["HubSpot", "hubspot", "App", "Records", "Marketing & CRM", false],
-  ["Xero", "xero", "App", "Finance", "Accounting", false],
-  ["Airtable", "airtable", "App", "Records", "Records & bases", false],
-  ["Twilio", "twilio", "API", "Comms", "SMS & voice", false],
-  ["GitHub", "github", "MCP", "Dev", "Repos, issues & PRs", false],
-  ["Linear", "linear", "MCP", "Dev", "Issues & projects", false],
-  ["Snowflake", "snowflake", "API", "Data", "Warehouse & queries", false],
+  ["Gusto", "gusto.com", "App", "Finance", "Payroll & benefits", true],
+  ["QuickBooks", "quickbooks.intuit.com", "App", "Finance", "Billing & ledger", true],
+  ["Gmail", "gmail.com", "App", "Comms", "Inbox & email", true],
+  ["Slack", "slack.com", "App", "Comms", "Notifications & alerts", true],
+  ["Google Drive", "drive.google.com", "App", "Productivity", "Files & storage", true],
+  ["Stripe", "stripe.com", "API", "Payments", "Payments & payouts", false],
+  ["Plaid", "plaid.com", "API", "Finance", "Bank connections", false],
+  ["Notion", "notion.so", "MCP", "Productivity", "Docs, wikis & databases", false],
+  ["Salesforce", "salesforce.com", "App", "Records", "Customer relationships", false],
+  ["HubSpot", "hubspot.com", "App", "Records", "Marketing & CRM", false],
+  ["Xero", "xero.com", "App", "Finance", "Accounting", false],
+  ["Airtable", "airtable.com", "App", "Records", "Records & bases", false],
+  ["Twilio", "twilio.com", "API", "Comms", "SMS & voice", false],
+  ["GitHub", "github.com", "MCP", "Dev", "Repos, issues & PRs", false],
+  ["Linear", "linear.app", "MCP", "Dev", "Issues & projects", false],
+  ["Snowflake", "snowflake.com", "API", "Data", "Warehouse & queries", false],
 ];
 
 const mono = (n) => n.replace(/[^A-Za-z]/g, "").slice(0, 1).toUpperCase();
@@ -37,7 +36,7 @@ class MzConnectors extends HTMLElement {
     this.innerHTML = `
       <div class="cn-head">
         <h2 class="cn-title">Connect everything.</h2>
-        <p class="cn-sub">Plug Marzy into the tools, APIs, and MCP servers your back office already runs on.</p>
+        <p class="cn-sub">Tools, APIs, and MCP servers, all in one place.</p>
         <div class="cn-search">
           <span class="cn-search-ico" aria-hidden="true">${icon("search")}</span>
           <input class="input cn-search-input" type="search" placeholder="Search connectors…" aria-label="Search connectors" />
@@ -55,15 +54,15 @@ class MzConnectors extends HTMLElement {
 
   renderGrid() {
     const term = this._q.trim().toLowerCase();
-    const rows = CONNECTORS.filter(([name, slug, kind, cat, desc]) =>
+    const rows = CONNECTORS.filter(([name, domain, kind, cat, desc]) =>
       !term || `${name} ${kind} ${cat} ${desc}`.toLowerCase().includes(term)
     );
     this._grid.innerHTML = rows.length
       ? rows
           .map(
-            ([name, slug, kind, cat, desc, connected]) => `
+            ([name, domain, kind, cat, desc, connected]) => `
         <div class="cn-card">
-          <img class="cn-logo" src="${LOGO(slug)}" alt="${name}" loading="lazy"
+          <img class="cn-logo" src="${LOGO(domain)}" alt="${name}" loading="lazy"
             onerror="this.outerHTML='<span class=&quot;cn-logo cn-mono&quot;>${mono(name)}</span>'" />
           <div class="cn-body">
             <div class="cn-name">${name}</div>
