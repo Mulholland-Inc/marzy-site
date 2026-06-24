@@ -3406,6 +3406,72 @@ mz-tab-panel:not([hidden]) {
   }
 }
 
+/* ─────────────────────────────────────────── Identity (mz-identity) ── */
+.identity {
+  display: block;
+}
+.identity-lead {
+  margin: 0 0 var(--space-5);
+  max-width: 62ch;
+  font-size: var(--text-small);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-2);
+}
+.identity-list {
+  max-width: 720px;
+  border: var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--color-surface);
+}
+.idn-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-top: var(--border);
+}
+.idn-row:first-child {
+  border-top: 0;
+}
+.idn-logo {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+  background: var(--color-surface-2);
+}
+.idn-mono {
+  display: grid;
+  place-items: center;
+  font-size: var(--text-14);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-2);
+}
+.idn-main {
+  flex: 1;
+  min-width: 0;
+}
+.idn-name {
+  font-size: var(--text-small);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+.idn-sub {
+  margin-top: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.idn-verified {
+  color: var(--color-volt);
+}
+.idn-row .badge,
+.idn-row .btn {
+  flex: 0 0 auto;
+}
+
 /* ─────────────────────────────────────────── Collection (archive) ── */
 .collection {
   display: flex;

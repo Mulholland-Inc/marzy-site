@@ -15,6 +15,7 @@ const ICON = {
   connectors: icon("plug"),
   users: icon("users"),
   roles: icon("shield"),
+  identity: icon("link-2"),
   settings: icon("settings"),
 };
 const BURGER = icon("menu");
@@ -48,6 +49,7 @@ const VIEWS = [
   { id: "connectors", label: "Connectors", dot: true, render: () => `<mz-connectors></mz-connectors>` },
   { id: "users", label: "Users", render: () => `<mz-users></mz-users>` },
   { id: "roles", label: "Roles", render: () => `<mz-roles></mz-roles>` },
+  { id: "identity", label: "Identity", render: () => `<mz-identity></mz-identity>` },
   {
     id: "settings",
     label: "Settings",

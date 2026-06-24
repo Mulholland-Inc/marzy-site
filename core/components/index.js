@@ -66,6 +66,7 @@ import "./view-todo.js";
 import "./mailbox.js";
 import "./users.js";
 import "./roles.js";
+import "./identity.js";
 import "./workspace.js";
 import "./toolbar.js";
 import "./collection.js";
