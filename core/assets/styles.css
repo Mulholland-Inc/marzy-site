@@ -3309,7 +3309,14 @@ mz-tab-panel:not([hidden]) {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
-  max-width: 680px;
+  max-width: 1100px;
+}
+/* two-column rows that use the screen width */
+.roles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5) var(--space-6);
+  align-items: start;
 }
 .roles-field {
   display: grid;
@@ -3389,6 +3396,9 @@ mz-tab-panel:not([hidden]) {
   .roles-head {
     flex-wrap: wrap;
     gap: var(--space-2);
+  }
+  .roles-grid {
+    grid-template-columns: 1fr;
   }
 }
 

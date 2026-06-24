@@ -140,13 +140,15 @@ class MzRoles extends HTMLElement {
     ).join("");
 
     this._cfg.innerHTML = `
-      <div class="roles-field">
-        <label for="rl-name">Role name</label>
-        <input class="input" id="rl-name" data-f="name" value="${esc(r.name)}" />
-      </div>
-      <div class="roles-field">
-        <label for="rl-desc">Description</label>
-        <input class="input" id="rl-desc" data-f="desc" value="${esc(r.desc)}" />
+      <div class="roles-grid">
+        <div class="roles-field">
+          <label for="rl-name">Role name</label>
+          <input class="input" id="rl-name" data-f="name" value="${esc(r.name)}" />
+        </div>
+        <div class="roles-field">
+          <label for="rl-desc">Description</label>
+          <input class="input" id="rl-desc" data-f="desc" value="${esc(r.desc)}" />
+        </div>
       </div>
 
       <section class="roles-sec">
@@ -157,21 +159,23 @@ class MzRoles extends HTMLElement {
         <textarea class="input roles-prompt" data-f="prompt" rows="5">${esc(r.prompt)}</textarea>
       </section>
 
-      <section class="roles-sec">
-        <div class="roles-sec-head">
-          <h3>Tools</h3>
-          <p class="roles-sec-desc t-meta">What this role's Marzy is allowed to do.</p>
-        </div>
-        <div class="roles-rows">${tools}</div>
-      </section>
+      <div class="roles-grid">
+        <section class="roles-sec">
+          <div class="roles-sec-head">
+            <h3>Tools</h3>
+            <p class="roles-sec-desc t-meta">What this role's Marzy is allowed to do.</p>
+          </div>
+          <div class="roles-rows">${tools}</div>
+        </section>
 
-      <section class="roles-sec">
-        <div class="roles-sec-head">
-          <h3>Object access</h3>
-          <p class="roles-sec-desc t-meta">Which records it can see and change.</p>
-        </div>
-        <div class="roles-rows">${objects}</div>
-      </section>
+        <section class="roles-sec">
+          <div class="roles-sec-head">
+            <h3>Object access</h3>
+            <p class="roles-sec-desc t-meta">Which records it can see and change.</p>
+          </div>
+          <div class="roles-rows">${objects}</div>
+        </section>
+      </div>
 
       <div class="roles-actions">
         <button type="button" class="btn btn-ghost btn-sm roles-delete">${icon("trash-2")}<span>Delete role</span></button>
