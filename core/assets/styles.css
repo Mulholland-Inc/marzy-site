@@ -3623,56 +3623,47 @@ mz-tab-panel:not([hidden]) {
 .users {
   display: block;
 }
-.users-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-4);
-  margin-bottom: var(--space-4);
-}
-.users-title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-20);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-tight);
-  color: var(--color-ink);
-}
-.users-sub {
-  margin: 4px 0 0;
-  font-size: var(--text-small);
-  color: var(--color-muted);
-  max-width: 52ch;
-}
-.users-add svg {
-  width: 16px;
-  height: 16px;
-}
-/* inline invite row */
-.users-invite {
+/* clean, always-on toolbar — no container around it */
+.users-toolbar {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  flex-wrap: wrap;
-  margin-bottom: var(--space-4);
-  padding: var(--space-3);
-  border: var(--border);
-  border-radius: var(--radius);
-  background: var(--color-bg-soft);
+  margin-bottom: var(--space-3);
 }
-.users-invite[hidden] {
-  display: none;
-}
-.users-invite-email {
+.users-search {
+  position: relative;
+  display: flex;
   flex: 1;
-  min-width: 220px;
+  align-items: center;
+  max-width: 320px;
 }
-/* role picker — keep it compact in its table cell and the invite row */
+.users-search > svg {
+  position: absolute;
+  left: 10px;
+  width: 16px;
+  height: 16px;
+  color: var(--color-muted);
+  pointer-events: none;
+}
+.users-search-input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px 0 32px;
+  border: var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font: inherit;
+  font-size: var(--text-13);
+  color: var(--color-ink);
+}
+.users-search-input:focus {
+  outline: none;
+  border-color: var(--color-volt);
+  box-shadow: 0 0 0 3px var(--color-volt-soft);
+}
+/* role picker — keep it compact in its table cell */
 .users-role {
   width: 140px;
-}
-.users .table-card {
-  margin-top: 0;
 }
 
 /* ─────────────────────────────────────────── Collection (archive) ── */
