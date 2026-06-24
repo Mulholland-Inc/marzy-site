@@ -3422,7 +3422,7 @@ mz-tab-panel:not([hidden]) {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
   border-top: var(--border);
 }
 .idn-row:first-child {
