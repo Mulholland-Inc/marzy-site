@@ -57,22 +57,21 @@ class MzRoles extends HTMLElement {
     this._seq = 0;
 
     this.innerHTML = `
-      <aside class="roles-rail">
-        <div class="roles-rail-head t-caption">Roles</div>
-        <div class="roles-list-nav"></div>
+      <div class="roles-head">
+        <div class="roles-tabs" role="tablist"></div>
         <button type="button" class="btn btn-outline btn-sm roles-new">${icon("plus")}<span>New role</span></button>
-      </aside>
+      </div>
       <div class="roles-config"></div>`;
 
-    this._nav = this.querySelector(".roles-list-nav");
+    this._tabs = this.querySelector(".roles-tabs");
     this._cfg = this.querySelector(".roles-config");
 
     this.querySelector(".roles-new").addEventListener("click", () => this.addRole());
-    this._nav.addEventListener("click", (e) => {
-      const item = e.target.closest(".roles-item");
+    this._tabs.addEventListener("click", (e) => {
+      const item = e.target.closest(".tab");
       if (!item) return;
       this._i = Number(item.dataset.i);
-      this.renderRail();
+      this.renderTabs();
       this.renderConfig();
     });
     // config interactions
@@ -92,14 +91,14 @@ class MzRoles extends HTMLElement {
       const f = e.target.closest("[data-f]");
       if (!f) return;
       this.role()[f.dataset.f] = e.target.value;
-      // keep the rail label in sync with the name, without re-rendering (preserves focus)
+      // keep the active tab label in sync with the name (without re-rendering)
       if (f.dataset.f === "name") {
-        const b = this._nav.querySelector(".roles-item.is-active b");
-        if (b) b.textContent = e.target.value || "Untitled role";
+        const t = this._tabs.querySelector(".tab.is-active");
+        if (t) t.textContent = e.target.value || "Untitled role";
       }
     });
 
-    this.renderRail();
+    this.renderTabs();
     this.renderConfig();
   }
 
@@ -107,15 +106,12 @@ class MzRoles extends HTMLElement {
     return this._roles[this._i];
   }
 
-  renderRail() {
-    this._nav.innerHTML = this._roles
-      .map((r, i) => {
-        const tools = r.tools.size;
-        return `<button type="button" class="roles-item${i === this._i ? " is-active" : ""}" data-i="${i}">
-          <b>${esc(r.name) || "Untitled role"}</b>
-          <small>${tools} tool${tools === 1 ? "" : "s"} · ${esc(r.desc) || "No description"}</small>
-        </button>`;
-      })
+  renderTabs() {
+    this._tabs.innerHTML = this._roles
+      .map(
+        (r, i) =>
+          `<button type="button" class="tab${i === this._i ? " is-active" : ""}" data-i="${i}">${esc(r.name) || "Untitled role"}</button>`
+      )
       .join("");
   }
 
@@ -187,7 +183,7 @@ class MzRoles extends HTMLElement {
       objects: Object.fromEntries(OBJECTS.map((o) => [o, "None"])),
     });
     this._i = this._roles.length - 1;
-    this.renderRail();
+    this.renderTabs();
     this.renderConfig();
     this._cfg.querySelector("#rl-name")?.focus();
   }
