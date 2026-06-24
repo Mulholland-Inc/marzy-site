@@ -76,6 +76,10 @@ class MzRoles extends HTMLElement {
     });
     // config interactions
     this._cfg.addEventListener("click", (e) => {
+      if (e.target.closest(".roles-delete")) {
+        this.deleteRole();
+        return;
+      }
       const sw = e.target.closest(".switch[data-tool]");
       if (!sw) return;
       const on = sw.getAttribute("aria-checked") !== "true";
@@ -170,8 +174,22 @@ class MzRoles extends HTMLElement {
       </section>
 
       <div class="roles-actions">
+        <button type="button" class="btn btn-ghost btn-sm roles-delete">${icon("trash-2")}<span>Delete role</span></button>
         <button type="button" class="btn btn-primary btn-sm">Save changes</button>
       </div>`;
+  }
+
+  deleteRole() {
+    this._roles.splice(this._i, 1);
+    if (!this._roles.length) {
+      this._i = 0;
+      this.renderTabs();
+      this._cfg.innerHTML = `<mz-empty heading="No roles">Create a role to configure its Marzy.</mz-empty>`;
+      return;
+    }
+    this._i = Math.min(this._i, this._roles.length - 1);
+    this.renderTabs();
+    this.renderConfig();
   }
 
   addRole() {

@@ -3369,7 +3369,20 @@ mz-tab-panel:not([hidden]) {
 }
 .roles-actions {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.roles-delete {
+  color: var(--color-muted);
+}
+.roles-delete svg {
+  width: 15px;
+  height: 15px;
+}
+.roles-delete:hover {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
 }
 
 @media (max-width: 860px) {
