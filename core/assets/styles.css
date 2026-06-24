@@ -2873,6 +2873,7 @@ mz-tab-panel:not([hidden]) {
   grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
 }
 .vcard {
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: border-color var(--duration-base) var(--ease);
 }
