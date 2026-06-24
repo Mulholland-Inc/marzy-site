@@ -3370,9 +3370,13 @@ mz-tab-panel:not([hidden]) {
   font-size: var(--text-small);
   color: var(--color-ink);
 }
-.roles-level {
-  width: 110px;
+/* object access: a compact None/Read/Edit segmented (reuses .seg) */
+.roles-access {
   flex: 0 0 auto;
+  height: var(--control-h-sm);
+}
+.roles-access button {
+  font-size: var(--text-12);
 }
 .roles-actions {
   display: flex;

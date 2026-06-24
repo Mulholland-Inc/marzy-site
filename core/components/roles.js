@@ -80,16 +80,18 @@ class MzRoles extends HTMLElement {
         this.deleteRole();
         return;
       }
+      const opt = e.target.closest(".roles-acc-opt");
+      if (opt) {
+        this.role().objects[opt.dataset.obj] = opt.dataset.level;
+        opt.parentElement.querySelectorAll(".roles-acc-opt").forEach((b) => b.classList.toggle("is-active", b === opt));
+        return;
+      }
       const sw = e.target.closest(".switch[data-tool]");
       if (!sw) return;
       const on = sw.getAttribute("aria-checked") !== "true";
       sw.setAttribute("aria-checked", on ? "true" : "false");
       const tools = this.role().tools;
       on ? tools.add(sw.dataset.tool) : tools.delete(sw.dataset.tool);
-    });
-    this._cfg.addEventListener("change", (e) => {
-      const sel = e.target.closest("[data-obj]");
-      if (sel) this.role().objects[sel.dataset.obj] = sel.value;
     });
     this._cfg.addEventListener("input", (e) => {
       const f = e.target.closest("[data-f]");
@@ -130,11 +132,10 @@ class MzRoles extends HTMLElement {
     const objects = OBJECTS.map(
       (o) => `<div class="roles-row">
         <span class="roles-row-name">${o}</span>
-        <div class="select-wrap roles-level">
-          <select class="input select" data-obj="${o}" aria-label="${o} access">
-            ${LEVELS.map((l) => `<option${l === r.objects[o] ? " selected" : ""}>${l}</option>`).join("")}
-          </select>
-          ${icon("chevron-down")}
+        <div class="seg roles-access" role="group" aria-label="${o} access">
+          ${LEVELS.map(
+            (l) => `<button type="button" class="roles-acc-opt${r.objects[o] === l ? " is-active" : ""}" data-obj="${o}" data-level="${l}">${l}</button>`
+          ).join("")}
         </div>
       </div>`
     ).join("");
