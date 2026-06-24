@@ -1,6 +1,7 @@
-// <mz-identity></mz-identity> — link your account to external platforms via
-// OIDC, so Marzy can act as you there. Each row shows the platform, the verified
-// handle once linked, and a Link / Unlink action. Self-contained sample state.
+// <mz-identity></mz-identity> — link your accounts on external platforms via
+// OIDC so Marzy can verify who it's talking to (e.g. when you message it on
+// Slack). Each row shows the platform, the verified handle once linked, and a
+// Link / Unlink action. Self-contained sample state.
 import { icon } from "./icons.js";
 
 // Full-colour brand logos via DuckDuckGo's favicon service; letter fallback.
@@ -25,7 +26,7 @@ class MzIdentity extends HTMLElement {
     this._accounts = PLATFORMS.map(([name, domain, handle, as]) => ({ name, domain, handle, as }));
 
     this.innerHTML = `
-      <p class="identity-lead">Link your account to the platforms you use. We confirm it's really you with OIDC, so Marzy can act as you there.</p>
+      <p class="identity-lead">Link your accounts on the platforms where you message Marzy. We verify it's really you with OIDC, so Marzy knows who it's talking to and can trust requests from you there.</p>
       <div class="identity-list"></div>`;
 
     this._list = this.querySelector(".identity-list");

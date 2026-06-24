@@ -3437,11 +3437,9 @@ mz-tab-panel:not([hidden]) {
 }
 .idn-logo {
   flex: 0 0 auto;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
+  width: 28px;
+  height: 28px;
   object-fit: contain;
-  background: var(--color-surface-2);
 }
 .idn-mono {
   display: grid;
