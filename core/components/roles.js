@@ -16,6 +16,8 @@ const TOOLS = [
 ];
 const OBJECTS = ["Tasks", "Projects", "Invoices", "Payroll", "Clients", "Documents", "Connectors"];
 const LEVELS = ["None", "Read", "Edit"];
+// on-brand role dots (ink + Volt shades only)
+const DOT = ["var(--color-volt)", "var(--color-ink-2)", "var(--color-volt-300)", "var(--color-muted)", "var(--color-volt-700)"];
 
 const allEdit = () => Object.fromEntries(OBJECTS.map((o) => [o, "Edit"]));
 const allRead = () => Object.fromEntries(OBJECTS.map((o) => [o, "Read"]));
@@ -57,21 +59,24 @@ class MzRoles extends HTMLElement {
     this._seq = 0;
 
     this.innerHTML = `
-      <div class="roles-head">
-        <div class="roles-tabs" role="tablist"></div>
-        <button type="button" class="btn btn-outline btn-sm roles-new">${icon("plus")}<span>New role</span></button>
-      </div>
+      <aside class="roles-rail">
+        <div class="roles-rail-top">
+          <span class="roles-rail-title t-caption">Roles</span>
+          <button type="button" class="btn-icon roles-new" title="New role" aria-label="New role">${icon("plus")}</button>
+        </div>
+        <div class="roles-list-nav" role="tablist"></div>
+      </aside>
       <div class="roles-config"></div>`;
 
-    this._tabs = this.querySelector(".roles-tabs");
+    this._nav = this.querySelector(".roles-list-nav");
     this._cfg = this.querySelector(".roles-config");
 
     this.querySelector(".roles-new").addEventListener("click", () => this.addRole());
-    this._tabs.addEventListener("click", (e) => {
-      const item = e.target.closest(".tab");
+    this._nav.addEventListener("click", (e) => {
+      const item = e.target.closest(".roles-item");
       if (!item) return;
       this._i = Number(item.dataset.i);
-      this.renderTabs();
+      this.renderRail();
       this.renderConfig();
     });
     // config interactions
@@ -95,14 +100,14 @@ class MzRoles extends HTMLElement {
       const f = e.target.closest("[data-f]");
       if (!f) return;
       this.role()[f.dataset.f] = e.target.value;
-      // keep the active tab label in sync with the name (without re-rendering)
+      // keep the active rail label in sync with the name (without re-rendering)
       if (f.dataset.f === "name") {
-        const t = this._tabs.querySelector(".tab.is-active");
+        const t = this._nav.querySelector(".roles-item.is-active .roles-item-name");
         if (t) t.textContent = e.target.value || "Untitled role";
       }
     });
 
-    this.renderTabs();
+    this.renderRail();
     this.renderConfig();
   }
 
@@ -110,11 +115,14 @@ class MzRoles extends HTMLElement {
     return this._roles[this._i];
   }
 
-  renderTabs() {
-    this._tabs.innerHTML = this._roles
+  renderRail() {
+    this._nav.innerHTML = this._roles
       .map(
         (r, i) =>
-          `<button type="button" class="tab${i === this._i ? " is-active" : ""}" data-i="${i}">${esc(r.name) || "Untitled role"}</button>`
+          `<button type="button" class="roles-item${i === this._i ? " is-active" : ""}" data-i="${i}">
+            <span class="roles-dot" style="background:${DOT[i % DOT.length]}"></span>
+            <span class="roles-item-name">${esc(r.name) || "Untitled role"}</span>
+          </button>`
       )
       .join("");
   }
@@ -183,12 +191,12 @@ class MzRoles extends HTMLElement {
     this._roles.splice(this._i, 1);
     if (!this._roles.length) {
       this._i = 0;
-      this.renderTabs();
+      this.renderRail();
       this._cfg.innerHTML = `<mz-empty heading="No roles">Create a role to configure its Marzy.</mz-empty>`;
       return;
     }
     this._i = Math.min(this._i, this._roles.length - 1);
-    this.renderTabs();
+    this.renderRail();
     this.renderConfig();
   }
 
@@ -201,7 +209,7 @@ class MzRoles extends HTMLElement {
       objects: Object.fromEntries(OBJECTS.map((o) => [o, "None"])),
     });
     this._i = this._roles.length - 1;
-    this.renderTabs();
+    this.renderRail();
     this.renderConfig();
     this._cfg.querySelector("#rl-name")?.focus();
   }

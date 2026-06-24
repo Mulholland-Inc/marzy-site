@@ -3280,36 +3280,76 @@ mz-tab-panel:not([hidden]) {
 
 /* ─────────────────────────────────────────── Roles (mz-roles) ── */
 .roles {
-  display: block;
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  gap: var(--space-5);
+  height: calc(100dvh - 104px);
+  min-height: 460px;
   min-width: 0;
 }
-/* role selection: a clean underline tab bar (reuses .tab) + New role */
-.roles-head {
+/* Discord-style role sidebar: a clean list, light selection */
+.roles-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  overflow-y: auto;
+}
+.roles-rail-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  border-bottom: var(--border);
-  margin-bottom: var(--space-6);
+  padding: var(--space-1) var(--space-1) var(--space-2) var(--space-2);
 }
-.roles-tabs {
+.roles-rail-title {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: var(--weight-semibold);
+}
+.roles-item {
   display: flex;
-  gap: var(--space-1);
-  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  font: inherit;
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  color: var(--color-ink-2);
+  text-align: left;
+  cursor: pointer;
 }
-.roles-new {
+.roles-item:hover {
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+}
+.roles-item.is-active {
+  background: var(--color-volt-soft);
+  color: var(--color-ink);
+}
+.roles-dot {
   flex: 0 0 auto;
-  margin-bottom: var(--space-2);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
 }
-.roles-new svg {
-  width: 16px;
-  height: 16px;
+.roles-item-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+/* detail column */
 .roles-config {
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
   max-width: 680px;
+  padding-right: var(--space-1);
 }
 .roles-field {
   display: grid;
@@ -3386,9 +3426,12 @@ mz-tab-panel:not([hidden]) {
 }
 
 @media (max-width: 860px) {
-  .roles-head {
-    flex-wrap: wrap;
-    gap: var(--space-2);
+  .roles {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .roles-rail {
+    overflow: visible;
   }
 }
 
