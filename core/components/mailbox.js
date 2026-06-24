@@ -4,16 +4,10 @@
 // bubbles with a composer. It owns its own master/detail split and tells the
 // app shell to extend the breadcrumb (mz-crumb) and flag the sidebar (mz-unread).
 import { icon } from "./icons.js";
-import { SPARK } from "./spark.js";
-import { initials } from "./data.js";
 import { MESSAGES } from "./mailbox-data.js";
 
 const esc = (s) =>
   String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-
-// Marzy gets the spark glyph; you get a monogram.
-const marzyAvatar = (cls = "") => `<span class="who-av mbx-av-marzy ${cls}" title="Marzy">${SPARK}</span>`;
-const noteAvatar = (n) => (n.marzy ? marzyAvatar() : `<span class="who-av" title="You">${initials("You")}</span>`);
 
 class MzMailbox extends HTMLElement {
   connectedCallback() {
@@ -87,7 +81,6 @@ class MzMailbox extends HTMLElement {
         const snippet = last ? `${last.you ? "You: " : ""}${esc(last.text)}` : "";
         return `<div class="mbx-row${m.unread ? " is-unread" : ""}${m.id === this._open ? " is-open" : ""}" role="listitem">
           <button type="button" class="mbx-row-open" data-open="${m.id}">
-            ${marzyAvatar()}
             <span class="mbx-row-body">
               <span class="mbx-row-top">
                 <span class="mbx-from">${esc(m.subject)}</span>
@@ -108,16 +101,15 @@ class MzMailbox extends HTMLElement {
       ${cancel ? `<div class="mbx-read-head"><button type="button" class="btn-icon mbx-read-cancel" data-act="cancel" title="Cancel" aria-label="Cancel">${icon("x")}</button></div>` : ""}
       <div class="mbx-thread">${notes}</div>
       <form class="mbx-compose">
-        <textarea class="mbx-compose-input" rows="2" placeholder="${esc(placeholder)}" aria-label="Message Marzy"></textarea>
-        <div class="mbx-compose-actions">
-          <button type="submit" class="btn btn-primary btn-sm">${icon("send")}<span>Send</span></button>
+        <div class="mbx-compose-box">
+          <textarea class="mbx-compose-input" rows="1" placeholder="${esc(placeholder)}" aria-label="Message Marzy"></textarea>
+          <button type="submit" class="mbx-send" title="Send" aria-label="Send">${icon("send")}</button>
         </div>
       </form>`;
   }
 
   noteHTML(n) {
     return `<div class="mbx-note${n.you ? " is-you" : ""}">
-        ${noteAvatar(n)}
         <div class="mbx-note-body">
           <div class="mbx-note-head"><b>${n.marzy ? "Marzy" : "You"}</b>${n.time ? `<time>${esc(n.time)}</time>` : ""}</div>
           <div class="mbx-note-text">${esc(n.text)}</div>
