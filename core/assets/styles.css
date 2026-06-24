@@ -3542,14 +3542,14 @@ mz-tab-panel:not([hidden]) {
   background: var(--color-volt-soft);
 }
 
-/* avatars: Marzy spark + larger reading sizes */
+/* avatars: Marzy is the plain spark mark (no circle); you get a monogram */
 .mbx-av-marzy {
-  background: var(--color-ink);
-  color: var(--color-surface);
+  background: none;
+  color: var(--color-ink);
 }
 .mbx-av-marzy svg {
-  width: 13px;
-  height: 13px;
+  width: 20px;
+  height: 20px;
 }
 .mbx-note .who-av {
   width: 28px;
@@ -3557,8 +3557,8 @@ mz-tab-panel:not([hidden]) {
   font-size: 11px;
 }
 .mbx-note .mbx-av-marzy svg {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
 }
 
 /* reply composer */
