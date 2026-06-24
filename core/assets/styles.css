@@ -613,7 +613,10 @@ p {
 .input::placeholder {
   color: var(--color-muted);
 }
-.input:focus {
+/* one Volt focus ring for every text control */
+.input:focus,
+.search-input:focus,
+.tb-search-input:focus {
   outline: none;
   border-color: var(--color-volt);
   box-shadow: 0 0 0 3px var(--color-volt-soft);
@@ -629,11 +632,6 @@ p {
   font: inherit;
   font-size: var(--text-13);
   color: var(--color-ink);
-}
-.search-input:focus {
-  outline: none;
-  border-color: var(--color-volt);
-  box-shadow: 0 0 0 3px var(--color-volt-soft);
 }
 textarea.input {
   height: auto;
@@ -2741,7 +2739,8 @@ mz-tab-panel:not([hidden]) {
   gap: var(--space-2);
 }
 .tag-dot,
-.status-dot {
+.status-dot,
+.prio-dot {
   flex: 0 0 auto;
   width: 8px;
   height: 8px;
@@ -2767,13 +2766,6 @@ mz-tab-panel:not([hidden]) {
   font-size: var(--text-12);
   color: var(--color-muted);
   white-space: nowrap;
-}
-.prio-dot {
-  flex: 0 0 auto;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-line-strong);
 }
 .prio-high {
   background: var(--color-volt);
@@ -2998,7 +2990,8 @@ mz-tab-panel:not([hidden]) {
   min-width: 0;
   align-items: center;
 }
-.mbx-search > svg {
+.mbx-search > svg,
+.users-search > svg {
   position: absolute;
   left: 10px;
   width: 16px;
@@ -3280,14 +3273,6 @@ mz-tab-panel:not([hidden]) {
   width: 16px;
   height: 16px;
 }
-.users-search > svg {
-  position: absolute;
-  left: 10px;
-  width: 16px;
-  height: 16px;
-  color: var(--color-muted);
-  pointer-events: none;
-}
 /* role picker — keep it compact in its table cell */
 .users-role {
   width: 140px;
@@ -3483,11 +3468,6 @@ mz-tab-panel:not([hidden]) {
   border: var(--border-strong);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-xs);
-}
-.tb-search-input:focus {
-  outline: none;
-  border-color: var(--color-volt);
-  box-shadow: 0 0 0 3px var(--color-volt-soft);
 }
 .tb-controls {
   display: flex;
