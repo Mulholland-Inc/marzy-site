@@ -3628,6 +3628,7 @@ mz-tab-panel:not([hidden]) {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  flex-wrap: wrap;
   margin-bottom: var(--space-3);
 }
 .users-search {
@@ -3635,7 +3636,26 @@ mz-tab-panel:not([hidden]) {
   display: flex;
   flex: 1;
   align-items: center;
+  min-width: 180px;
   max-width: 320px;
+}
+/* add-user bar, pushed to the right */
+.users-add {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+.users-add-email {
+  width: 200px;
+  height: 36px;
+}
+.users-add .select {
+  height: 36px;
+}
+.users-add .btn svg {
+  width: 16px;
+  height: 16px;
 }
 .users-search > svg {
   position: absolute;

@@ -33,6 +33,7 @@ class MzUsers extends HTMLElement {
     this.classList.add("users");
     this._users = USERS.map((u) => ({ ...u }));
     this._search = "";
+    this._seq = 100;
 
     this.innerHTML = `
       <div class="users-toolbar">
@@ -40,6 +41,16 @@ class MzUsers extends HTMLElement {
           ${icon("search")}
           <input type="search" class="users-search-input" placeholder="Search people" aria-label="Search people" />
         </div>
+        <form class="users-add">
+          <input type="email" class="input users-add-email" placeholder="name@company.com" aria-label="Email to add" />
+          <div class="select-wrap users-role">
+            <select class="input select users-add-role" aria-label="Role">
+              ${ROLES.map((r) => `<option${r === "Member" ? " selected" : ""}>${r}</option>`).join("")}
+            </select>
+            ${icon("chevron-down")}
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm">${icon("plus")}<span>Add user</span></button>
+        </form>
       </div>
       <div class="table-card">
         <table class="table">
@@ -61,6 +72,10 @@ class MzUsers extends HTMLElement {
       this._search = e.target.value;
       this.render();
     });
+    this.querySelector(".users-add").addEventListener("submit", (e) => {
+      e.preventDefault();
+      this.addUser();
+    });
     this._body.addEventListener("change", (e) => {
       const sel = e.target.closest("[data-role]");
       if (sel) this.byId(sel.dataset.role).role = sel.value;
@@ -77,6 +92,21 @@ class MzUsers extends HTMLElement {
 
   byId(id) {
     return this._users.find((u) => String(u.id) === String(id));
+  }
+
+  addUser() {
+    const emailEl = this.querySelector(".users-add-email");
+    const email = emailEl.value.trim();
+    if (!email) return;
+    const role = this.querySelector(".users-add-role").value;
+    const name = email
+      .split("@")[0]
+      .split(/[.\-_]/)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+    this._users.push({ id: ++this._seq, name, email, role, last: null });
+    emailEl.value = "";
+    this.render();
   }
 
   render() {
