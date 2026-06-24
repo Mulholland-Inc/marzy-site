@@ -1111,6 +1111,18 @@ button.sidebar-item {
 .app-scrim[hidden] {
   display: none;
 }
+/* detail pane open: a soft gray fade behind the card — strongest just to its
+   left — so it lifts off the content instead of clashing with the table */
+@media (min-width: 901px) {
+  .app.pane-open .app-scrim {
+    background: linear-gradient(
+      to right,
+      transparent 28%,
+      rgba(11, 13, 18, 0.05) 64%,
+      rgba(11, 13, 18, 0.13) 100%
+    );
+  }
+}
 @media (max-width: 900px) {
   .app-bar {
     display: flex;
@@ -3742,7 +3754,7 @@ mz-tab-panel:not([hidden]) {
   background: var(--color-surface);
   border: var(--border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-lg);
   padding: var(--space-5);
   overflow-y: auto;
   transform: translateX(calc(100% + var(--space-5)));
