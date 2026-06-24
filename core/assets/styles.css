@@ -1037,6 +1037,15 @@ button.sidebar-item {
   background: var(--color-surface);
   color: var(--color-ink);
 }
+/* unread / activity indicator, pushed to the right edge of the item */
+.sidebar-dot {
+  margin-left: auto;
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-volt);
+}
 
 /* ─────────────────────────────────────────── Workspace switcher (mz-workspace) ── */
 .ws {
@@ -3311,60 +3320,14 @@ mz-tab-panel:not([hidden]) {
   min-height: 0;
 }
 
-/* folder rail */
-.mbx-folders {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
+/* New chat */
+.mbx-new {
+  width: 100%;
+  justify-content: center;
 }
-.mbx-folder {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 32px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: var(--radius-sm);
-  background: none;
-  font: inherit;
-  font-size: var(--text-13);
-  font-weight: var(--weight-medium);
-  color: var(--color-muted);
-  cursor: pointer;
-}
-.mbx-folder:hover {
-  background: var(--color-surface-2);
-  color: var(--color-ink);
-}
-.mbx-folder.is-active {
-  background: var(--color-ink);
-  color: var(--color-surface);
-}
-.mbx-folder-ico {
-  display: inline-flex;
-}
-.mbx-folder-ico svg {
-  width: 15px;
-  height: 15px;
-}
-.mbx-folder.is-active .mbx-star,
-.mbx-folder-ico svg {
-  fill: none;
-}
-.mbx-folder-count {
-  display: inline-grid;
-  place-items: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: var(--radius-pill);
-  background: var(--color-volt);
-  color: #fff;
-  font-size: 11px;
-  font-weight: var(--weight-semibold);
-}
-.mbx-folder.is-active .mbx-folder-count {
-  background: rgba(255, 255, 255, 0.22);
+.mbx-new svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* search */
@@ -3398,27 +3361,6 @@ mz-tab-panel:not([hidden]) {
   box-shadow: 0 0 0 3px var(--color-volt-soft);
 }
 
-/* bulk-action bar */
-.mbx-bulk {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-  padding: 4px 6px 4px 10px;
-  border: 1px solid var(--color-volt-line);
-  border-radius: var(--radius-sm);
-  background: var(--color-volt-soft);
-}
-.mbx-bulk-count {
-  font-size: var(--text-13);
-  font-weight: var(--weight-semibold);
-  color: var(--color-ink);
-}
-.mbx-bulk-actions {
-  display: flex;
-  gap: 2px;
-}
-
 /* message list */
 .mbx-list {
   flex: 1;
@@ -3442,8 +3384,7 @@ mz-tab-panel:not([hidden]) {
 .mbx-row:hover {
   background: var(--color-bg-soft);
 }
-.mbx-row.is-open,
-.mbx-row.is-checked {
+.mbx-row.is-open {
   background: var(--color-volt-soft);
 }
 .mbx-row.is-unread::before {
@@ -3455,37 +3396,6 @@ mz-tab-panel:not([hidden]) {
   width: 3px;
   border-radius: var(--radius-pill);
   background: var(--color-volt);
-}
-.mbx-check {
-  flex: 0 0 auto;
-  margin-top: 2px;
-}
-.mbx-star {
-  flex: 0 0 auto;
-  display: inline-grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border: 0;
-  border-radius: var(--radius-sm);
-  background: none;
-  color: var(--color-line-strong);
-  cursor: pointer;
-}
-.mbx-star svg {
-  width: 16px;
-  height: 16px;
-  fill: none;
-}
-.mbx-star:hover {
-  background: var(--color-surface-2);
-  color: var(--color-muted);
-}
-.mbx-star.is-on {
-  color: var(--color-volt);
-}
-.mbx-star.is-on svg {
-  fill: var(--color-volt);
 }
 .mbx-row-open {
   flex: 1;
@@ -3549,20 +3459,6 @@ mz-tab-panel:not([hidden]) {
 .mbx-row.is-unread .mbx-subj {
   font-weight: var(--weight-semibold);
 }
-.mbx-label {
-  flex: 0 0 auto;
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 8px;
-  border: var(--border);
-  border-radius: var(--radius-pill);
-  background: var(--color-surface);
-  font-size: var(--text-12);
-  color: var(--color-ink-2);
-  white-space: nowrap;
-}
 
 /* reading pane */
 .mbx-reading {
@@ -3575,62 +3471,33 @@ mz-tab-panel:not([hidden]) {
   background: var(--color-surface);
   overflow: hidden;
 }
-.mbx-read-empty {
-  margin: auto;
-  padding: var(--space-6);
+.mbx-reading[hidden] {
+  display: none;
 }
 .mbx-read-head {
   flex: 0 0 auto;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  border-bottom: var(--border);
-}
-.mbx-read-titles {
-  display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: var(--space-2);
-  min-width: 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-soft);
+  border-bottom: var(--border);
 }
 .mbx-read-subj {
   margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-family: var(--font-display);
-  font-size: var(--text-18);
+  font-size: var(--text-16);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-tight);
   color: var(--color-ink);
 }
-.mbx-read-tools {
+.mbx-read-cancel {
   flex: 0 0 auto;
-  display: flex;
-  gap: 2px;
-}
-.mbx-read-tools .mbx-star.is-on {
-  color: var(--color-volt);
-}
-.mbx-read-from {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: var(--space-3) var(--space-4);
-  border-bottom: var(--border);
-}
-.mbx-read-meta {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.3;
-  min-width: 0;
-}
-.mbx-read-meta b {
-  font-size: var(--text-small);
-  color: var(--color-ink);
-}
-.mbx-read-email {
-  font-size: var(--text-12);
-  color: var(--color-muted);
+  margin-left: auto;
 }
 .mbx-thread {
   flex: 1;
@@ -3684,13 +3551,11 @@ mz-tab-panel:not([hidden]) {
   width: 13px;
   height: 13px;
 }
-.mbx-read-from .who-av,
 .mbx-note .who-av {
   width: 28px;
   height: 28px;
   font-size: 11px;
 }
-.mbx-read-from .mbx-av-marzy svg,
 .mbx-note .mbx-av-marzy svg {
   width: 16px;
   height: 16px;

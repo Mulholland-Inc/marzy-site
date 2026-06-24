@@ -39,11 +39,11 @@ const VIEWS = [
         <mz-activity></mz-activity>
       </mz-grid>`,
   },
-  { id: "tasks", label: "Tasks", collection: { singular: "task", view: "board", views: "board,table,grid,gallery,todo,calendar" } },
+  { id: "tasks", label: "Tasks", dot: true, collection: { singular: "task", view: "board", views: "board,table,grid,gallery,todo,calendar" } },
   { id: "projects", label: "Projects", collection: { singular: "project", view: "grid", views: "grid,gallery,table,board" } },
-  { id: "inbox", label: "Inbox", render: () => `<mz-mailbox></mz-mailbox>` },
+  { id: "inbox", label: "Inbox", dot: true, render: () => `<mz-mailbox></mz-mailbox>` },
   { id: "calendar", label: "Calendar", render: () => `<mz-calendar></mz-calendar>` },
-  { id: "connectors", label: "Connectors", render: () => `<mz-connectors></mz-connectors>` },
+  { id: "connectors", label: "Connectors", dot: true, render: () => `<mz-connectors></mz-connectors>` },
   {
     id: "settings",
     label: "Settings",
@@ -92,7 +92,7 @@ class MzApp extends HTMLElement {
     this._singular = "item";
     const nav = VIEWS.map(
       (v, i) =>
-        `<button class="sidebar-item${i === 0 ? " is-active" : ""}" type="button" data-view="${v.id}">${ICON[v.id]}<span>${v.label}</span></button>`
+        `<button class="sidebar-item${i === 0 ? " is-active" : ""}" type="button" data-view="${v.id}">${ICON[v.id]}<span>${v.label}</span>${v.dot ? `<span class="sidebar-dot"></span>` : ""}</button>`
     ).join("");
     this.innerHTML = `
       <aside class="sidebar">
@@ -130,6 +130,13 @@ class MzApp extends HTMLElement {
     // collections + views bubble these up to the app, which owns the pane
     this.addEventListener("mz-select", (e) => this.openDetail(e.detail));
     this.addEventListener("mz-new", () => this.openCreate());
+    // the mailbox extends the breadcrumb with the open conversation, and flags
+    // the sidebar when there's unread mail
+    this.addEventListener("mz-crumb", (e) => {
+      const c = this._body.querySelector(".crumbs");
+      if (c && this._view) c.innerHTML = this.crumbsHTML(this._view, e.detail && e.detail.label);
+    });
+    this.addEventListener("mz-unread", (e) => this.setNavDot("inbox", e.detail.count > 0));
     this._pane.addEventListener("click", (e) => {
       if (e.target.closest(".pane-cancel")) this.hidePane();
     });
@@ -158,15 +165,35 @@ class MzApp extends HTMLElement {
     this._scrim.hidden = !(this.classList.contains("nav-open") || this.classList.contains("pane-open"));
   }
 
+  // Breadcrumb: Mulholland › View, plus an optional trailing segment (e.g. the
+  // open mailbox conversation) — when present, the View crumb steps back to muted.
+  crumbsHTML(view, extra) {
+    const sep = `<span class="crumb-sep" aria-hidden="true">${icon("chevron-right")}</span>`;
+    let html = `<span class="crumb crumb-muted">Mulholland</span>${sep}`;
+    html += `<span class="crumb ${extra ? "crumb-muted" : "crumb-current"}"><span class="crumb-ico" aria-hidden="true">${ICON[view.id]}</span>${view.label}</span>`;
+    if (extra) html += `${sep}<span class="crumb crumb-current">${extra}</span>`;
+    return html;
+  }
+
+  setNavDot(id, on) {
+    const item = this._nav.querySelector(`.sidebar-item[data-view="${id}"]`);
+    if (!item) return;
+    const dot = item.querySelector(".sidebar-dot");
+    if (on && !dot) {
+      const d = document.createElement("span");
+      d.className = "sidebar-dot";
+      item.appendChild(d);
+    } else if (!on && dot) {
+      dot.remove();
+    }
+  }
+
   show(id) {
     const view = VIEWS.find((v) => v.id === id) || VIEWS[0];
+    this._view = view;
     this._barTitle.textContent = view.label;
     const head = `<header class="app-head">
-        <nav class="crumbs" aria-label="Breadcrumb">
-          <span class="crumb crumb-muted">Mulholland</span>
-          <span class="crumb-sep" aria-hidden="true">${icon("chevron-right")}</span>
-          <span class="crumb crumb-current"><span class="crumb-ico" aria-hidden="true">${ICON[view.id]}</span>${view.label}</span>
-        </nav>
+        <nav class="crumbs" aria-label="Breadcrumb">${this.crumbsHTML(view, null)}</nav>
       </header>`;
     this._singular = view.collection ? view.collection.singular : "item";
     this._body.innerHTML = view.collection
