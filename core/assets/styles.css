@@ -3684,19 +3684,18 @@ mz-tab-panel:not([hidden]) {
    right (the content keeps its full width) and slides in when opened. */
 .app-pane {
   position: fixed;
-  top: var(--space-4);
-  right: var(--space-4);
-  bottom: var(--space-4);
+  top: 0;
+  right: 0;
+  bottom: 0;
   z-index: var(--z-modal);
   width: 460px;
-  max-width: calc(100vw - 2 * var(--space-4));
+  max-width: 100vw;
   background: var(--color-surface);
-  border: var(--border);
-  border-radius: var(--radius-lg);
+  border-left: var(--border);
   box-shadow: var(--shadow-lg);
   padding: var(--space-5);
   overflow-y: auto;
-  transform: translateX(calc(100% + var(--space-5)));
+  transform: translateX(100%);
   transition: transform var(--duration-slow) var(--ease);
 }
 .app.pane-open .app-pane {
@@ -3866,9 +3865,9 @@ mz-tab-panel:not([hidden]) {
   gap: var(--space-4);
 }
 @media (max-width: 720px) {
-  /* fill more of the screen on small phones */
+  /* full-width drawer on small phones */
   .app-pane {
-    width: calc(100vw - 2 * var(--space-4));
+    width: 100vw;
   }
 }
 
