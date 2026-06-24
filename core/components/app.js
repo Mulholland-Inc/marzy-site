@@ -41,7 +41,7 @@ const VIEWS = [
   },
   { id: "tasks", label: "Tasks", collection: { singular: "task", view: "board", views: "board,table,grid,gallery,todo,calendar" } },
   { id: "projects", label: "Projects", collection: { singular: "project", view: "grid", views: "grid,gallery,table,board" } },
-  { id: "inbox", label: "Inbox", collection: { singular: "item", view: "todo", views: "todo,table" } },
+  { id: "inbox", label: "Inbox", render: () => `<mz-mailbox></mz-mailbox>` },
   { id: "calendar", label: "Calendar", render: () => `<mz-calendar></mz-calendar>` },
   { id: "connectors", label: "Connectors", render: () => `<mz-connectors></mz-connectors>` },
   {
