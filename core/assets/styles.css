@@ -3737,7 +3737,7 @@ mz-tab-panel:not([hidden]) {
   right: var(--space-4);
   bottom: var(--space-4);
   z-index: var(--z-modal);
-  width: 360px;
+  width: 460px;
   max-width: calc(100vw - 2 * var(--space-4));
   background: var(--color-surface);
   border: var(--border);

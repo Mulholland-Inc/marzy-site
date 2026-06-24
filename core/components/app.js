@@ -134,10 +134,7 @@ class MzApp extends HTMLElement {
     this.addEventListener("mz-new", () => this.openCreate());
     // the mailbox extends the breadcrumb with the open conversation, and flags
     // the sidebar when there's unread mail
-    this.addEventListener("mz-crumb", (e) => {
-      const c = this._body.querySelector(".crumbs");
-      if (c && this._view) c.innerHTML = this.crumbsHTML(this._view, e.detail && e.detail.label);
-    });
+    this.addEventListener("mz-crumb", (e) => this.setCrumb(e.detail && e.detail.label));
     this.addEventListener("mz-unread", (e) => this.setNavDot("inbox", e.detail.count > 0));
     this._pane.addEventListener("click", (e) => {
       if (e.target.closest(".pane-cancel")) this.hidePane();
@@ -157,6 +154,7 @@ class MzApp extends HTMLElement {
   hidePane() {
     // keep the element rendered (transform handles hide) so it can slide out
     this.classList.remove("pane-open");
+    this.setCrumb(null);
     this.syncScrim();
   }
   showPane() {
@@ -175,6 +173,12 @@ class MzApp extends HTMLElement {
     html += `<span class="crumb ${extra ? "crumb-muted" : "crumb-current"}"><span class="crumb-ico" aria-hidden="true">${ICON[view.id]}</span>${view.label}</span>`;
     if (extra) html += `${sep}<span class="crumb crumb-current">${extra}</span>`;
     return html;
+  }
+
+  // Update the trailing breadcrumb segment (the open object/conversation).
+  setCrumb(extra) {
+    const c = this._body.querySelector(".crumbs");
+    if (c && this._view) c.innerHTML = this.crumbsHTML(this._view, extra || null);
   }
 
   setNavDot(id, on) {
@@ -271,6 +275,7 @@ class MzApp extends HTMLElement {
           </li>
         </ol>
       </div>`;
+    this.setCrumb(r.title);
     this.showPane();
   }
 
@@ -289,6 +294,7 @@ class MzApp extends HTMLElement {
           <mz-btn variant="primary">Create ${this._singular}</mz-btn>
         </mz-actions>
       </form>`;
+    this.setCrumb("New " + this._singular);
     this.showPane();
   }
 }
