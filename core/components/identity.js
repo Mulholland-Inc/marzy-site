@@ -55,7 +55,6 @@ class MzIdentity extends HTMLElement {
             <div class="idn-name">${a.name}</div>
             <div class="idn-sub t-meta">${sub}</div>
           </div>
-          ${linked ? `<span class="badge badge-info">Linked</span>` : ""}
           <button type="button" class="btn ${linked ? "btn-ghost" : "btn-primary"} btn-sm" data-i="${i}" data-act="${linked ? "unlink" : "link"}">${linked ? "Unlink" : "Link account"}</button>
         </div>`;
       })
