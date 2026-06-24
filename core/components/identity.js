@@ -25,9 +25,7 @@ class MzIdentity extends HTMLElement {
     this.classList.add("identity");
     this._accounts = PLATFORMS.map(([name, domain, handle, as]) => ({ name, domain, handle, as }));
 
-    this.innerHTML = `
-      <p class="identity-lead">Link your accounts on the platforms where you message Marzy. We verify it's really you with OIDC, so Marzy knows who it's talking to and can trust requests from you there.</p>
-      <div class="identity-list"></div>`;
+    this.innerHTML = `<div class="identity-list"></div>`;
 
     this._list = this.querySelector(".identity-list");
     this._list.addEventListener("click", (e) => {
