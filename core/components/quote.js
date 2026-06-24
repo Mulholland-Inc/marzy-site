@@ -14,7 +14,7 @@ class MzQuote extends HTMLElement {
       <p class="quote-text">${text}</p>
       <div class="quote-author">
         <span class="quote-av">${initials}</span>
-        <span class="quote-meta"><b>${author}</b><span>${role}</span></span>
+        <span class="quote-meta"><b>${author}</b><span class="t-meta">${role}</span></span>
       </div>`;
   }
 }

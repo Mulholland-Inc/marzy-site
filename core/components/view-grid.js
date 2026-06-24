@@ -22,7 +22,7 @@ class MzViewGrid extends HTMLElement {
       ? `<div class="grid grid-3">${recs
           .map(
             (r) => `<div class="card card-hover vcard" data-id="${r.id}">
-        <div class="vcard-top"><span class="vcard-tag">${r.tag}</span><span class="badge badge-neutral">${r.status}</span></div>
+        <div class="vcard-top"><span class="vcard-tag t-caption">${r.tag}</span><span class="badge badge-neutral">${r.status}</span></div>
         <div class="vcard-title">${r.title}</div>
         <div class="vcard-meta">${prioHTML(r.priority)}${avatarHTML(r.assignee)}</div>
       </div>`

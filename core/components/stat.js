@@ -6,7 +6,7 @@ class MzStat extends HTMLElement {
     this.classList.add("stat");
     const value = this.getAttribute("value") || "";
     const label = this.getAttribute("label") || this.innerHTML;
-    this.innerHTML = `<span class="stat-value">${value}</span><span class="stat-label">${label}</span>`;
+    this.innerHTML = `<span class="stat-value">${value}</span><span class="stat-label t-meta">${label}</span>`;
   }
 }
 customElements.define("mz-stat", MzStat);

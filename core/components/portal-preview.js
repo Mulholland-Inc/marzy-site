@@ -59,12 +59,12 @@ class MzPortalPreview extends HTMLElement {
             <div class="pp-content">
               <div class="pp-card">
                 <span class="pp-card-label">June payroll</span>
-                <span class="pp-card-meta">Drafted from 14 timesheets</span>
+                <span class="pp-card-meta t-caption">Drafted from 14 timesheets</span>
                 <span class="pp-status pp-status-pending">Needs approval</span>
               </div>
               <div class="pp-card">
                 <span class="pp-card-label">Books closed</span>
-                <span class="pp-card-meta">412 transactions reconciled</span>
+                <span class="pp-card-meta t-caption">412 transactions reconciled</span>
                 <span class="pp-status pp-status-done">Done</span>
               </div>
               <div class="pp-row"><span class="pp-row-spark">${SPARK}</span><span class="pp-row-text">Marzy filed 2 prior-auth requests</span><span class="pp-row-time">2m</span></div>

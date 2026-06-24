@@ -14,7 +14,7 @@ class MzField extends HTMLElement {
       type === "textarea"
         ? `<textarea class="input" rows="3"${id ? ` id="${id}"` : ""}${ph ? ` placeholder="${ph}"` : ""}></textarea>`
         : `<input class="input" type="${type}"${id ? ` id="${id}"` : ""}${ph ? ` placeholder="${ph}"` : ""} />`;
-    const hintHtml = hint ? `<span class="field-hint">${hint}</span>` : "";
+    const hintHtml = hint ? `<span class="field-hint t-meta">${hint}</span>` : "";
     this.innerHTML = `${labelHtml}${control}${hintHtml}`;
   }
 }

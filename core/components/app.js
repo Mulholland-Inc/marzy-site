@@ -212,7 +212,7 @@ class MzApp extends HTMLElement {
   openDetail(r) {
     this._pane.innerHTML = `
       <div class="pane-head">
-        <span class="pane-eyebrow">${r.tag}</span>
+        <span class="pane-eyebrow t-caption">${r.tag}</span>
         <div class="pane-tools">
           <button type="button" class="btn-icon" title="Edit ${this._singular}" aria-label="Edit">${PENCIL}</button>
           <button type="button" class="btn-icon" title="Duplicate" aria-label="Duplicate">${COPY}</button>
@@ -281,7 +281,7 @@ class MzApp extends HTMLElement {
 
   openCreate() {
     this._pane.innerHTML = `
-      <div class="pane-head"><span class="pane-eyebrow">New ${this._singular}</span></div>
+      <div class="pane-head"><span class="pane-eyebrow t-caption">New ${this._singular}</span></div>
       <form class="pane-form" onsubmit="return false">
         <mz-field label="Title" placeholder="Untitled ${this._singular}" for="nc-title"></mz-field>
         <mz-select label="Status">${STATUSES.map((s) => `<option>${s}</option>`).join("")}</mz-select>

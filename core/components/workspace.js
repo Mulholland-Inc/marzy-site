@@ -49,7 +49,7 @@ class MzWorkspace extends HTMLElement {
           ([n, s], i) =>
             `<button type="button" class="ws-item${i === this._i ? " is-active" : ""}" data-i="${i}" role="menuitemradio" aria-checked="${i === this._i}">
               <span class="ws-av">${n.charAt(0)}</span>
-              <span class="ws-item-meta"><b>${n}</b><span>${s}</span></span>
+              <span class="ws-item-meta"><b>${n}</b><span class="t-caption">${s}</span></span>
               ${i === this._i ? `<span class="ws-check" aria-hidden="true">${CHECK}</span>` : ""}
             </button>`
         ).join("")}

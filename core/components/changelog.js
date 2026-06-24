@@ -23,7 +23,7 @@ class MzChangelog extends HTMLElement {
     this.innerHTML = ENTRIES.map(
       ([version, date, title, changes]) => `
       <div class="cl-entry">
-        <div class="cl-meta"><span class="cl-version">${version}</span><span class="cl-date">${date}</span></div>
+        <div class="cl-meta"><span class="cl-version">${version}</span><span class="cl-date t-meta">${date}</span></div>
         <div class="cl-card">
           <h3 class="cl-title">${title}</h3>
           <ul class="cl-list">${changes

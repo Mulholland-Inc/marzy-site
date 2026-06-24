@@ -112,7 +112,7 @@ class MzMailbox extends HTMLElement {
 
   noteHTML(n) {
     return `<div class="mbx-note${n.you ? " is-you" : ""}">
-        <div class="mbx-note-head"><b>${n.marzy ? "Marzy" : "You"}</b>${n.time ? `<time>${esc(n.time)}</time>` : ""}</div>
+        <div class="mbx-note-head"><b>${n.marzy ? "Marzy" : "You"}</b>${n.time ? `<time class="t-caption">${esc(n.time)}</time>` : ""}</div>
         <div class="mbx-note-text">${esc(n.text)}</div>
       </div>`;
   }

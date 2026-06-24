@@ -121,7 +121,7 @@ class MzUsers extends HTMLElement {
     this._body.innerHTML = rows
       .map(
         (u) => `<tr>
-          <td><div class="cell-user"><span class="avatar" aria-hidden="true">${initials(u.name)}</span><span><b>${esc(u.name)}</b><small>${esc(u.email)}</small></span></div></td>
+          <td><div class="cell-user"><span class="avatar" aria-hidden="true">${initials(u.name)}</span><span><b>${esc(u.name)}</b><small class="t-caption">${esc(u.email)}</small></span></div></td>
           <td>${roleSelect(u)}</td>
           <td class="cell-muted">${fmtDate(u.last)}</td>
           <td><div class="row-actions"><button class="btn-icon" type="button" data-act="remove" data-id="${u.id}" title="Remove" aria-label="Remove ${esc(u.name)}">${icon("trash-2")}</button></div></td>

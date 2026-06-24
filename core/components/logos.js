@@ -6,7 +6,7 @@ class MzLogos extends HTMLElement {
   connectedCallback() {
     this.classList.add("logos");
     this.innerHTML = `
-      <span class="logos-cap">Trusted by back offices at</span>
+      <span class="logos-cap t-meta">Trusted by back offices at</span>
       <div class="logos-row">${LOGOS.map((l) => `<span class="logos-item">${l}</span>`).join("")}</div>`;
   }
 }
