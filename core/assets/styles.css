@@ -3444,14 +3444,18 @@ mz-tab-panel:not([hidden]) {
 .idn-main {
   flex: 1;
   min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
 }
 .idn-name {
+  flex: 0 0 auto;
   font-size: var(--text-small);
   font-weight: var(--weight-semibold);
   color: var(--color-ink);
 }
 .idn-sub {
-  margin-top: 1px;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
