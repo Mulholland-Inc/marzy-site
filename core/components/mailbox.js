@@ -101,13 +101,11 @@ class MzMailbox extends HTMLElement {
       .join("");
   }
 
-  // The shared chat-room chrome: title header, thread of bubbles, composer.
-  roomHTML(title, notes, placeholder, cancel) {
+  // The shared chat-room chrome: thread of bubbles + composer. The title lives
+  // in the breadcrumb, so the only header is a close button while composing.
+  roomHTML(notes, placeholder, cancel) {
     return `
-      <div class="mbx-read-head">
-        <h2 class="mbx-read-subj">${esc(title)}</h2>
-        ${cancel ? `<button type="button" class="btn-icon mbx-read-cancel" data-act="cancel" title="Cancel" aria-label="Cancel">${icon("x")}</button>` : ""}
-      </div>
+      ${cancel ? `<div class="mbx-read-head"><button type="button" class="btn-icon mbx-read-cancel" data-act="cancel" title="Cancel" aria-label="Cancel">${icon("x")}</button></div>` : ""}
       <div class="mbx-thread">${notes}</div>
       <form class="mbx-compose">
         <textarea class="mbx-compose-input" rows="2" placeholder="${esc(placeholder)}" aria-label="Message Marzy"></textarea>
@@ -131,7 +129,7 @@ class MzMailbox extends HTMLElement {
     if (this._composing) {
       this._readEl.hidden = false;
       const greeting = this.noteHTML({ marzy: true, text: "What can I help you with? Ask me to handle a task, pull a report, or check on something." });
-      this._readEl.innerHTML = this.roomHTML("New chat", greeting, "Message Marzy…", true);
+      this._readEl.innerHTML = this.roomHTML(greeting, "Message Marzy…", true);
       this._readEl.querySelector(".mbx-compose").addEventListener("submit", (e) => {
         e.preventDefault();
         this.startChat();
@@ -151,7 +149,7 @@ class MzMailbox extends HTMLElement {
     }
     this._readEl.hidden = false;
     const notes = m.thread.map((n) => this.noteHTML(n)).join("");
-    this._readEl.innerHTML = this.roomHTML(m.subject, notes, "Message Marzy…", false);
+    this._readEl.innerHTML = this.roomHTML(notes, "Message Marzy…", false);
     this._readEl.querySelector(".mbx-compose").addEventListener("submit", (e) => {
       e.preventDefault();
       this.sendReply(m);

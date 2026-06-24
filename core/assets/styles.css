@@ -3483,18 +3483,6 @@ mz-tab-panel:not([hidden]) {
   background: var(--color-bg-soft);
   border-bottom: var(--border);
 }
-.mbx-read-subj {
-  margin: 0;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: var(--font-display);
-  font-size: var(--text-16);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-tight);
-  color: var(--color-ink);
-}
 .mbx-read-cancel {
   flex: 0 0 auto;
   margin-left: auto;
