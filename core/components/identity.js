@@ -46,9 +46,7 @@ class MzIdentity extends HTMLElement {
     this._list.innerHTML = this._accounts
       .map((a, i) => {
         const linked = !!a.handle;
-        const sub = linked
-          ? `${esc(a.handle)} · <span class="idn-verified">verified via OIDC</span>`
-          : "Not linked";
+        const sub = linked ? esc(a.handle) : "Not linked";
         return `<div class="idn-row">
           <img class="idn-logo" src="${LOGO(a.domain)}" alt="" loading="lazy"
             onerror="this.outerHTML='<span class=&quot;idn-logo idn-mono&quot;>${mono(a.name)}</span>'" />
