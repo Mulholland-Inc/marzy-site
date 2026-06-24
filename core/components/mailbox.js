@@ -24,7 +24,7 @@ class MzMailbox extends HTMLElement {
         <div class="mbx-top">
           <div class="mbx-search">
             ${icon("search")}
-            <input type="search" class="mbx-search-input" placeholder="Search chats" aria-label="Search chats" />
+            <input type="search" class="search-input" placeholder="Search chats" aria-label="Search chats" />
           </div>
           <button type="button" class="btn btn-primary btn-sm mbx-new">${icon("plus")}<span>New chat</span></button>
         </div>
@@ -34,7 +34,7 @@ class MzMailbox extends HTMLElement {
 
     this._listEl = this.querySelector(".mbx-list");
     this._readEl = this.querySelector(".mbx-reading");
-    this._searchInput = this.querySelector(".mbx-search-input");
+    this._searchInput = this.querySelector(".search-input");
 
     this._searchInput.addEventListener("input", (e) => {
       this._search = e.target.value;

@@ -39,7 +39,7 @@ class MzUsers extends HTMLElement {
       <div class="users-toolbar">
         <div class="users-search">
           ${icon("search")}
-          <input type="search" class="users-search-input" placeholder="Search people" aria-label="Search people" />
+          <input type="search" class="search-input" placeholder="Search people" aria-label="Search people" />
         </div>
         <form class="users-add">
           <input type="email" class="input users-add-email" placeholder="name@company.com" aria-label="Email to add" />
@@ -68,7 +68,7 @@ class MzUsers extends HTMLElement {
 
     this._body = this.querySelector(".users-body");
 
-    this.querySelector(".users-search-input").addEventListener("input", (e) => {
+    this.querySelector(".search-input").addEventListener("input", (e) => {
       this._search = e.target.value;
       this.render();
     });
