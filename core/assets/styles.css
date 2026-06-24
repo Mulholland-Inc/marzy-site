@@ -3313,7 +3313,6 @@ mz-tab-panel:not([hidden]) {
   min-width: 0;
 }
 .mbx-list-pane {
-  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -3321,15 +3320,15 @@ mz-tab-panel:not([hidden]) {
   min-height: 0;
 }
 
-/* New chat: a pill that floats over the conversation list */
+/* search + New chat share the top row */
+.mbx-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
 .mbx-new {
-  position: absolute;
-  left: 50%;
-  bottom: var(--space-4);
-  transform: translateX(-50%);
-  z-index: 2;
-  width: auto;
-  box-shadow: var(--shadow-lg);
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 .mbx-new svg {
   width: 16px;
@@ -3340,6 +3339,8 @@ mz-tab-panel:not([hidden]) {
 .mbx-search {
   position: relative;
   display: flex;
+  flex: 1;
+  min-width: 0;
   align-items: center;
 }
 .mbx-search > svg {
@@ -3372,7 +3373,6 @@ mz-tab-panel:not([hidden]) {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding-bottom: 56px;
   border: var(--border);
   border-radius: var(--radius);
   background: var(--color-surface);
@@ -3504,12 +3504,17 @@ mz-tab-panel:not([hidden]) {
   gap: var(--space-4);
   padding: var(--space-4) var(--space-4) 84px;
 }
+/* chat bubbles: Marzy is blue on the left, you are neutral on the right */
 .mbx-note {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
+  align-self: flex-start;
+  max-width: 80%;
 }
-.mbx-note-body {
-  min-width: 0;
+.mbx-note.is-you {
+  align-items: flex-end;
+  align-self: flex-end;
 }
 .mbx-note-head {
   display: flex;
@@ -3528,13 +3533,17 @@ mz-tab-panel:not([hidden]) {
 .mbx-note-text {
   padding: 10px 12px;
   border-radius: var(--radius);
-  background: var(--color-bg-soft);
+  border-bottom-left-radius: 4px;
+  background: var(--color-volt);
   font-size: var(--text-small);
   line-height: var(--leading-relaxed);
-  color: var(--color-ink-2);
+  color: #fff;
 }
 .mbx-note.is-you .mbx-note-text {
-  background: var(--color-volt-soft);
+  border-bottom-left-radius: var(--radius);
+  border-bottom-right-radius: 4px;
+  background: var(--color-surface-2);
+  color: var(--color-ink);
 }
 
 /* floating composer: a pill that hovers over the thread, send button inside */
@@ -3552,7 +3561,7 @@ mz-tab-panel:not([hidden]) {
   gap: var(--space-2);
   padding: 6px 6px 6px 14px;
   border: var(--border-strong);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-sm);
   background: var(--color-surface);
   box-shadow: var(--shadow-lg);
 }
