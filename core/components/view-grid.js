@@ -1,7 +1,7 @@
 // <mz-view-grid></mz-view-grid>, a card-grid perspective over the shared data.
 // Renders from this._records (set via setData by mz-collection's toolbar query),
 // defaulting to all RECORDS.
-import { RECORDS, byId, emitSelect, prioHTML, avatarHTML } from "./data.js";
+import { RECORDS, byId, emitSelect } from "./data.js";
 
 class MzViewGrid extends HTMLElement {
   connectedCallback() {
@@ -22,9 +22,12 @@ class MzViewGrid extends HTMLElement {
       ? `<div class="grid grid-3">${recs
           .map(
             (r) => `<div class="card card-hover vcard" data-id="${r.id}">
-        <div class="vcard-top"><span class="vcard-tag t-caption">${r.tag}</span><span class="badge badge-neutral">${r.status}</span></div>
         <div class="vcard-title">${r.title}</div>
-        <div class="vcard-meta">${prioHTML(r.priority)}${avatarHTML(r.assignee)}</div>
+        <dl class="vcard-details">
+          <div class="vcard-row"><dt>Status</dt><dd>${r.status}</dd></div>
+          <div class="vcard-row"><dt>Owner</dt><dd>${r.assignee}</dd></div>
+          <div class="vcard-row"><dt>Due</dt><dd>${r.due}</dd></div>
+        </dl>
       </div>`
           )
           .join("")}</div>`
