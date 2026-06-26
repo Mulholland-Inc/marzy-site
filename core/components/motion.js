@@ -32,6 +32,12 @@ export function popOut(el) {
   return animate(el, { opacity: [1, 0], scale: [1, 0.97] }, { duration: 0.12, ease: EASE_IN }).finished;
 }
 
+// Content enter — fade up. Used when a view's content swaps in.
+export function fadeIn(el, y = 8) {
+  if (reduce || !el) return;
+  animate(el, { opacity: [0, 1], y: [y, 0] }, { duration: 0.24, ease: EASE_OUT });
+}
+
 // A quick attention pop (e.g. a checkmark landing).
 export function pop(el) {
   if (reduce) return;

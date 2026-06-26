@@ -5,6 +5,7 @@
 // app owns the pane and fills it from collections' mz-select / mz-new events.
 import { STATUSES, RECORDS, PRIO, prioHTML, whoHTML } from "./data.js";
 import { icon } from "./icons.js";
+import { animate, SPRING_SOFT, EASE_IN, reduce } from "./motion.js";
 
 const ICON = {
   overview: icon("layout-dashboard"),
@@ -161,13 +162,24 @@ class MzApp extends HTMLElement {
   }
   hidePane() {
     // keep the element rendered (transform handles hide) so it can slide out
+    const wasOpen = this.classList.contains("pane-open");
     this.classList.remove("pane-open");
     this.setCrumb(null);
     this.syncScrim();
+    if (reduce || !wasOpen) {
+      this._pane.style.transform = "";
+      return;
+    }
+    animate(this._pane, { x: ["0%", "100%"] }, { duration: 0.26, ease: EASE_IN });
   }
   showPane() {
     this.classList.add("pane-open");
     this.syncScrim();
+    if (reduce) {
+      this._pane.style.transform = "none";
+      return;
+    }
+    animate(this._pane, { x: ["100%", "0%"] }, SPRING_SOFT);
   }
   syncScrim() {
     this._scrim.hidden = !(this.classList.contains("nav-open") || this.classList.contains("pane-open"));

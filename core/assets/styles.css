@@ -3926,8 +3926,8 @@ mz-tab-panel:not([hidden]) {
   box-shadow: var(--shadow-lg);
   padding: var(--space-5);
   overflow-y: auto;
+  /* resting off-screen; Motion drives the open/close slide (see app.js) */
   transform: translateX(100%);
-  transition: transform var(--duration-slow) var(--ease);
 }
 .app.pane-open .app-pane {
   transform: none;

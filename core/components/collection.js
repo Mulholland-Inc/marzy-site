@@ -5,6 +5,7 @@
 // detail pane and responds to both.
 import { icon } from "./icons.js";
 import { queryRecords } from "./data.js";
+import { fadeIn } from "./motion.js";
 
 const VIEW_TAG = {
   table: "mz-view-table",
@@ -101,6 +102,7 @@ class MzCollection extends HTMLElement {
   renderView() {
     this._main.innerHTML = `<${VIEW_TAG[this._view]}></${VIEW_TAG[this._view]}>`;
     this.applyQuery();
+    fadeIn(this._main.firstElementChild);
   }
 
   applyQuery() {
