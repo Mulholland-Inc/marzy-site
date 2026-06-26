@@ -1335,6 +1335,11 @@ button.sidebar-item {
   outline: none;
   box-shadow: 0 0 0 3px var(--color-volt-soft);
 }
+/* While drawCheck pens in the stroke, suppress the static background mark so
+   only the animated overlay shows; it settles back the instant the draw ends. */
+.checkbox.is-drawing {
+  background-image: none;
+}
 
 /* ─────────────────────────────────────────── Table ── */
 .table-card {

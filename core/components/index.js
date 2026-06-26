@@ -73,6 +73,7 @@ import "./collection.js";
 import "./connectors.js";
 import "./app.js";
 import "./login.js";
+import { initCheckmarks } from "./motion.js";
 
 // Scroll-reveal: sections ease up as they enter the viewport (one-shot).
 function initReveal() {
@@ -101,6 +102,7 @@ function initReveal() {
 const reveal = () => document.body && document.body.classList.add("mz-ready");
 const boot = () => {
   initReveal();
+  initCheckmarks();
   requestAnimationFrame(reveal);
 };
 if (document.readyState === "loading") {
