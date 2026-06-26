@@ -2867,11 +2867,30 @@ mz-tab-panel:not([hidden]) {
   border: var(--border);
   border-radius: var(--radius-sm);
   padding: var(--space-3);
-  cursor: pointer;
+  cursor: grab;
+  touch-action: none;
   transition: border-color var(--duration-base) var(--ease);
 }
 .board-card:hover {
   border-color: var(--color-line-strong);
+}
+/* drag-and-drop */
+.board-card.is-dragging {
+  z-index: var(--z-modal);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-line-strong);
+  cursor: grabbing;
+  pointer-events: none;
+}
+.board-ph {
+  border: 1px dashed var(--color-volt-line);
+  border-radius: var(--radius-sm);
+  background: var(--color-volt-soft);
+}
+body.is-dragging-card,
+body.is-dragging-card * {
+  cursor: grabbing !important;
+  user-select: none;
 }
 .board-card-title {
   font-size: var(--text-13);
