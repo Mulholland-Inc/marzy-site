@@ -3,6 +3,7 @@
 // the left, the selected role's config on the right. Self-contained over a
 // sample set; edits update an in-memory model.
 import { icon } from "./icons.js";
+import { flipKnob } from "./motion.js";
 
 const TOOLS = [
   "Run payroll",
@@ -90,6 +91,7 @@ class MzRoles extends HTMLElement {
       if (!sw) return;
       const on = sw.getAttribute("aria-checked") !== "true";
       sw.setAttribute("aria-checked", on ? "true" : "false");
+      flipKnob(sw, on);
       const tools = this.role().tools;
       on ? tools.add(sw.dataset.tool) : tools.delete(sw.dataset.tool);
     });

@@ -37,3 +37,11 @@ export function pop(el) {
   if (reduce) return;
   animate(el, { scale: [0.6, 1] }, { ...SPRING, stiffness: 700, damping: 18 });
 }
+
+// Spring the switch knob between off (0) and on (20px). Explicit keyframes so
+// the CSS aria-checked rule doesn't snap it before Motion takes over.
+export function flipKnob(btn, on) {
+  if (reduce) return;
+  const knob = btn.querySelector(".switch-knob");
+  if (knob) animate(knob, { x: [on ? 0 : 20, on ? 20 : 0] }, SPRING);
+}

@@ -1,6 +1,7 @@
 // <mz-view-todo></mz-view-todo>, a to-do/checklist perspective. Renders from
 // this._records (set via setData), default RECORDS.
 import { RECORDS, byId, emitSelect, prioHTML, avatarHTML } from "./data.js";
+import { pop } from "./motion.js";
 
 class MzViewTodo extends HTMLElement {
   connectedCallback() {
@@ -9,6 +10,7 @@ class MzViewTodo extends HTMLElement {
       if (e.target.closest(".todo-check")) {
         const row = e.target.closest(".todo-item");
         row.classList.toggle("is-done", e.target.checked);
+        if (e.target.checked) pop(e.target);
         return;
       }
       const t = e.target.closest(".todo-title");
