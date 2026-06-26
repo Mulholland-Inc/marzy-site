@@ -2962,12 +2962,17 @@ mz-tab-panel:not([hidden]) {
 .todo-item {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) 0;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
   border-top: var(--border);
 }
 .todo-item:first-child {
   border-top: 0;
+}
+.todo .who-av {
+  width: 18px;
+  height: 18px;
+  font-size: 9px;
 }
 .todo-title {
   flex: 1;
@@ -2976,7 +2981,7 @@ mz-tab-panel:not([hidden]) {
   border: 0;
   background: none;
   font: inherit;
-  font-size: var(--text-small);
+  font-size: var(--text-13);
   color: var(--color-ink);
   cursor: pointer;
   overflow: hidden;
