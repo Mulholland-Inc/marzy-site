@@ -43,12 +43,10 @@ class MzConnectors extends HTMLElement {
           ${icon("search")}
           <input type="search" class="search-input" placeholder="Search connectors" aria-label="Search connectors" />
         </div>
-        <span class="cnx-count t-meta"></span>
       </div>
       <div class="cnx-sections"></div>`;
 
     this._sections = this.querySelector(".cnx-sections");
-    this._count = this.querySelector(".cnx-count");
 
     this.querySelector(".search-input").addEventListener("input", (e) => {
       this._q = e.target.value;
@@ -69,9 +67,6 @@ class MzConnectors extends HTMLElement {
     const term = this._q.trim().toLowerCase();
     const match = (it) => !term || `${it.name} ${it.kind} ${it.cat} ${it.desc}`.toLowerCase().includes(term);
 
-    const connectedTotal = this._items.filter((it) => it.connected).length;
-    this._count.textContent = `${connectedTotal} connected · ${this._items.length} available`;
-
     const row = (it) => {
       const i = this._items.indexOf(it);
       return `<div class="cnx-row${it.connected ? " is-connected" : ""}">
@@ -81,8 +76,6 @@ class MzConnectors extends HTMLElement {
           <div class="cnx-name">${esc(it.name)}</div>
           <div class="cnx-desc t-meta">${esc(it.desc)}</div>
         </div>
-        <span class="cnx-kind">${it.kind}</span>
-        ${it.connected ? `<span class="cnx-on" title="Connected" aria-hidden="true"></span>` : ""}
         <button type="button" class="btn ${it.connected ? "btn-ghost" : "btn-primary"} btn-sm" data-i="${i}">${it.connected ? "Manage" : "Connect"}</button>
       </div>`;
     };

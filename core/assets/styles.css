@@ -3561,15 +3561,11 @@ mz-tab-panel:not([hidden]) {
   flex: 1;
   max-width: 320px;
 }
-.cnx-count {
-  flex: 0 0 auto;
-  white-space: nowrap;
-}
 .cnx-sections {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-  max-width: 760px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5) var(--space-6);
+  align-items: start;
 }
 /* category heading + count */
 .cnx-cat {
@@ -3632,23 +3628,13 @@ mz-tab-panel:not([hidden]) {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.cnx-kind {
-  flex: 0 0 auto;
-  font-size: 11px;
-  font-weight: var(--weight-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-muted);
-}
-.cnx-on {
-  flex: 0 0 auto;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--color-volt);
-}
 .cnx-row .btn {
   flex: 0 0 auto;
+}
+@media (max-width: 860px) {
+  .cnx-sections {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ─────────────────────────────────────────── View toolbar (mz-toolbar) ──
