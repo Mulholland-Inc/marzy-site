@@ -3051,6 +3051,14 @@ body.is-dragging-card * {
   min-width: 180px;
   max-width: 320px;
 }
+.users-search > svg {
+  position: absolute;
+  left: 10px;
+  width: 16px;
+  height: 16px;
+  color: var(--color-muted);
+  pointer-events: none;
+}
 /* add-user bar, pushed to the right */
 .users-add {
   display: flex;
