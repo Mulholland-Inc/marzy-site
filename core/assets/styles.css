@@ -3314,7 +3314,18 @@ mz-tab-panel:not([hidden]) {
 }
 /* role picker — keep it compact in its table cell */
 .users-role {
-  width: 140px;
+  width: 128px;
+}
+/* compact role picker inside the dense table */
+.table .users-role .select {
+  height: 26px;
+  padding-left: 10px;
+  padding-right: 26px;
+  font-size: var(--text-13);
+  box-shadow: none;
+}
+.table .users-role svg {
+  right: 9px;
 }
 
 /* ─────────────────────────────────────────── Roles (mz-roles) ── */
