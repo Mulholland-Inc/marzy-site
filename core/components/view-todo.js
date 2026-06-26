@@ -26,7 +26,7 @@ class MzViewTodo extends HTMLElement {
       ? `<div class="todo">${recs
           .map(
             (r) => `<div class="todo-item${r.status === "Done" ? " is-done" : ""}" data-id="${r.id}">
-        <input type="checkbox" class="checkbox todo-check" data-check="draw" ${r.status === "Done" ? "checked" : ""} aria-label="Done" />
+        <input type="checkbox" class="checkbox todo-check" ${r.status === "Done" ? "checked" : ""} aria-label="Done" />
         <button type="button" class="todo-title">${r.title}</button>
         ${prioHTML(r.priority)}
         ${avatarHTML(r.assignee)}

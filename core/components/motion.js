@@ -87,8 +87,9 @@ export function drawCheck(box) {
 }
 
 // House default: any checkbox that lands checked gets a checkmark animation —
-// no per-component wiring. `data-check="draw"` (on the input or an ancestor)
-// opts into the pen-stroke draw; everything else gets the quick pop.
+// no per-component wiring. Custom `.checkbox` ticks get the pen-stroke draw;
+// native checkboxes (no styled SVG mark) get the quick pop. Override per box
+// with `data-check="draw"` or `data-check="pop"`.
 let checksWired = false;
 export function initCheckmarks() {
   if (checksWired) return;
@@ -96,7 +97,9 @@ export function initCheckmarks() {
   document.addEventListener("change", (e) => {
     const box = e.target;
     if (!(box instanceof HTMLInputElement) || box.type !== "checkbox" || !box.checked) return;
-    if (box.closest('[data-check="draw"]')) drawCheck(box);
+    const mode = box.closest("[data-check]")?.dataset.check;
+    const draw = mode ? mode === "draw" : box.classList.contains("checkbox");
+    if (draw) drawCheck(box);
     else pop(box);
   });
 }
