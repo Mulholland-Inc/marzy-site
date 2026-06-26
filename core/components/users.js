@@ -16,6 +16,7 @@ const USERS = [
 
 const esc = (s) =>
   String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const initials = (name) => name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 const fmtDate = (iso) =>
   iso ? new Date(iso + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—";
 
@@ -120,7 +121,7 @@ class MzUsers extends HTMLElement {
     this._body.innerHTML = rows
       .map(
         (u) => `<tr>
-          <td><div class="cell-user"><b>${esc(u.name)}</b><small class="t-caption">${esc(u.email)}</small></div></td>
+          <td><div class="cell-user"><span class="avatar" aria-hidden="true">${initials(u.name)}</span><span class="cell-user-text"><b>${esc(u.name)}</b><small class="t-caption">${esc(u.email)}</small></span></div></td>
           <td>${roleSelect(u)}</td>
           <td class="cell-muted">${fmtDate(u.last)}</td>
           <td><div class="row-actions"><button class="btn-icon" type="button" data-act="remove" data-id="${u.id}" title="Remove" aria-label="Remove ${esc(u.name)}">${icon("trash-2")}</button></div></td>
