@@ -2,6 +2,7 @@
 // database table. Renders from this._records (set via setData), default RECORDS.
 import { RECORDS, byId, emitSelect, whoHTML } from "./data.js";
 import { icon } from "./icons.js";
+import { pop } from "./motion.js";
 
 const TAG_CAT = { Finance: "finance", People: "people", Ops: "ops", Payroll: "payroll", Eng: "eng", Legal: "legal", Clinic: "clinic" };
 const slug = (s) => s.toLowerCase().replace(/\s+/g, "-");
@@ -20,7 +21,11 @@ class MzViewTable extends HTMLElement {
   connectedCallback() {
     this.classList.add("view");
     this.addEventListener("click", (e) => {
-      if (e.target.closest("input")) return; // let checkboxes toggle
+      const cb = e.target.closest("input.checkbox");
+      if (cb) {
+        if (cb.checked) pop(cb); // pop the tick when it lands
+        return;
+      }
       const tr = e.target.closest("tr[data-id]");
       if (tr) emitSelect(this, byId(tr.dataset.id));
     });

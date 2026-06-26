@@ -5,7 +5,7 @@
 // detail pane and responds to both.
 import { icon } from "./icons.js";
 import { queryRecords } from "./data.js";
-import { fadeIn } from "./motion.js";
+import { fadeIn, animate, SPRING, reduce } from "./motion.js";
 
 const VIEW_TAG = {
   table: "mz-view-table",
@@ -76,7 +76,7 @@ class MzCollection extends HTMLElement {
       this.applyQuery();
     });
 
-    const settle = () => this.moveThumb(this._seg.querySelector(".seg-btn.is-active"));
+    const settle = () => this.moveThumb(this._seg.querySelector(".seg-btn.is-active"), false);
     requestAnimationFrame(settle);
     if ("ResizeObserver" in window) {
       this._ro = new ResizeObserver(settle);
@@ -90,13 +90,20 @@ class MzCollection extends HTMLElement {
     this._ro?.disconnect();
   }
 
-  moveThumb(btn) {
+  moveThumb(btn, animateIt = true) {
     if (!btn || !this._thumb) return;
-    this._thumb.style.left = `${btn.offsetLeft}px`;
-    this._thumb.style.top = `${btn.offsetTop}px`;
-    this._thumb.style.width = `${btn.offsetWidth}px`;
-    this._thumb.style.height = `${btn.offsetHeight}px`;
+    const to = {
+      left: `${btn.offsetLeft}px`,
+      top: `${btn.offsetTop}px`,
+      width: `${btn.offsetWidth}px`,
+      height: `${btn.offsetHeight}px`,
+    };
     this._thumb.style.opacity = "1";
+    if (reduce || !animateIt) {
+      Object.assign(this._thumb.style, to);
+    } else {
+      animate(this._thumb, to, SPRING);
+    }
   }
 
   renderView() {

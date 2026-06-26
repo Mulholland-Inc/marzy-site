@@ -3889,10 +3889,7 @@ body.is-dragging-card * {
   border-radius: var(--radius-sm);
   opacity: 0;
   pointer-events: none;
-  transition:
-    left var(--duration-slow) var(--ease),
-    top var(--duration-slow) var(--ease),
-    width var(--duration-slow) var(--ease);
+  /* Motion drives the slide (see collection.js moveThumb) */
 }
 .seg-btn {
   position: relative;
