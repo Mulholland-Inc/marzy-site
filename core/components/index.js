@@ -63,7 +63,6 @@ import "./view-board.js";
 import "./view-grid.js";
 import "./view-gallery.js";
 import "./view-todo.js";
-import "./mailbox.js";
 import "./users.js";
 import "./roles.js";
 import "./identity.js";

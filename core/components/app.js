@@ -11,7 +11,6 @@ const ICON = {
   overview: icon("layout-dashboard"),
   tasks: icon("square-kanban"),
   projects: icon("layout-grid"),
-  inbox: icon("inbox"),
   calendar: icon("calendar"),
   connectors: icon("plug"),
   users: icon("users"),
@@ -45,7 +44,6 @@ const VIEWS = [
   },
   { id: "tasks", label: "Tasks", dot: true, collection: { singular: "task", view: "board", views: "board,table,grid,gallery,todo,calendar" } },
   { id: "projects", label: "Projects", collection: { singular: "project", view: "grid", views: "grid,gallery,table,board" } },
-  { id: "inbox", label: "Inbox", dot: true, render: () => `<mz-mailbox></mz-mailbox>` },
   { id: "calendar", label: "Calendar", render: () => `<mz-calendar></mz-calendar>` },
   { id: "users", label: "Users", render: () => `<mz-users></mz-users>` },
   { id: "roles", label: "Roles", render: () => `<mz-roles></mz-roles>` },
@@ -141,10 +139,6 @@ class MzApp extends HTMLElement {
     // collections + views bubble these up to the app, which owns the pane
     this.addEventListener("mz-select", (e) => this.openDetail(e.detail));
     this.addEventListener("mz-new", () => this.openCreate());
-    // the mailbox extends the breadcrumb with the open conversation, and flags
-    // the sidebar when there's unread mail
-    this.addEventListener("mz-crumb", (e) => this.setCrumb(e.detail && e.detail.label));
-    this.addEventListener("mz-unread", (e) => this.setNavDot("inbox", e.detail.count > 0));
     this._pane.addEventListener("click", (e) => {
       if (e.target.closest(".pane-cancel")) this.hidePane();
     });
@@ -186,7 +180,7 @@ class MzApp extends HTMLElement {
   }
 
   // Breadcrumb: Mulholland › View, plus an optional trailing segment (e.g. the
-  // open mailbox conversation) — when present, the View crumb steps back to muted.
+  // open object's title) — when present, the View crumb steps back to muted.
   crumbsHTML(view, extra) {
     const sep = `<span class="crumb-sep" aria-hidden="true">${icon("chevron-right")}</span>`;
     let html = `<span class="crumb crumb-muted">Mulholland</span>${sep}`;
@@ -195,23 +189,10 @@ class MzApp extends HTMLElement {
     return html;
   }
 
-  // Update the trailing breadcrumb segment (the open object/conversation).
+  // Update the trailing breadcrumb segment (the open object's title).
   setCrumb(extra) {
     const c = this._body.querySelector(".crumbs");
     if (c && this._view) c.innerHTML = this.crumbsHTML(this._view, extra || null);
-  }
-
-  setNavDot(id, on) {
-    const item = this._nav.querySelector(`.sidebar-item[data-view="${id}"]`);
-    if (!item) return;
-    const dot = item.querySelector(".sidebar-dot");
-    if (on && !dot) {
-      const d = document.createElement("span");
-      d.className = "sidebar-dot";
-      item.appendChild(d);
-    } else if (!on && dot) {
-      dot.remove();
-    }
   }
 
   show(id) {
