@@ -3561,11 +3561,14 @@ mz-tab-panel:not([hidden]) {
   flex: 1;
   max-width: 320px;
 }
+/* masonry: sections flow down columns, packing without row gaps */
 .cnx-sections {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-5) var(--space-6);
-  align-items: start;
+  column-count: 3;
+  column-gap: var(--space-6);
+}
+.cnx-cat-sec {
+  break-inside: avoid;
+  margin-bottom: var(--space-5);
 }
 /* category heading + count */
 .cnx-cat {
@@ -3633,12 +3636,12 @@ mz-tab-panel:not([hidden]) {
 }
 @media (max-width: 1080px) {
   .cnx-sections {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-count: 2;
   }
 }
 @media (max-width: 720px) {
   .cnx-sections {
-    grid-template-columns: 1fr;
+    column-count: 1;
   }
 }
 
