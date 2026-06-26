@@ -1,78 +1,102 @@
-// <mz-connectors></mz-connectors>, the integrations directory: a big centered
-// title + search, category chips, and a marketplace grid of connector cards
-// (logo, name, kind, status, Connect/Manage). Search + category filter live.
+// <mz-connectors></mz-connectors>, the integrations directory. Structured:
+// a search + connected count, then one section per category, each a list of
+// connector rows (logo, name, kind, Connect/Manage). Search filters live.
 import { icon } from "./icons.js";
 
-// Real, full-colour brand logos via DuckDuckGo's favicon service (free, no
-// auth), keyed by domain. Falls back to a letter monogram if one can't load.
+// Full-colour brand logos via DuckDuckGo's favicon service; letter fallback.
 const LOGO = (domain) => `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+const mono = (n) => n.replace(/[^A-Za-z]/g, "").slice(0, 1).toUpperCase();
+const esc = (s) =>
+  String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 // [name, domain, kind, category, description, connected]
 const CONNECTORS = [
   ["Gusto", "gusto.com", "App", "Finance", "Payroll & benefits", true],
   ["QuickBooks", "quickbooks.intuit.com", "App", "Finance", "Billing & ledger", true],
+  ["Xero", "xero.com", "App", "Finance", "Accounting", false],
+  ["Plaid", "plaid.com", "API", "Finance", "Bank connections", false],
   ["Gmail", "gmail.com", "App", "Comms", "Inbox & email", true],
   ["Slack", "slack.com", "App", "Comms", "Notifications & alerts", true],
+  ["Twilio", "twilio.com", "API", "Comms", "SMS & voice", false],
   ["Google Drive", "drive.google.com", "App", "Productivity", "Files & storage", true],
-  ["Stripe", "stripe.com", "API", "Payments", "Payments & payouts", false],
-  ["Plaid", "plaid.com", "API", "Finance", "Bank connections", false],
   ["Notion", "notion.so", "MCP", "Productivity", "Docs, wikis & databases", false],
+  ["Stripe", "stripe.com", "API", "Payments", "Payments & payouts", false],
   ["Salesforce", "salesforce.com", "App", "Records", "Customer relationships", false],
   ["HubSpot", "hubspot.com", "App", "Records", "Marketing & CRM", false],
-  ["Xero", "xero.com", "App", "Finance", "Accounting", false],
   ["Airtable", "airtable.com", "App", "Records", "Records & bases", false],
-  ["Twilio", "twilio.com", "API", "Comms", "SMS & voice", false],
   ["GitHub", "github.com", "MCP", "Dev", "Repos, issues & PRs", false],
   ["Linear", "linear.app", "MCP", "Dev", "Issues & projects", false],
   ["Snowflake", "snowflake.com", "API", "Data", "Warehouse & queries", false],
 ];
 
-const mono = (n) => n.replace(/[^A-Za-z]/g, "").slice(0, 1).toUpperCase();
+const CATS = ["Finance", "Comms", "Productivity", "Payments", "Records", "Dev", "Data"];
 
 class MzConnectors extends HTMLElement {
   connectedCallback() {
-    this.classList.add("connectors");
+    this.classList.add("cnx");
+    this._items = CONNECTORS.map(([name, domain, kind, cat, desc, connected]) => ({ name, domain, kind, cat, desc, connected }));
     this._q = "";
-    this.innerHTML = `
-      <div class="cn-head">
-        <h2 class="cn-title">Connect everything.</h2>
-        <p class="cn-sub">Tools, APIs, and MCP servers, all in one place.</p>
-        <div class="cn-search">
-          <span class="cn-search-ico" aria-hidden="true">${icon("search")}</span>
-          <input class="input cn-search-input" type="search" placeholder="Search connectors…" aria-label="Search connectors" />
-        </div>
-      </div>
-      <div class="cn-grid"></div>`;
 
-    this._grid = this.querySelector(".cn-grid");
-    this.querySelector(".cn-search-input").addEventListener("input", (e) => {
+    this.innerHTML = `
+      <div class="cnx-toolbar">
+        <div class="search cnx-search">
+          ${icon("search")}
+          <input type="search" class="search-input" placeholder="Search connectors" aria-label="Search connectors" />
+        </div>
+        <span class="cnx-count t-meta"></span>
+      </div>
+      <div class="cnx-sections"></div>`;
+
+    this._sections = this.querySelector(".cnx-sections");
+    this._count = this.querySelector(".cnx-count");
+
+    this.querySelector(".search-input").addEventListener("input", (e) => {
       this._q = e.target.value;
-      this.renderGrid();
+      this.render();
     });
-    this.renderGrid();
+    this._sections.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-i]");
+      if (!btn) return;
+      const it = this._items[Number(btn.dataset.i)];
+      it.connected = !it.connected;
+      this.render();
+    });
+
+    this.render();
   }
 
-  renderGrid() {
+  render() {
     const term = this._q.trim().toLowerCase();
-    const rows = CONNECTORS.filter(([name, domain, kind, cat, desc]) =>
-      !term || `${name} ${kind} ${cat} ${desc}`.toLowerCase().includes(term)
-    );
-    this._grid.innerHTML = rows.length
-      ? rows
-          .map(
-            ([name, domain, kind, cat, desc, connected]) => `
-        <div class="cn-card">
-          <img class="cn-logo" src="${LOGO(domain)}" alt="${name}" loading="lazy"
-            onerror="this.outerHTML='<span class=&quot;cn-logo cn-mono&quot;>${mono(name)}</span>'" />
-          <div class="cn-body">
-            <div class="cn-name">${name}</div>
-            <p class="cn-desc">${desc}</p>
-          </div>
-          <button type="button" class="btn ${connected ? "btn-outline" : "btn-primary"} btn-sm cn-action">${connected ? "Manage" : "Connect"}</button>
-        </div>`
-          )
-          .join("")
-      : `<mz-empty heading="No connectors found">Try a different search.</mz-empty>`;
+    const match = (it) => !term || `${it.name} ${it.kind} ${it.cat} ${it.desc}`.toLowerCase().includes(term);
+
+    const connectedTotal = this._items.filter((it) => it.connected).length;
+    this._count.textContent = `${connectedTotal} connected · ${this._items.length} available`;
+
+    const row = (it) => {
+      const i = this._items.indexOf(it);
+      return `<div class="cnx-row${it.connected ? " is-connected" : ""}">
+        <img class="cnx-logo" src="${LOGO(it.domain)}" alt="" loading="lazy"
+          onerror="this.outerHTML='<span class=&quot;cnx-logo cnx-mono&quot;>${mono(it.name)}</span>'" />
+        <div class="cnx-main">
+          <div class="cnx-name">${esc(it.name)}</div>
+          <div class="cnx-desc t-meta">${esc(it.desc)}</div>
+        </div>
+        <span class="cnx-kind">${it.kind}</span>
+        ${it.connected ? `<span class="cnx-on" title="Connected" aria-hidden="true"></span>` : ""}
+        <button type="button" class="btn ${it.connected ? "btn-ghost" : "btn-primary"} btn-sm" data-i="${i}">${it.connected ? "Manage" : "Connect"}</button>
+      </div>`;
+    };
+
+    const sections = CATS.map((cat) => {
+      const items = this._items.filter((it) => it.cat === cat && match(it));
+      if (!items.length) return "";
+      return `<section class="cnx-cat-sec">
+        <h3 class="cnx-cat">${cat}<span>${items.length}</span></h3>
+        <div class="cnx-list">${items.map(row).join("")}</div>
+      </section>`;
+    }).join("");
+
+    this._sections.innerHTML = sections || `<mz-empty heading="No connectors found">Try a different search.</mz-empty>`;
   }
 }
 customElements.define("mz-connectors", MzConnectors);
