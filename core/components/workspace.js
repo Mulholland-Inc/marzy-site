@@ -2,6 +2,7 @@
 // the app sidebar: shows the current workspace + user, and opens a dropdown to
 // switch workspaces.
 import { icon } from "./icons.js";
+import { popIn, popOut } from "./motion.js";
 
 const CHEVRON = icon("chevron-down");
 const CHECK = icon("check");
@@ -77,15 +78,21 @@ class MzWorkspace extends HTMLElement {
   }
 
   toggle() {
-    const open = this._menu.hidden;
-    this._menu.hidden = !open;
-    this._btn.setAttribute("aria-expanded", String(open));
+    this._menu.hidden ? this.open() : this.close();
+  }
+
+  open() {
+    this._menu.hidden = false;
+    this._btn.setAttribute("aria-expanded", "true");
+    popIn(this._menu);
   }
 
   close() {
-    if (!this._menu) return;
-    this._menu.hidden = true;
+    if (!this._menu || this._menu.hidden) return;
     this._btn.setAttribute("aria-expanded", "false");
+    popOut(this._menu).then(() => {
+      if (this._menu) this._menu.hidden = true;
+    });
   }
 }
 customElements.define("mz-workspace", MzWorkspace);

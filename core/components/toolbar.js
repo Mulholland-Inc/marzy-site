@@ -3,6 +3,7 @@
 // event (bubbling) on every change; mz-collection applies it to the active view.
 import { icon } from "./icons.js";
 import { STATUSES, PRIORITIES, ASSIGNEES, SORTS, PRIO } from "./data.js";
+import { popIn, popOut } from "./motion.js";
 
 const CAP = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -177,11 +178,15 @@ class MzToolbar extends HTMLElement {
     if (open) {
       pop.hidden = false;
       this.querySelector(`.tb-btn[data-pop="${id}"]`).setAttribute("aria-expanded", "true");
+      popIn(pop);
     }
   }
 
   closeAll() {
-    this.querySelectorAll(".tb-pop").forEach((p) => (p.hidden = true));
+    this.querySelectorAll(".tb-pop").forEach((p) => {
+      if (p.hidden) return;
+      popOut(p).then(() => (p.hidden = true));
+    });
     this.querySelectorAll(".tb-btn").forEach((b) => b.setAttribute("aria-expanded", "false"));
   }
 
