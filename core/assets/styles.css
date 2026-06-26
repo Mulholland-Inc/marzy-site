@@ -621,7 +621,20 @@ p {
   border-color: var(--color-volt);
   box-shadow: 0 0 0 3px var(--color-volt-soft);
 }
-/* compact icon-padded search field, shared across the app (mailbox, users, …) */
+/* search box: icon + input, shared across the app (mailbox, users, connectors…) */
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.search > svg {
+  position: absolute;
+  left: 10px;
+  width: 16px;
+  height: 16px;
+  color: var(--color-muted);
+  pointer-events: none;
+}
 .search-input {
   width: 100%;
   height: 36px;
