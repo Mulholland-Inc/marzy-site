@@ -46,10 +46,8 @@ const VIEWS = [
   { id: "projects", label: "Projects", collection: { singular: "project", view: "grid", views: "grid,gallery,table,board" } },
   { id: "inbox", label: "Inbox", dot: true, render: () => `<mz-mailbox></mz-mailbox>` },
   { id: "calendar", label: "Calendar", render: () => `<mz-calendar></mz-calendar>` },
-  { id: "connectors", label: "Connectors", dot: true, render: () => `<mz-connectors></mz-connectors>` },
   { id: "users", label: "Users", render: () => `<mz-users></mz-users>` },
   { id: "roles", label: "Roles", render: () => `<mz-roles></mz-roles>` },
-  { id: "identity", label: "Identity", render: () => `<mz-identity></mz-identity>` },
   {
     id: "settings",
     label: "Settings",
@@ -67,6 +65,12 @@ const VIEWS = [
               <option>Board</option><option>Table</option><option>Grid</option>
             </mz-select>
           </mz-grid>
+        </mz-tab-panel>
+        <mz-tab-panel label="Connectors">
+          <mz-connectors></mz-connectors>
+        </mz-tab-panel>
+        <mz-tab-panel label="Identity">
+          <mz-identity></mz-identity>
         </mz-tab-panel>
         <mz-tab-panel label="Automation">
           <mz-stack gap="3">
