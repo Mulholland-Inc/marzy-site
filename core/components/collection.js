@@ -5,7 +5,7 @@
 // detail pane and responds to both.
 import { icon } from "./icons.js";
 import { queryRecords } from "./data.js";
-import { fadeIn, animate, SPRING, reduce } from "./motion.js";
+import { fadeIn, animate, EASE_OUT, reduce } from "./motion.js";
 
 const VIEW_TAG = {
   table: "mz-view-table",
@@ -102,7 +102,7 @@ class MzCollection extends HTMLElement {
     if (reduce || !animateIt) {
       Object.assign(this._thumb.style, to);
     } else {
-      animate(this._thumb, to, SPRING);
+      animate(this._thumb, to, { duration: 0.26, ease: EASE_OUT });
     }
   }
 
