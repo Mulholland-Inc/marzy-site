@@ -3477,9 +3477,24 @@ mz-tab-panel:not([hidden]) {
 /* ─────────────────────────────────────────── Identity (mz-identity) ── */
 .identity {
   display: block;
-}
-.identity-list {
   max-width: 720px;
+}
+.idn-head {
+  margin-bottom: var(--space-5);
+}
+.idn-title {
+  margin: 0;
+  font-size: var(--text-18);
+  font-weight: var(--weight-semibold);
+}
+.idn-desc {
+  margin: var(--space-1) 0 0;
+  max-width: 62ch;
+  font-size: var(--text-small);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-2);
+}
+.idn-card {
   border: var(--border);
   border-radius: var(--radius);
   overflow: hidden;
@@ -3489,7 +3504,7 @@ mz-tab-panel:not([hidden]) {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--space-4);
   border-top: var(--border);
 }
 .idn-row:first-child {
@@ -3497,8 +3512,8 @@ mz-tab-panel:not([hidden]) {
 }
 .idn-logo {
   flex: 0 0 auto;
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
 }
 .idn-mono {
@@ -3508,27 +3523,46 @@ mz-tab-panel:not([hidden]) {
   font-weight: var(--weight-semibold);
   color: var(--color-ink-2);
 }
-.idn-main {
+.idn-info {
   flex: 1;
   min-width: 0;
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
 }
 .idn-name {
-  flex: 0 0 auto;
   font-size: var(--text-small);
   font-weight: var(--weight-semibold);
   color: var(--color-ink);
 }
-.idn-sub {
-  min-width: 0;
+.idn-status {
+  margin-top: 1px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.idn-row .btn {
+.idn-actions {
   flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.idn-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-12);
+  font-weight: var(--weight-medium);
+  color: var(--color-volt);
+}
+.idn-verified svg {
+  width: 14px;
+  height: 14px;
+}
+.idn-btn {
+  min-width: 88px;
+  justify-content: center;
+}
+.idn-row .btn-ghost:hover {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
 }
 
 /* ─────────────────────────────────────────── Collection (archive) ── */
