@@ -3068,7 +3068,7 @@ body.is-dragging-card * {
   border: var(--border-strong);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
-  padding: var(--space-4) var(--space-3) var(--space-3);
+  padding: var(--space-4);
   box-shadow: var(--shadow-sm);
   transition:
     border-color var(--duration-fast) var(--ease),
@@ -3086,9 +3086,8 @@ body.is-dragging-card * {
   resize: none;
   font: inherit;
   font-size: var(--text-16);
-  line-height: var(--leading-relaxed);
+  line-height: var(--leading-snug);
   color: var(--color-ink);
-  min-height: 28px;
   max-height: 200px;
 }
 .chats-input:focus {
