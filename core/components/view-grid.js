@@ -1,7 +1,7 @@
-// <mz-view-grid></mz-view-grid>, a card-grid perspective over the shared data.
-// Renders from this._records (set via setData by mz-collection's toolbar query),
-// defaulting to all RECORDS.
-import { RECORDS, byId, emitSelect } from "./data.js";
+// <mz-view-grid></mz-view-grid>, a Notion-style gallery of cards over the shared
+// data. Renders from this._records (set via setData by mz-collection's toolbar
+// query), defaulting to all RECORDS.
+import { RECORDS, byId, emitSelect, prioHTML, whoHTML } from "./data.js";
 
 class MzViewGrid extends HTMLElement {
   connectedCallback() {
@@ -19,19 +19,20 @@ class MzViewGrid extends HTMLElement {
   render() {
     const recs = this._records || RECORDS;
     this.innerHTML = recs.length
-      ? `<div class="grid grid-3">${recs
+      ? `<div class="vgrid">${recs
           .map(
-            (r) => `<div class="card card-hover vcard" data-id="${r.id}">
+            (r) => `<div class="vcard" data-id="${r.id}">
         <div class="vcard-title">${r.title}</div>
-        <dl class="vcard-details">
-          <div class="vcard-row"><dt>Status</dt><dd>${r.status}</dd></div>
-          <div class="vcard-row"><dt>Owner</dt><dd>${r.assignee}</dd></div>
-          <div class="vcard-row"><dt>Due</dt><dd>${r.due}</dd></div>
-        </dl>
+        <div class="vcard-props">
+          <span class="badge badge-neutral">${r.status}</span>
+          <span class="vcard-tag">${r.tag}</span>
+          ${prioHTML(r.priority)}
+        </div>
+        <div class="vcard-foot">${whoHTML(r.assignee)}<span class="vcard-due">${r.due}</span></div>
       </div>`
           )
           .join("")}</div>`
-      : `<mz-empty heading="Nothing here" >No items match the current filters.</mz-empty>`;
+      : `<mz-empty heading="Nothing here">No items match the current filters.</mz-empty>`;
   }
 }
 customElements.define("mz-view-grid", MzViewGrid);
