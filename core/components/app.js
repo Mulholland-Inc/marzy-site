@@ -6,7 +6,7 @@
 import { STATUSES, RECORDS, PRIO, TAGS, prioHTML, whoHTML, initials } from "./data.js";
 import { SPARK } from "./spark.js";
 import { icon } from "./icons.js";
-import { animate, SPRING_SOFT, EASE_IN, reduce } from "./motion.js";
+import { animate, stagger, SPRING_SOFT, EASE_OUT, EASE_IN, reduce } from "./motion.js";
 
 const esc = (s) =>
   String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -180,6 +180,24 @@ class MzApp extends HTMLElement {
     });
 
     this.show(VIEWS[0].id);
+    requestAnimationFrame(() => this.buildIn());
+  }
+
+  // On first load, the workspace "builds": the sidebar (workspace switcher + nav
+  // items) staggers in, then the main content settles up.
+  buildIn() {
+    if (reduce) return;
+    const nodes = [this.querySelector("mz-workspace"), ...this.querySelectorAll(".sidebar-item")].filter(Boolean);
+    nodes.forEach((el) => (el.style.opacity = "0"));
+    animate(nodes, { opacity: [0, 1], x: [-10, 0] }, { delay: stagger(0.05), duration: 0.34, ease: EASE_OUT }).finished.then(
+      () => nodes.forEach((el) => (el.style.opacity = ""))
+    );
+    if (this._body) {
+      this._body.style.opacity = "0";
+      animate(this._body, { opacity: [0, 1], y: [10, 0] }, { duration: 0.4, delay: 0.22, ease: EASE_OUT }).finished.then(
+        () => (this._body.style.opacity = "")
+      );
+    }
   }
 
   toggleNav() {

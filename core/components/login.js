@@ -3,6 +3,7 @@
 import { SPARK } from "./spark.js";
 import { buildPipes } from "./pipe.js";
 import { ROUTES } from "./site-config.js";
+import { animate, reduce, EASE_IN } from "./motion.js";
 
 // Background is a single Hilbert curve — a space-filling curve that threads
 // one continuous, non-crossing pipe through the whole area, bending at nearly
@@ -82,10 +83,21 @@ class MzLogin extends HTMLElement {
         <p class="auth-foot">New to Marzy? <a class="link" href="${ROUTES.contact || "#"}">Request access</a></p>
       </div>`;
 
-    // mock auth: any submit (or Google) proceeds to the app
+    // mock auth: any submit (or Google) plays the exit, then proceeds to the app —
+    // the card fades up and out, then the pipes dissolve.
     const go = (e) => {
       e.preventDefault();
-      window.location.href = next;
+      if (this._leaving) return;
+      this._leaving = true;
+      if (reduce) {
+        window.location.href = next;
+        return;
+      }
+      const card = this.querySelector(".auth-card");
+      const bg = this.querySelector(".auth-bg");
+      animate(card, { opacity: [1, 0], y: [0, -32], scale: [1, 0.97] }, { duration: 0.42, ease: EASE_IN });
+      animate(bg, { opacity: [1, 0] }, { duration: 0.55, delay: 0.12, ease: EASE_IN });
+      setTimeout(() => (window.location.href = next), 660);
     };
     this.querySelector(".auth-form").addEventListener("submit", go);
     this.querySelector(".auth-google").addEventListener("click", go);
