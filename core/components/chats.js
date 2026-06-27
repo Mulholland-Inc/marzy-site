@@ -49,7 +49,6 @@ class MzChats extends HTMLElement {
         <form class="chats-composer">
           <textarea class="chats-input" rows="1" placeholder="Ask Marzy to run a task, reconcile the books, draft payroll…" aria-label="Message Marzy"></textarea>
           <div class="chats-composer-foot">
-            <span class="chats-composer-hint">Marzy can act across your connected tools.</span>
             <button type="submit" class="chats-send" aria-label="Send">${icon("send")}</button>
           </div>
         </form>
