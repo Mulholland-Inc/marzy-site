@@ -260,32 +260,24 @@ class MzApp extends HTMLElement {
   seedChain(r) {
     const cid = () => `c${++this._cid}`;
     return [
-      { id: cid(), head: "Status changed", from: "In progress", to: r.status, who: "Marzy", time: "2h ago" },
-      { id: cid(), head: "Assignee changed", from: "Unassigned", to: r.assignee, who: "Marzy", time: "1d ago" },
-      { id: cid(), head: "Priority changed", from: "Low", to: PRIO[r.priority], who: r.assignee, time: "3d ago" },
-      { id: cid(), head: "Created", text: r.title, who: r.assignee, time: r.due },
+      { id: cid(), diffs: [{ label: "Status", from: "In progress", to: r.status }], who: "Marzy", time: "2h ago" },
+      { id: cid(), diffs: [{ label: "Assignee", from: "Unassigned", to: r.assignee }], who: "Marzy", time: "1d ago" },
+      { id: cid(), diffs: [{ label: "Priority", from: "Low", to: PRIO[r.priority] }], who: r.assignee, time: "3d ago" },
+      { id: cid(), label: "Created", text: r.title, who: r.assignee, time: r.due },
     ];
   }
 
   chainItem(c) {
     const diff = (from, to) =>
       `<span class="chain-diff"><span class="chain-from">${esc(String(from))}</span>→<span class="chain-to">${esc(String(to))}</span></span>`;
-    let body;
-    if (c.diffs) {
-      // one commit, several field changes grouped together
-      body = `<div class="chain-changes">${c.diffs
-        .map((d) => `<div class="chain-change"><span class="chain-field">${esc(d.label)}</span>${diff(d.from, d.to)}</div>`)
-        .join("")}</div>`;
-    } else if (c.text) {
-      body = `<span class="chain-diff">${esc(c.text)}</span>`;
-    } else {
-      body = diff(c.from, c.to);
-    }
+    const rows = c.diffs
+      ? c.diffs.map((d) => `<div class="chain-change"><span class="chain-field">${esc(d.label)}</span>${diff(d.from, d.to)}</div>`).join("")
+      : `<div class="chain-change">${c.label ? `<span class="chain-field">${esc(c.label)}</span>` : ""}<span class="chain-diff">${esc(c.text)}</span></div>`;
     return `<li class="chain-item${c.fresh ? " is-fresh" : ""}" data-cid="${c.id}">
         <span class="chain-dot"></span>
         <div class="chain-content">
-          <div class="chain-head"><b>${esc(c.head)}</b><time>${esc(c.time)}</time></div>
-          <div class="chain-card">${body}<span class="chain-who">${whoHTML(c.who)}</span></div>
+          <div class="chain-head">${whoHTML(c.who)}<time>${esc(c.time)}</time></div>
+          <div class="chain-card"><div class="chain-changes">${rows}</div></div>
         </div>
       </li>`;
   }
@@ -355,14 +347,7 @@ class MzApp extends HTMLElement {
     }
 
     Object.assign(this._record, this._detail); // persist to the live record
-    const commit = {
-      id: `c${++this._cid}`,
-      head: diffs.length === 1 ? `${diffs[0].label} changed` : `Edited ${this._singular}`,
-      diffs,
-      who: "You",
-      time: "just now",
-      fresh: true,
-    };
+    const commit = { id: `c${++this._cid}`, diffs, who: "You", time: "just now", fresh: true };
 
     // capture chain positions before the re-render so survivors can slide down (FLIP)
     const oldRects = new Map();

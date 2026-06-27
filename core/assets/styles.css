@@ -4229,7 +4229,7 @@ body.is-dragging-card * {
 }
 .chain-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
   margin-bottom: var(--space-2);
