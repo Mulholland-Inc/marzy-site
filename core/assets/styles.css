@@ -3080,6 +3080,7 @@ body.is-dragging-card * {
   display: inline;
 }
 .chats-composer {
+  position: relative;
   width: 100%;
   border: var(--border-strong);
   border-radius: var(--radius-lg);
@@ -3115,7 +3116,7 @@ body.is-dragging-card * {
 .chats-composer-foot {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-top: var(--space-3);
 }
 .chats-send {
@@ -3142,6 +3143,126 @@ body.is-dragging-card * {
   width: 16px;
   height: 16px;
   color: #fff;
+}
+
+/* attach button — ghost icon, left of the foot */
+.chats-attach {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+}
+.chats-attach:hover {
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+}
+.chats-attach svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* attached file chips */
+.chats-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.chats-files[hidden] {
+  display: none;
+}
+.chats-file {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 220px;
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
+  border: var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+}
+.chats-file-ico {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  color: var(--color-muted);
+}
+.chats-file-ico svg {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+}
+.chats-file-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-13);
+  color: var(--color-ink);
+}
+.chats-file-size {
+  flex: 0 0 auto;
+  font-size: var(--text-12);
+  color: var(--color-muted);
+}
+.chats-file-x {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+}
+.chats-file-x:hover {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+.chats-file-x svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* drag-and-drop affordance */
+.chats-composer.is-dragging {
+  border-color: var(--color-volt);
+  box-shadow: 0 0 0 3px var(--color-volt-soft);
+}
+.chats-drop-hint {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: 1.5px dashed var(--color-volt);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-volt-700);
+  font-size: var(--text-15);
+  font-weight: var(--weight-medium);
+  pointer-events: none;
+}
+.chats-composer.is-dragging .chats-drop-hint {
+  display: flex;
+}
+.chats-drop-hint svg {
+  width: 18px;
+  height: 18px;
 }
 
 /* conversation: stage fills and centers the answer; composer docks at bottom */

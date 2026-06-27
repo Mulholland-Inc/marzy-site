@@ -12,6 +12,11 @@ import { animate, stagger, reduce, SPRING_SOFT } from "./motion.js";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const esc = (s) =>
   String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmtSize = (bytes) => {
+  if (bytes < 1024) return bytes + " B";
+  if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + " KB";
+  return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+};
 
 // What Marzy does for a prompt: the steps she works through (with the tool each
 // touches), the line she lands on, and the embedded card she returns. Lightly
@@ -84,6 +89,22 @@ class MzChats extends HTMLElement {
     this._composer = this.querySelector(".chats-composer");
     this._input = this.querySelector(".chats-input");
 
+    // Attachments
+    this._files = [];
+    this._fid = 0;
+    this._filesRow = this.querySelector(".chats-files");
+    this._fileInput = this.querySelector(".chats-file-input");
+    this.querySelector(".chats-attach").addEventListener("click", () => this._fileInput.click());
+    this._fileInput.addEventListener("change", (e) => {
+      this.addFiles(e.target.files);
+      this._fileInput.value = ""; // let the same file be picked again later
+    });
+    this._filesRow.addEventListener("click", (e) => {
+      const x = e.target.closest(".chats-file-x");
+      if (x) this.removeFile(x.dataset.id);
+    });
+    this.wireDrop();
+
     this._input.addEventListener("input", () => this.grow());
     // Enter sends, Shift+Enter makes a newline (chat convention).
     this._input.addEventListener("keydown", (e) => {
@@ -106,10 +127,11 @@ class MzChats extends HTMLElement {
 
   async send() {
     const text = this._input.value.trim();
-    if (!text || this._busy) return;
+    if ((!text && !this._files.length) || this._busy) return;
     this._busy = true;
     this._input.value = "";
     this.grow();
+    this.clearFiles(); // attachments go with the message
     this.setSending(true);
 
     if (!this._conversing) this.dockComposer();
@@ -233,6 +255,68 @@ class MzChats extends HTMLElement {
     this.querySelector(".chats-send").disabled = on;
   }
 
+  // ── Attachments ───────────────────────────────────────────────
+  addFiles(fileList) {
+    for (const file of fileList) this._files.push({ id: String(++this._fid), file });
+    this.renderFiles();
+  }
+
+  removeFile(id) {
+    this._files = this._files.filter((f) => f.id !== id);
+    this.renderFiles();
+  }
+
+  clearFiles() {
+    if (!this._files.length) return;
+    this._files = [];
+    this.renderFiles();
+  }
+
+  renderFiles() {
+    this._filesRow.hidden = this._files.length === 0;
+    this._filesRow.innerHTML = this._files
+      .map(({ id, file }) => {
+        const ico = file.type.startsWith("image/") ? "image" : "file";
+        return `<span class="chats-file">
+          <span class="chats-file-ico" aria-hidden="true">${icon(ico)}</span>
+          <span class="chats-file-name">${esc(file.name)}</span>
+          <span class="chats-file-size">${fmtSize(file.size)}</span>
+          <button type="button" class="chats-file-x" data-id="${id}" aria-label="Remove ${esc(file.name)}">${icon("x")}</button>
+        </span>`;
+      })
+      .join("");
+  }
+
+  // Drag a file anywhere over the chat to attach it; the composer lights up.
+  wireDrop() {
+    let depth = 0;
+    const hasFiles = (e) => e.dataTransfer && Array.from(e.dataTransfer.types || []).includes("Files");
+    const show = (on) => this._composer.classList.toggle("is-dragging", on);
+    this.addEventListener("dragenter", (e) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      depth++;
+      show(true);
+    });
+    this.addEventListener("dragover", (e) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "copy";
+    });
+    this.addEventListener("dragleave", (e) => {
+      if (!hasFiles(e)) return;
+      depth = Math.max(0, depth - 1);
+      if (depth === 0) show(false);
+    });
+    this.addEventListener("drop", (e) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      depth = 0;
+      show(false);
+      if (e.dataTransfer.files.length) this.addFiles(e.dataTransfer.files);
+    });
+  }
+
   render() {
     this.innerHTML = `
       <div class="chats-stage">
@@ -241,10 +325,14 @@ class MzChats extends HTMLElement {
           <h2 class="chats-greeting">What can Marzy do for you?</h2>
         </div>
         <form class="chats-composer">
+          <div class="chats-files" hidden></div>
           <textarea class="chats-input" rows="1" placeholder="Ask Marzy to run a task, reconcile the books, draft payroll…" aria-label="Message Marzy"></textarea>
           <div class="chats-composer-foot">
+            <button type="button" class="chats-attach" aria-label="Add attachment">${icon("paperclip")}</button>
             <button type="submit" class="chats-send" aria-label="Send">${icon("send")}</button>
           </div>
+          <input type="file" class="chats-file-input" multiple hidden aria-hidden="true" />
+          <div class="chats-drop-hint" aria-hidden="true">${icon("paperclip")}<span>Drop files to attach</span></div>
         </form>
       </div>`;
   }
