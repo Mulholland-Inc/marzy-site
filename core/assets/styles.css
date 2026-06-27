@@ -3170,71 +3170,86 @@ body.is-dragging-card * {
   height: 18px;
 }
 
-/* attached file chips */
+/* attached files — little cards, tossed down at a slight angle */
 .chats-files {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-bottom: var(--space-3);
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  margin-bottom: var(--space-2);
 }
 .chats-files[hidden] {
   display: none;
 }
 .chats-file {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  max-width: 220px;
-  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
+  position: relative;
+  width: 84px;
+  padding: 6px;
   border: var(--border);
-  border-radius: var(--radius-pill);
-  background: var(--color-surface-2);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  transform: rotate(var(--rot, 0deg)) translateY(var(--ty, 0px));
+  transition:
+    transform var(--duration-base) var(--ease),
+    box-shadow var(--duration-base) var(--ease);
 }
-.chats-file-ico {
-  flex: 0 0 auto;
+.chats-file:hover {
+  /* straighten and lift when you reach for it */
+  transform: rotate(0deg) translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  z-index: 1;
+}
+.chats-file-preview {
   display: grid;
   place-items: center;
+  height: 54px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
   color: var(--color-muted);
+  overflow: hidden;
 }
-.chats-file-ico svg {
-  width: var(--icon-sm);
-  height: var(--icon-sm);
+.chats-file-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.chats-file-preview svg {
+  width: 22px;
+  height: 22px;
 }
 .chats-file-name {
-  min-width: 0;
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: var(--text-13);
+  font-size: var(--text-12);
   color: var(--color-ink);
 }
-.chats-file-size {
-  flex: 0 0 auto;
-  font-size: var(--text-12);
-  color: var(--color-muted);
-}
 .chats-file-x {
-  flex: 0 0 auto;
+  position: absolute;
+  top: -7px;
+  right: -7px;
   display: grid;
   place-items: center;
   width: 20px;
   height: 20px;
-  border: 0;
+  border: 2px solid var(--color-surface);
   border-radius: var(--radius-pill);
-  background: none;
-  color: var(--color-muted);
+  background: var(--color-ink);
+  color: #fff;
   cursor: pointer;
-  transition:
-    background var(--duration-fast) var(--ease),
-    color var(--duration-fast) var(--ease);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease);
 }
-.chats-file-x:hover {
-  background: var(--color-surface);
-  color: var(--color-ink);
+.chats-file:hover .chats-file-x {
+  opacity: 1;
 }
 .chats-file-x svg {
-  width: 13px;
-  height: 13px;
+  width: 11px;
+  height: 11px;
 }
 
 /* drag-and-drop affordance */

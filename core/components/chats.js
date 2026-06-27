@@ -12,11 +12,6 @@ import { animate, stagger, reduce, SPRING_SOFT } from "./motion.js";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const esc = (s) =>
   String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const fmtSize = (bytes) => {
-  if (bytes < 1024) return bytes + " B";
-  if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + " KB";
-  return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-};
 
 // What Marzy does for a prompt: the steps she works through (with the tool each
 // touches), the line she lands on, and the embedded card she returns. Lightly
@@ -256,18 +251,41 @@ class MzChats extends HTMLElement {
   }
 
   // ── Attachments ───────────────────────────────────────────────
+  // Each lands as a little card, tossed down at a slight random angle. Images
+  // get a real thumbnail (object URL); everything else gets a file glyph.
   addFiles(fileList) {
-    for (const file of fileList) this._files.push({ id: String(++this._fid), file });
+    const newIds = [];
+    for (const file of fileList) {
+      const id = String(++this._fid);
+      this._files.push({
+        id,
+        file,
+        rot: Math.random() * 14 - 7, // -7°..7°
+        ty: Math.random() * 6 - 3, // -3px..3px
+        url: file.type.startsWith("image/") ? URL.createObjectURL(file) : "",
+      });
+      newIds.push(id);
+    }
     this.renderFiles();
+    if (reduce) return;
+    for (const id of newIds) {
+      const card = this._filesRow.querySelector(`.chats-file[data-id="${id}"]`);
+      if (!card) continue;
+      card.style.opacity = "0"; // pre-hide before paint, then settle in
+      animate(card, { opacity: [0, 1] }, { duration: 0.24 }).finished.then(() => (card.style.opacity = ""));
+    }
   }
 
   removeFile(id) {
+    const f = this._files.find((f) => f.id === id);
+    if (f && f.url) URL.revokeObjectURL(f.url);
     this._files = this._files.filter((f) => f.id !== id);
     this.renderFiles();
   }
 
   clearFiles() {
     if (!this._files.length) return;
+    this._files.forEach((f) => f.url && URL.revokeObjectURL(f.url));
     this._files = [];
     this.renderFiles();
   }
@@ -275,13 +293,12 @@ class MzChats extends HTMLElement {
   renderFiles() {
     this._filesRow.hidden = this._files.length === 0;
     this._filesRow.innerHTML = this._files
-      .map(({ id, file }) => {
-        const ico = file.type.startsWith("image/") ? "image" : "file";
-        return `<span class="chats-file">
-          <span class="chats-file-ico" aria-hidden="true">${icon(ico)}</span>
-          <span class="chats-file-name">${esc(file.name)}</span>
-          <span class="chats-file-size">${fmtSize(file.size)}</span>
+      .map(({ id, file, rot, ty, url }) => {
+        const preview = url ? `<img src="${url}" alt="" />` : icon("file");
+        return `<span class="chats-file" data-id="${id}" style="--rot:${rot.toFixed(2)}deg; --ty:${ty.toFixed(2)}px">
           <button type="button" class="chats-file-x" data-id="${id}" aria-label="Remove ${esc(file.name)}">${icon("x")}</button>
+          <span class="chats-file-preview">${preview}</span>
+          <span class="chats-file-name">${esc(file.name)}</span>
         </span>`;
       })
       .join("");
