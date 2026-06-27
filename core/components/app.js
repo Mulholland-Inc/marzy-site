@@ -36,7 +36,7 @@ const FIELD_DEFS = [
   { key: "priority", label: "Priority", opts: () => ["high", "medium", "low"], optLabel: (o) => PRIO[o] },
   { key: "assignee", label: "Assignee", opts: () => people },
   { key: "tag", label: "Team", opts: () => TAGS },
-  { key: "due", label: "Due", text: true },
+  { key: "due", label: "Due", date: true },
 ];
 const valueHTML = (key, v) =>
   key === "status" ? `<span class="badge badge-neutral">${esc(v)}</span>`
@@ -44,13 +44,27 @@ const valueHTML = (key, v) =>
   : key === "assignee" ? whoHTML(v)
   : esc(String(v));
 const valueText = (key, v) => (key === "priority" ? PRIO[v] : String(v));
-const editControl = (f, v) =>
-  f.text
-    ? `<input class="ios-edit" type="text" data-field="${f.key}" value="${esc(String(v))}" aria-label="${f.label}" />`
-    : `<select class="ios-edit" data-field="${f.key}" aria-label="${f.label}">${f
-        .opts()
-        .map((o) => `<option value="${esc(o)}"${o === v ? " selected" : ""}>${esc(f.optLabel ? f.optLabel(o) : o)}</option>`)
-        .join("")}</select>`;
+
+// Due is stored as a short display string ("Jun 28"); the date <input> needs ISO.
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const dueToISO = (due) => {
+  const m = String(due).match(/([A-Za-z]{3})\s+(\d{1,2})/);
+  if (!m) return "";
+  const mi = MONTHS.indexOf(m[1]);
+  return mi < 0 ? "" : `2026-${String(mi + 1).padStart(2, "0")}-${String(Number(m[2])).padStart(2, "0")}`;
+};
+const isoToDue = (iso) => {
+  const m = String(iso).match(/^\d{4}-(\d{2})-(\d{2})$/);
+  return m ? `${MONTHS[Number(m[1]) - 1]} ${Number(m[2])}` : String(iso);
+};
+
+const editControl = (f, v) => {
+  if (f.date) return `<input class="ios-edit" type="date" data-field="${f.key}" value="${dueToISO(v)}" aria-label="${f.label}" />`;
+  return `<select class="ios-edit" data-field="${f.key}" aria-label="${f.label}">${f
+    .opts()
+    .map((o) => `<option value="${esc(o)}"${o === v ? " selected" : ""}>${esc(f.optLabel ? f.optLabel(o) : o)}</option>`)
+    .join("")}</select>`;
+};
 
 const VIEWS = [
   { id: "chats", label: "Chat", render: () => `<mz-chats></mz-chats>` },
@@ -318,7 +332,7 @@ class MzApp extends HTMLElement {
     FIELD_DEFS.forEach((f) => {
       const el = this._pane.querySelector(`[data-field="${f.key}"]`);
       if (!el) return;
-      const nv = el.value;
+      const nv = f.date ? isoToDue(el.value) : el.value;
       const ov = this._detail[f.key];
       if (String(nv) !== String(ov)) {
         changes.push({ id: `c${++this._cid}`, head: `${f.label} changed`, from: valueText(f.key, ov), to: valueText(f.key, nv), who: "You", time: "just now", fresh: true });
