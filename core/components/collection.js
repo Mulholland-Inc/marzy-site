@@ -12,7 +12,6 @@ const VIEW_TAG = {
   board: "mz-view-board",
   grid: "mz-view-grid",
   gallery: "mz-view-gallery",
-  gantt: "mz-view-gantt",
   files: "mz-view-files",
   calendar: "mz-calendar",
 };
@@ -21,7 +20,6 @@ const VIEW_LABEL = {
   board: "Board",
   grid: "Grid",
   gallery: "Gallery",
-  gantt: "Gantt",
   files: "Files",
   calendar: "Calendar",
 };
@@ -30,7 +28,6 @@ const VICON = {
   board: icon("square-kanban"),
   grid: icon("layout-grid"),
   gallery: icon("image"),
-  gantt: icon("align-left"),
   files: icon("file"),
   calendar: icon("calendar"),
 };
