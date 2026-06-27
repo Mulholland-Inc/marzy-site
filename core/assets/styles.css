@@ -2850,15 +2850,14 @@ mz-tab-panel:not([hidden]) {
   overflow-x: auto;
   padding-bottom: var(--space-2);
 }
-/* each column is a recessed container; the cards float above it */
+/* Trello-style: a subtle gray lane (no border) with the cards floating on top */
 .board-col {
   flex: 0 0 272px;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-3);
-  background: var(--color-paper);
-  border: var(--border);
+  padding: var(--space-2);
+  background: var(--color-surface-2);
   border-radius: var(--radius-lg);
 }
 .board-col-head {
@@ -2878,7 +2877,7 @@ mz-tab-panel:not([hidden]) {
   display: inline-grid;
   place-items: center;
   border-radius: var(--radius-pill);
-  background: var(--color-surface-2);
+  background: var(--color-surface);
   font-size: var(--text-12);
   font-weight: var(--weight-medium);
   color: var(--color-ink-2);
@@ -2915,7 +2914,7 @@ mz-tab-panel:not([hidden]) {
 .board-ph {
   border: 1px dashed var(--color-line-strong);
   border-radius: var(--radius);
-  background: var(--color-surface-2);
+  background: transparent;
 }
 body.is-dragging-card,
 body.is-dragging-card * {
