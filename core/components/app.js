@@ -180,23 +180,42 @@ class MzApp extends HTMLElement {
     });
 
     this.show(VIEWS[0].id);
-    requestAnimationFrame(() => this.buildIn());
+    this.buildIn();
   }
 
   // On first load, the workspace "builds": the sidebar (workspace switcher + nav
-  // items) staggers in, then the main content settles up.
+  // items) staggers in, then the main content settles up. The body is hidden
+  // (opacity 0) until index.js adds `mz-ready`, so we pre-hide the pieces now and
+  // only play the stagger once the page is actually revealed — otherwise it runs
+  // while invisible.
   buildIn() {
     if (reduce) return;
     const nodes = [this.querySelector("mz-workspace"), ...this.querySelectorAll(".sidebar-item")].filter(Boolean);
     nodes.forEach((el) => (el.style.opacity = "0"));
-    animate(nodes, { opacity: [0, 1], x: [-10, 0] }, { delay: stagger(0.05), duration: 0.34, ease: EASE_OUT }).finished.then(
-      () => nodes.forEach((el) => (el.style.opacity = ""))
-    );
-    if (this._body) {
-      this._body.style.opacity = "0";
-      animate(this._body, { opacity: [0, 1], y: [10, 0] }, { duration: 0.4, delay: 0.22, ease: EASE_OUT }).finished.then(
-        () => (this._body.style.opacity = "")
-      );
+    if (this._body) this._body.style.opacity = "0";
+
+    const play = () =>
+      requestAnimationFrame(() => {
+        animate(nodes, { opacity: [0, 1], x: [-12, 0] }, { delay: stagger(0.06), duration: 0.36, ease: EASE_OUT }).finished.then(
+          () => nodes.forEach((el) => (el.style.opacity = ""))
+        );
+        if (this._body) {
+          animate(this._body, { opacity: [0, 1], y: [10, 0] }, { duration: 0.42, delay: 0.2, ease: EASE_OUT }).finished.then(
+            () => (this._body.style.opacity = "")
+          );
+        }
+      });
+
+    if (document.body.classList.contains("mz-ready")) {
+      play();
+    } else {
+      const mo = new MutationObserver(() => {
+        if (document.body.classList.contains("mz-ready")) {
+          mo.disconnect();
+          play();
+        }
+      });
+      mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });
     }
   }
 

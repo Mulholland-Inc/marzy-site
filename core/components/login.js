@@ -95,9 +95,9 @@ class MzLogin extends HTMLElement {
       }
       const card = this.querySelector(".auth-card");
       const bg = this.querySelector(".auth-bg");
-      animate(card, { opacity: [1, 0], y: [0, -32], scale: [1, 0.97] }, { duration: 0.42, ease: EASE_IN });
-      animate(bg, { opacity: [1, 0] }, { duration: 0.55, delay: 0.12, ease: EASE_IN });
-      setTimeout(() => (window.location.href = next), 660);
+      animate(card, { opacity: [1, 0], y: [0, -56] }, { duration: 0.28, ease: EASE_IN });
+      animate(bg, { opacity: [1, 0] }, { duration: 0.32, delay: 0.06, ease: EASE_IN });
+      setTimeout(() => (window.location.href = next), 420);
     };
     this.querySelector(".auth-form").addEventListener("submit", go);
     this.querySelector(".auth-google").addEventListener("click", go);
