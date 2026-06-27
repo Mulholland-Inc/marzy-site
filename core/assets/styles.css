@@ -4200,15 +4200,15 @@ body.is-dragging-card * {
   content: "";
   position: absolute;
   left: 12px;
-  top: 30px;
-  bottom: -2px;
+  top: 26px;
+  bottom: -6px;
   width: 2px;
   background: var(--color-line);
 }
 .chain-item:last-child::before {
   display: none;
 }
-/* the timeline node is the actor's avatar */
+/* the timeline node is the actor's avatar, centered on the name line */
 .chain-av {
   position: relative;
   z-index: 1;
@@ -4217,6 +4217,8 @@ body.is-dragging-card * {
   place-items: center;
   width: 26px;
   height: 26px;
+  /* pull up so the avatar's center sits on the name, not the top of the row */
+  margin-top: -3px;
   border-radius: 50%;
   background: var(--color-surface-2);
   color: var(--color-ink-2);
