@@ -268,9 +268,19 @@ class MzApp extends HTMLElement {
   }
 
   chainItem(c) {
-    const body = c.text
-      ? `<span class="chain-diff">${esc(c.text)}</span>`
-      : `<span class="chain-diff"><span class="chain-from">${esc(String(c.from))}</span>→<span class="chain-to">${esc(String(c.to))}</span></span>`;
+    const diff = (from, to) =>
+      `<span class="chain-diff"><span class="chain-from">${esc(String(from))}</span>→<span class="chain-to">${esc(String(to))}</span></span>`;
+    let body;
+    if (c.diffs) {
+      // one commit, several field changes grouped together
+      body = `<div class="chain-changes">${c.diffs
+        .map((d) => `<div class="chain-change"><span class="chain-field">${esc(d.label)}</span>${diff(d.from, d.to)}</div>`)
+        .join("")}</div>`;
+    } else if (c.text) {
+      body = `<span class="chain-diff">${esc(c.text)}</span>`;
+    } else {
+      body = diff(c.from, c.to);
+    }
     return `<li class="chain-item${c.fresh ? " is-fresh" : ""}" data-cid="${c.id}">
         <span class="chain-dot"></span>
         <div class="chain-content">
@@ -324,25 +334,41 @@ class MzApp extends HTMLElement {
   }
 
   saveEdit() {
-    // diff each field; every change becomes a fresh commit at the top of the chain
-    const changes = [];
+    // diff every field; all the changes from this save become ONE commit
+    const diffs = [];
     FIELD_DEFS.forEach((f) => {
       const el = this._pane.querySelector(`[data-field="${f.key}"]`);
       if (!el) return;
       const nv = f.date ? isoToDue(el.value) : el.value;
       const ov = this._detail[f.key];
       if (String(nv) !== String(ov)) {
-        changes.push({ id: `c${++this._cid}`, head: `${f.label} changed`, from: valueText(f.key, ov), to: valueText(f.key, nv), who: "You", time: "just now", fresh: true });
+        diffs.push({ label: f.label, from: valueText(f.key, ov), to: valueText(f.key, nv) });
         this._detail[f.key] = nv;
       }
     });
+
+    // nothing changed → just leave edit mode
+    if (!diffs.length) {
+      this._editing = false;
+      this.renderDetail();
+      return;
+    }
+
     Object.assign(this._record, this._detail); // persist to the live record
+    const commit = {
+      id: `c${++this._cid}`,
+      head: diffs.length === 1 ? `${diffs[0].label} changed` : `Edited ${this._singular}`,
+      diffs,
+      who: "You",
+      time: "just now",
+      fresh: true,
+    };
 
     // capture chain positions before the re-render so survivors can slide down (FLIP)
     const oldRects = new Map();
     this._pane.querySelectorAll(".chain-item").forEach((li) => oldRects.set(li.dataset.cid, li.getBoundingClientRect()));
 
-    this._chain = [...changes, ...this._chain];
+    this._chain = [commit, ...this._chain];
     this._editing = false;
     this.renderDetail();
     this.animateChainAppend(oldRects);
