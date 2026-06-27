@@ -52,7 +52,7 @@ const VIEWS = [
             </mz-select>
           </mz-grid>
         </mz-tab-panel>
-        <mz-tab-panel label="Connectors">
+        <mz-tab-panel label="Connections">
           <mz-connectors></mz-connectors>
         </mz-tab-panel>
         <mz-tab-panel label="Identity">
