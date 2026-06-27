@@ -71,7 +71,6 @@ class MzUsers extends HTMLElement {
         <span class="upp-title"></span>
         <textarea class="upp-text" rows="5" placeholder="Tell Marzy who this person is and how to work with them — their role, what they own, how they like updates…" aria-label="Person context"></textarea>
         <div class="upp-foot">
-          <span class="upp-hint">Marzy uses this when acting on their behalf.</span>
           <button type="button" class="btn btn-primary btn-sm upp-done">Done</button>
         </div>
       </div>`;

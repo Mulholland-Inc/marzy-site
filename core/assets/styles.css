@@ -3578,12 +3578,7 @@ body.is-dragging-card * {
 .upp-foot {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
-.upp-hint {
-  font-size: var(--text-12);
-  color: var(--color-muted);
+  justify-content: flex-end;
 }
 
 /* ─────────────────────────────────────────── Roles (mz-roles) ── */
