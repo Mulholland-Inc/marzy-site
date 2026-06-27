@@ -2989,7 +2989,7 @@ body.is-dragging-card * {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
-  margin-top: var(--space-3);
+  margin-top: var(--space-2);
 }
 .gal-cap-title {
   min-width: 0;
@@ -5630,8 +5630,8 @@ body.is-dragging-card * {
 /* ─────────────────────────────────────────── Media gallery ── */
 .shots {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--gap-grid);
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+  gap: var(--space-4);
 }
 .gal-item {
   display: block;
@@ -5654,15 +5654,14 @@ body.is-dragging-card * {
 }
 .gal-tag {
   position: absolute;
-  top: var(--space-3);
-  left: var(--space-3);
-  padding: 3px 8px;
+  top: var(--space-2);
+  left: var(--space-2);
+  padding: 2px 8px;
   border-radius: var(--radius-sm);
   background: var(--color-surface);
   border: var(--border);
-  font-family: var(--font-mono);
   font-size: var(--text-12);
-  letter-spacing: var(--tracking-mono);
+  font-weight: var(--weight-medium);
   color: var(--color-ink-2);
 }
 .gal-item figcaption {
