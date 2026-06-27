@@ -3057,9 +3057,9 @@ body.is-dragging-card * {
   align-items: center;
   gap: 6px;
   padding: 0 8px;
-  border: 1px solid var(--color-volt-line);
+  border: 1px solid var(--color-ink-2);
   border-radius: var(--radius-sm);
-  background: var(--color-volt-soft);
+  background: var(--color-ink-2);
   cursor: pointer;
   overflow: hidden;
   transition:
@@ -3067,18 +3067,8 @@ body.is-dragging-card * {
     box-shadow var(--duration-base) var(--ease);
 }
 .gantt-bar:hover {
-  border-color: var(--color-volt);
+  border-color: var(--color-ink);
   box-shadow: var(--shadow-sm);
-}
-.gantt-bar.is-done {
-  background: var(--color-volt);
-  border-color: var(--color-volt);
-}
-.gantt-bar.is-done .prio-dot {
-  display: none;
-}
-.gantt-bar.is-done .gantt-bar-label {
-  color: #fff;
 }
 .gantt-bar-label {
   min-width: 0;
@@ -3086,7 +3076,7 @@ body.is-dragging-card * {
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: var(--text-12);
-  color: var(--color-ink);
+  color: #fff;
 }
 
 /* Files view — a document library of tiles. */
