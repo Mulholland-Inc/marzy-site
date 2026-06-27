@@ -25,7 +25,7 @@ const PLANS = [
       { label: "Calculating taxes & deductions", tool: "" },
       { label: "Drafting the pay run", tool: "" },
     ],
-    lead: "June payroll is drafted from 14 timesheets — it's ready for your approval.",
+    lead: "June payroll is drafted from all 14 timesheets, with hours matched to every employee and taxes and deductions applied. Totals line up against last month within the usual range, so there's nothing unusual to flag — it's ready for your approval whenever you are.",
     embed: "mz-embed-table",
   },
   {
@@ -35,7 +35,7 @@ const PLANS = [
       { label: "Matching against the ledger", tool: "" },
       { label: "Flagging anomalies", tool: "" },
     ],
-    lead: "I reconciled 412 transactions — three need a second look, the rest closed clean.",
+    lead: "I reconciled all 412 transactions for the period against the ledger, and 409 matched cleanly on the first pass. Three are flagged for a second look — a duplicated vendor payment and two charges missing a receipt. Want me to walk you through them?",
     embed: "mz-embed-table",
   },
   {
@@ -45,7 +45,7 @@ const PLANS = [
       { label: "Requesting I-9 & direct deposit", tool: "" },
       { label: "Scheduling orientation", tool: "Calendar" },
     ],
-    lead: "I've kicked off onboarding — here's where the new hire stands.",
+    lead: "I've kicked off onboarding for the new hire and created their Gusto profile. The offer letter and tax forms are signed, and I've requested the I-9 and direct-deposit details. Accounts and orientation are the last steps — here's where everything stands.",
     embed: "mz-embed-checklist",
   },
   {
@@ -55,7 +55,7 @@ const PLANS = [
       { label: "Checking task progress", tool: "" },
       { label: "Summarizing", tool: "" },
     ],
-    lead: "Here's where things stand this week — nothing's blocked on you.",
+    lead: "Here's where things stand this week: payroll is on track, onboarding is at 42%, and 412 transactions synced overnight. A couple of items are still in review, but nothing is blocked on you right now. I'll keep moving on the rest and flag anything that needs a decision.",
     embed: "mz-embed-kanban",
   },
 ];
@@ -65,7 +65,7 @@ const DEFAULT_PLAN = {
     { label: "Checking connected tools", tool: "" },
     { label: "Preparing a plan", tool: "" },
   ],
-  lead: "Here's what I pulled together.",
+  lead: "Here's what I pulled together. I checked the systems you've connected, gathered the relevant records, and drafted a plan I can run on your say-so. Take a look below — if it's right, I'll take it from here and only loop you in when something needs your call.",
   embed: "mz-embed-doc",
 };
 
