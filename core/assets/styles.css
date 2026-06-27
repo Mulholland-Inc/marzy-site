@@ -3525,6 +3525,66 @@ body.is-dragging-card * {
 .table .users-role svg {
   right: 9px;
 }
+/* prompt button lights up Volt when a person has context set */
+.row-actions .btn-icon.is-set {
+  color: var(--color-volt);
+}
+
+/* per-person prompt editor — a hovering pane anchored to the row button */
+.users-prompt-pop {
+  position: fixed;
+  z-index: var(--z-modal);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 320px;
+  padding: var(--space-4);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+.users-prompt-pop[hidden] {
+  display: none;
+}
+.upp-title {
+  font-size: var(--text-14);
+  color: var(--color-ink);
+}
+.upp-title b {
+  font-weight: var(--weight-semibold);
+}
+.upp-text {
+  width: 100%;
+  min-height: 112px;
+  resize: vertical;
+  padding: var(--space-3);
+  border: var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font: inherit;
+  font-size: var(--text-13);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink);
+}
+.upp-text::placeholder {
+  color: var(--color-muted);
+}
+.upp-text:focus {
+  outline: none;
+  border-color: var(--color-volt);
+  box-shadow: 0 0 0 3px var(--color-volt-soft);
+}
+.upp-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.upp-hint {
+  font-size: var(--text-12);
+  color: var(--color-muted);
+}
 
 /* ─────────────────────────────────────────── Roles (mz-roles) ── */
 .roles {
