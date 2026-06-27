@@ -3057,9 +3057,9 @@ body.is-dragging-card * {
   align-items: center;
   gap: 6px;
   padding: 0 8px;
-  border: 1px solid var(--color-ink-2);
+  border: 1px solid var(--color-muted);
   border-radius: var(--radius-sm);
-  background: var(--color-ink-2);
+  background: var(--color-muted);
   cursor: pointer;
   overflow: hidden;
   transition:
@@ -3067,7 +3067,7 @@ body.is-dragging-card * {
     box-shadow var(--duration-base) var(--ease);
 }
 .gantt-bar:hover {
-  border-color: var(--color-ink);
+  border-color: var(--color-ink-2);
   box-shadow: var(--shadow-sm);
 }
 .gantt-bar-label {
