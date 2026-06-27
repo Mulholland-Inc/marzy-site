@@ -12,7 +12,8 @@ const VIEW_TAG = {
   board: "mz-view-board",
   grid: "mz-view-grid",
   gallery: "mz-view-gallery",
-  todo: "mz-view-todo",
+  timeline: "mz-view-timeline",
+  workload: "mz-view-workload",
   calendar: "mz-calendar",
 };
 const VIEW_LABEL = {
@@ -20,7 +21,8 @@ const VIEW_LABEL = {
   board: "Board",
   grid: "Grid",
   gallery: "Gallery",
-  todo: "To-do",
+  timeline: "Timeline",
+  workload: "Workload",
   calendar: "Calendar",
 };
 const VICON = {
@@ -28,7 +30,8 @@ const VICON = {
   board: icon("square-kanban"),
   grid: icon("layout-grid"),
   gallery: icon("image"),
-  todo: icon("list-todo"),
+  timeline: icon("activity"),
+  workload: icon("users"),
   calendar: icon("calendar"),
 };
 
@@ -36,7 +39,7 @@ class MzCollection extends HTMLElement {
   connectedCallback() {
     this.classList.add("collection");
     this._singular = this.getAttribute("singular") || "item";
-    this._views = (this.getAttribute("views") || "board,table,grid,todo").split(",").map((s) => s.trim());
+    this._views = (this.getAttribute("views") || "board,table,grid").split(",").map((s) => s.trim());
     this._view = this.getAttribute("view") || this._views[0];
 
     const seg = this._views
