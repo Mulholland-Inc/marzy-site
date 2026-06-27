@@ -63,8 +63,6 @@ import "./view-table.js";
 import "./view-board.js";
 import "./view-grid.js";
 import "./view-gallery.js";
-import "./view-timeline.js";
-import "./view-workload.js";
 import "./view-gantt.js";
 import "./view-files.js";
 import "./users.js";

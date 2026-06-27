@@ -2786,14 +2786,11 @@ mz-tab-panel:not([hidden]) {
   align-items: center;
   gap: var(--space-2);
 }
+/* decorative dots removed — the text labels carry the meaning */
 .tag-dot,
 .status-dot,
 .prio-dot {
-  flex: 0 0 auto;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-line-strong);
+  display: none;
 }
 .cat-finance { background: var(--color-volt); }
 .cat-people { background: var(--color-ink-2); }
@@ -3000,169 +2997,6 @@ body.is-dragging-card * {
   color: var(--color-ink);
 }
 
-/* Timeline view — objects grouped by due date down a vertical rail. */
-.tl {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.tl-day {
-  position: relative;
-  display: flex;
-  gap: var(--space-4);
-  padding-bottom: var(--space-5);
-}
-.tl-day:last-child {
-  padding-bottom: 0;
-}
-.tl-day::before {
-  content: "";
-  position: absolute;
-  left: 4px;
-  top: 16px;
-  bottom: -6px;
-  width: 2px;
-  background: var(--color-line);
-}
-.tl-day:last-child::before {
-  display: none;
-}
-.tl-dot {
-  position: relative;
-  z-index: 1;
-  flex: 0 0 auto;
-  width: 10px;
-  height: 10px;
-  margin-top: 4px;
-  border-radius: 50%;
-  background: var(--color-surface);
-  border: 2px solid var(--color-line-strong);
-}
-.tl-day:first-child .tl-dot {
-  background: var(--color-volt);
-  border-color: var(--color-volt);
-}
-.tl-content {
-  flex: 1;
-  min-width: 0;
-}
-.tl-date {
-  font-size: var(--text-13);
-  font-weight: var(--weight-semibold);
-  color: var(--color-ink);
-  margin-bottom: var(--space-2);
-}
-.tl-tasks {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-.tl-task {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  width: 100%;
-  padding: var(--space-2) var(--space-3);
-  border: var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  text-align: left;
-  font: inherit;
-  cursor: pointer;
-  transition: border-color var(--duration-base) var(--ease);
-}
-.tl-task:hover {
-  border-color: var(--color-ink-2);
-}
-.tl-task-title {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: var(--text-small);
-  color: var(--color-ink);
-}
-.tl-task-tag {
-  flex: 0 0 auto;
-  font-size: var(--text-12);
-  color: var(--color-muted);
-}
-
-/* Workload view — one lane per assignee, busiest first. */
-.wl {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: var(--space-4);
-  align-items: start;
-}
-.wl-lane {
-  border: var(--border);
-  border-radius: var(--radius);
-  background: var(--color-surface);
-  padding: var(--space-3);
-}
-.wl-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-3);
-}
-.wl-name {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: var(--text-small);
-  font-weight: var(--weight-semibold);
-  color: var(--color-ink);
-}
-.wl-count {
-  flex: 0 0 auto;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  display: grid;
-  place-items: center;
-  border-radius: var(--radius-pill);
-  background: var(--color-surface-2);
-  font-size: var(--text-12);
-  font-weight: var(--weight-medium);
-  color: var(--color-ink-2);
-}
-.wl-items {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-.wl-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  width: 100%;
-  padding: var(--space-2);
-  border: 0;
-  border-radius: var(--radius-sm);
-  background: none;
-  text-align: left;
-  font: inherit;
-  cursor: pointer;
-  transition: background var(--duration-base) var(--ease);
-}
-.wl-item:hover {
-  background: var(--color-paper);
-}
-.wl-item-title {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: var(--text-13);
-  color: var(--color-ink);
-}
-
 /* Gantt view — bars across a date axis. */
 .gantt-scroll {
   overflow-x: auto;
@@ -3224,7 +3058,7 @@ body.is-dragging-card * {
   gap: 6px;
   padding: 0 8px;
   border: 1px solid var(--color-volt-line);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
   background: var(--color-volt-soft);
   cursor: pointer;
   overflow: hidden;
