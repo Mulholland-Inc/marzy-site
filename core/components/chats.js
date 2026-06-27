@@ -133,7 +133,10 @@ class MzChats extends HTMLElement {
     this.appendChild(this._composer); // out of the centered cluster, to the bottom
     const last = this._composer.getBoundingClientRect();
     const dy = first.top - last.top;
-    if (!reduce && dy) animate(this._composer, { y: [dy, 0] }, SPRING_SOFT);
+    if (!reduce && dy) {
+      this._composer.style.transform = `translateY(${dy}px)`; // pre-place before paint
+      animate(this._composer, { y: [dy, 0] }, SPRING_SOFT).finished.then(() => (this._composer.style.transform = ""));
+    }
   }
 
   // Crossfade the centered card: out with the old, in with the new. `enter`
@@ -149,8 +152,13 @@ class MzChats extends HTMLElement {
     }
     this._stage.appendChild(node);
     if (reduce) return;
-    if (enter) enter(node);
-    else animate(node, { opacity: [0, 1], y: [10, 0] }, SPRING_SOFT);
+    if (enter) {
+      enter(node);
+    } else {
+      // Pre-hide before the first paint, then fade up — avoids a one-frame flash.
+      node.style.opacity = "0";
+      animate(node, { opacity: [0, 1], y: [10, 0] }, SPRING_SOFT).finished.then(() => (node.style.opacity = ""));
+    }
   }
 
   thinkNode() {
@@ -176,7 +184,10 @@ class MzChats extends HTMLElement {
         s.tool ? `<span class="think-tool">${esc(s.tool)}</span>` : ""
       }`;
       list.appendChild(row);
-      if (!reduce) animate(row, { opacity: [0, 1], y: [6, 0] }, { duration: 0.28 });
+      if (!reduce) {
+        row.style.opacity = "0";
+        animate(row, { opacity: [0, 1], y: [6, 0] }, { duration: 0.28 }).finished.then(() => (row.style.opacity = ""));
+      }
       await sleep(reduce ? 0 : 620);
       const ind = row.querySelector(".think-ind");
       ind.classList.replace("is-loading", "is-done");
@@ -200,19 +211,21 @@ class MzChats extends HTMLElement {
   }
 
   // Report entrance: spark pops, the line ripples in word by word, the card
-  // rises in just after.
+  // rises in just after. Everything is pre-hidden synchronously (before the
+  // first paint) so nothing flashes at full opacity before animating.
   revealReport(n) {
-    animate(n.querySelector(".chats-mark"), { opacity: [0, 1], scale: [0.7, 1] }, SPRING_SOFT);
-    animate(
-      n.querySelectorAll(".w"),
-      { opacity: [0, 1], filter: ["blur(2px)", "blur(0px)"] },
-      { delay: stagger(0.02), duration: 0.26 }
-    );
-    animate(
-      n.querySelector(".chats-report-embed"),
-      { opacity: [0, 1], y: [14, 0], scale: [0.97, 1] },
-      { ...SPRING_SOFT, delay: 0.18 }
-    );
+    const mark = n.querySelector(".chats-mark");
+    const words = n.querySelectorAll(".w");
+    const embed = n.querySelector(".chats-report-embed");
+    mark.style.opacity = "0";
+    words.forEach((w) => (w.style.opacity = "0"));
+    embed.style.opacity = "0";
+
+    animate(mark, { opacity: [0, 1], scale: [0.7, 1] }, SPRING_SOFT).finished.then(() => (mark.style.opacity = ""));
+    animate(words, { opacity: [0, 1], filter: ["blur(2px)", "blur(0px)"] }, { delay: stagger(0.02), duration: 0.26 })
+      .finished.then(() => words.forEach((w) => (w.style.opacity = "")));
+    animate(embed, { opacity: [0, 1], y: [14, 0], scale: [0.97, 1] }, { ...SPRING_SOFT, delay: 0.18 })
+      .finished.then(() => (embed.style.opacity = ""));
   }
 
   setSending(on) {
