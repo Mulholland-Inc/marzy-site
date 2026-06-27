@@ -3597,6 +3597,32 @@ body.is-dragging-card * {
   background: var(--color-surface-2);
   color: var(--color-ink);
 }
+/* keep the table readable on small screens — scroll instead of squish */
+.users .table {
+  min-width: 520px;
+}
+
+/* mobile: stack the toolbar so the add-user bar can't overflow */
+@media (max-width: 640px) {
+  .users-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .users-search {
+    flex: none;
+    min-width: 0;
+    max-width: none;
+  }
+  .users-add {
+    margin-left: 0;
+    flex-wrap: wrap;
+  }
+  .users-add-email {
+    width: auto;
+    flex: 1 1 160px;
+    min-width: 0;
+  }
+}
 
 /* per-person prompt editor — a hovering pane anchored to the row button */
 .users-prompt-pop {

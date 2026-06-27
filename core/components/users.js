@@ -49,17 +49,19 @@ class MzUsers extends HTMLElement {
         </form>
       </div>
       <div class="table-card">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Member</th>
-              <th>Role</th>
-              <th>Last active</th>
-              <th aria-label="Actions"></th>
-            </tr>
-          </thead>
-          <tbody class="users-body"></tbody>
-        </table>
+        <div class="table-scroll">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Role</th>
+                <th>Last active</th>
+                <th aria-label="Actions"></th>
+              </tr>
+            </thead>
+            <tbody class="users-body"></tbody>
+          </table>
+        </div>
       </div>
       <div class="users-prompt-pop" hidden role="dialog" aria-label="Edit person context">
         <span class="upp-title"></span>
