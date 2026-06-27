@@ -27,7 +27,7 @@ const TRASH = icon("trash-2");
 const people = [...new Set(RECORDS.map((r) => r.assignee))];
 
 const VIEWS = [
-  { id: "chats", label: "Chats", render: () => `<mz-chats></mz-chats>` },
+  { id: "chats", label: "Chat", render: () => `<mz-chats></mz-chats>` },
   { id: "activity", label: "Activity", render: () => `<mz-activity></mz-activity>` },
   { id: "tasks", label: "Tasks", dot: true, collection: { singular: "task", view: "board", views: "board,table,grid,gallery,todo,calendar" } },
   { id: "projects", label: "Projects", collection: { singular: "project", view: "grid", views: "grid,gallery,table,board" } },

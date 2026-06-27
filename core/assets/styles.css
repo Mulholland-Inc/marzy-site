@@ -3032,7 +3032,9 @@ body.is-dragging-card * {
 }
 
 /* ─────────────────────────────────────────── Chats (mz-chats) ── */
-/* one big centered prompt — stateless, no conversation rail */
+/* landing: greeting + composer as one centered cluster. On first send the
+   composer reparents to the bottom (.is-conversing) and FLIPs into place;
+   the center stage then holds Marzy's single answer. */
 .chats {
   display: grid;
   place-items: center;
@@ -3042,20 +3044,20 @@ body.is-dragging-card * {
   min-height: calc(100dvh - 96px);
 }
 .chats-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
   width: 100%;
   max-width: 640px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-5);
-  /* lift slightly above true center, like the chat apps */
-  margin-bottom: 6vh;
 }
-.chats-hero {
+.chats-answer {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-5);
+  width: 100%;
+  text-align: center;
 }
 .chats-mark {
   width: 44px;
@@ -3067,7 +3069,15 @@ body.is-dragging-card * {
   font-size: var(--text-32);
   letter-spacing: var(--tracking-tight);
   color: var(--color-ink);
-  text-align: center;
+}
+.chats-reply {
+  margin: 0;
+  font-size: var(--text-20);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink);
+}
+.chats-reply .w {
+  display: inline;
 }
 .chats-composer {
   width: 100%;
@@ -3134,93 +3144,44 @@ body.is-dragging-card * {
   color: #fff;
 }
 
-/* conversation mode — composer docks at the bottom, thread scrolls above */
+/* conversation: stage fills and centers the answer; composer docks at bottom */
 .chats.is-conversing {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: 0;
+  padding: 0 var(--space-4);
 }
-.chats-scroll {
+.chats.is-conversing .chats-stage {
   flex: 1;
   min-height: 0;
+  justify-content: center;
+  max-width: none;
   overflow-y: auto;
-  padding: var(--space-6) var(--space-4) var(--space-4);
+  padding-block: var(--space-6);
 }
-.chats-thread {
-  width: 100%;
+.chats.is-conversing .chats-answer {
   max-width: 640px;
   margin-inline: auto;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
 }
 .chats.is-conversing .chats-composer {
   flex: 0 0 auto;
-  width: 100%;
   max-width: 640px;
-  margin-inline: auto;
-  margin-bottom: var(--space-4);
-}
-
-/* messages */
-.msg {
-  display: flex;
-  gap: var(--space-3);
-}
-.msg-user {
-  justify-content: flex-end;
-}
-.msg-user .bubble {
-  max-width: 78%;
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface-2);
-  color: var(--color-ink);
-  font-size: var(--text-15);
-  line-height: var(--leading-relaxed);
-  white-space: pre-wrap;
-}
-.msg-marzy {
-  align-items: flex-start;
-}
-.msg-avatar {
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  padding: 6px;
-  border-radius: var(--radius-pill);
-  background: var(--color-volt-soft);
-  color: var(--color-volt);
-}
-.msg-body {
-  flex: 1;
-  min-width: 0;
-  padding-top: 3px;
-  color: var(--color-ink);
-  font-size: var(--text-15);
-  line-height: var(--leading-relaxed);
-}
-.msg-body .w {
-  /* streamed-in words; keep natural wrapping */
-  display: inline;
+  margin: 0 auto var(--space-4);
 }
 
 /* typing indicator — three soft pulsing dots */
 .typing {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  height: 1.2em;
+  gap: 5px;
+  height: 1.4em;
 }
 .typing i {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: var(--color-muted);
+  background: var(--color-volt);
+  opacity: 0.3;
   animation: chats-typing 1.2s var(--ease) infinite;
 }
 .typing i:nth-child(2) {

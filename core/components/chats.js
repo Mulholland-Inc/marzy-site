@@ -1,8 +1,8 @@
-// <mz-chats></mz-chats> — the Chats home: one big central prompt to Marzy
-// (Claude/ChatGPT style). Empty, it's a centered composer; on the first send
-// the composer glides down to dock at the bottom (FLIP), the greeting fades,
-// your message springs in, and Marzy replies — a typing beat, then the answer
-// streamed word by word. Built on house tokens, the shared spark, and Motion.
+// <mz-chats></mz-chats> — the Chats home. The composer is docked at the bottom;
+// the center shows a single answer from Marzy. You never see your own message:
+// on send, the centered card crossfades to a typing beat, then Marzy's reply
+// streams in word by word — replacing whatever was there. Stateless, no thread.
+// Built on house tokens, the shared spark, and Motion.
 import { SPARK } from "./spark.js";
 import { icon } from "./icons.js";
 import { animate, stagger, reduce, SPRING_SOFT } from "./motion.js";
@@ -32,6 +32,7 @@ class MzChats extends HTMLElement {
     this._conversing = false;
     this.render();
 
+    this._stage = this.querySelector(".chats-stage");
     this._composer = this.querySelector(".chats-composer");
     this._input = this.querySelector(".chats-input");
 
@@ -58,112 +59,71 @@ class MzChats extends HTMLElement {
   async send() {
     const text = this._input.value.trim();
     if (!text || this._busy) return;
+    this._busy = true;
     this._input.value = "";
     this.grow();
-    if (!this._conversing) this.startConversation();
-    this.addUser(text);
-    await this.respond(text);
+    this.setSending(true);
+
+    if (!this._conversing) this.dockComposer();
+
+    await this.swap(this.typingNode());
+    await sleep(950);
+    await this.swap(this.answerNode(reply(text)), true);
+
+    this.setSending(false);
+    this._busy = false;
   }
 
-  // Transition from the centered landing to the docked thread layout, gliding
-  // the composer down from where it sat to the bottom (FLIP).
-  startConversation() {
+  // First send: the composer glides down from the centered landing to the
+  // bottom dock (FLIP). The center stage stays put and becomes Marzy's answer.
+  dockComposer() {
     this._conversing = true;
-    const chatsRect = this.getBoundingClientRect();
     const first = this._composer.getBoundingClientRect();
-    const stage = this.querySelector(".chats-stage");
-    const stageRect = stage.getBoundingClientRect();
-
-    // Build the thread layout: a scroll area on top, composer docked below.
-    const scroll = document.createElement("div");
-    scroll.className = "chats-scroll";
-    this._thread = document.createElement("div");
-    this._thread.className = "chats-thread";
-    scroll.appendChild(this._thread);
-    this._scroll = scroll;
-
     this.classList.add("is-conversing");
-    this.insertBefore(scroll, stage);
-    this.appendChild(this._composer); // move composer out of the stage, to the bottom
-
-    if (reduce) {
-      stage.remove();
-    } else {
-      // Pin the leaving greeting where it sat (out of flow), then fade it up —
-      // so it doesn't shift the composer's docked position we're about to measure.
-      Object.assign(stage.style, {
-        position: "absolute",
-        top: stageRect.top - chatsRect.top + "px",
-        left: stageRect.left - chatsRect.left + "px",
-        width: stageRect.width + "px",
-        margin: "0",
-        pointerEvents: "none",
-      });
-      animate(stage, { opacity: [1, 0], y: [0, -10] }, { duration: 0.24 }).finished.then(() => stage.remove());
-    }
-
-    // FLIP: invert the composer's position, then release it with a soft spring.
+    this.appendChild(this._composer); // move out of the centered cluster, to the bottom
     const last = this._composer.getBoundingClientRect();
     const dy = first.top - last.top;
     if (!reduce && dy) animate(this._composer, { y: [dy, 0] }, SPRING_SOFT);
   }
 
-  addUser(text) {
-    const el = document.createElement("div");
-    el.className = "msg msg-user";
-    const bubble = document.createElement("div");
-    bubble.className = "bubble";
-    bubble.textContent = text;
-    el.appendChild(bubble);
-    this._thread.appendChild(el);
-    this.enter(el);
-    this.scrollDown();
+  // Crossfade the centered card: out with the old, in with the new. When
+  // `stream`, the spark pops and the reply's words ripple in word by word.
+  async swap(node, stream = false) {
+    const old = this._stage.firstElementChild;
+    if (old) {
+      if (reduce) old.remove();
+      else {
+        await animate(old, { opacity: [1, 0], y: [0, -8], scale: [1, 0.98] }, { duration: 0.2 }).finished;
+        old.remove();
+      }
+    }
+    this._stage.appendChild(node);
+    if (reduce) return;
+    if (stream) {
+      animate(node.querySelector(".chats-mark"), { opacity: [0, 1], scale: [0.7, 1] }, SPRING_SOFT);
+      animate(
+        node.querySelectorAll(".w"),
+        { opacity: [0, 1], filter: ["blur(2px)", "blur(0px)"] },
+        { delay: stagger(0.022), duration: 0.26 }
+      );
+    } else {
+      animate(node, { opacity: [0, 1], y: [10, 0] }, SPRING_SOFT);
+    }
   }
 
-  async respond(text) {
-    this._busy = true;
-    this.setSending(true);
-    await sleep(380);
-    const typing = this.addTyping();
-    await sleep(950);
-    typing.remove();
-    this.addMarzy(reply(text));
-    this.setSending(false);
-    this._busy = false;
-  }
-
-  addTyping() {
+  typingNode() {
     const el = document.createElement("div");
-    el.className = "msg msg-marzy";
-    el.innerHTML = `<span class="msg-avatar" aria-hidden="true">${SPARK}</span><div class="msg-body"><span class="typing"><i></i><i></i><i></i></span></div>`;
-    this._thread.appendChild(el);
-    this.enter(el);
-    this.scrollDown();
+    el.className = "chats-answer";
+    el.innerHTML = `<span class="chats-mark" aria-hidden="true">${SPARK}</span><span class="typing"><i></i><i></i><i></i></span>`;
     return el;
   }
 
-  addMarzy(text) {
+  answerNode(text) {
     const el = document.createElement("div");
-    el.className = "msg msg-marzy";
-    el.innerHTML = `<span class="msg-avatar" aria-hidden="true">${SPARK}</span><div class="msg-body"></div>`;
-    const body = el.querySelector(".msg-body");
-    body.innerHTML = text.split(" ").map((w) => `<span class="w">${esc(w)}</span>`).join(" ");
-    this._thread.appendChild(el);
-    this.scrollDown();
-    if (reduce) return;
-    animate(el.querySelector(".msg-avatar"), { opacity: [0, 1], scale: [0.7, 1] }, SPRING_SOFT);
-    // Stream the words in on a gentle stagger, then keep the view pinned.
-    animate(
-      el.querySelectorAll(".w"),
-      { opacity: [0, 1], filter: ["blur(2px)", "blur(0px)"] },
-      { delay: stagger(0.022), duration: 0.26 }
-    ).finished.then(() => this.scrollDown());
-  }
-
-  // Shared bubble entrance — fade + rise + a touch of scale.
-  enter(el) {
-    if (reduce) return;
-    animate(el, { opacity: [0, 1], y: [12, 0], scale: [0.98, 1] }, SPRING_SOFT);
+    el.className = "chats-answer";
+    const words = text.split(" ").map((w) => `<span class="w">${esc(w)}</span>`).join(" ");
+    el.innerHTML = `<span class="chats-mark" aria-hidden="true">${SPARK}</span><p class="chats-reply">${words}</p>`;
+    return el;
   }
 
   setSending(on) {
@@ -171,15 +131,10 @@ class MzChats extends HTMLElement {
     this.querySelector(".chats-send").disabled = on;
   }
 
-  scrollDown() {
-    if (!this._scroll) return;
-    this._scroll.scrollTo({ top: this._scroll.scrollHeight, behavior: reduce ? "auto" : "smooth" });
-  }
-
   render() {
     this.innerHTML = `
       <div class="chats-stage">
-        <div class="chats-hero">
+        <div class="chats-answer">
           <span class="chats-mark" aria-hidden="true">${SPARK}</span>
           <h2 class="chats-greeting">What can Marzy do for you?</h2>
         </div>
