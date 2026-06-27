@@ -3,9 +3,12 @@
 // only when an object is open. On mobile the sidebar becomes a hamburger drawer
 // and the pane becomes an overlay. Object pages render an <mz-collection>; the
 // app owns the pane and fills it from collections' mz-select / mz-new events.
-import { STATUSES, RECORDS, PRIO, prioHTML, whoHTML } from "./data.js";
+import { STATUSES, RECORDS, PRIO, TAGS, prioHTML, whoHTML } from "./data.js";
 import { icon } from "./icons.js";
 import { animate, SPRING_SOFT, EASE_IN, reduce } from "./motion.js";
+
+const esc = (s) =>
+  String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 const ICON = {
   chats: icon("message-square"),
@@ -24,6 +27,30 @@ const COPY = icon("copy");
 const TRASH = icon("trash-2");
 
 const people = [...new Set(RECORDS.map((r) => r.assignee))];
+
+// Editable detail-pane fields. `opts` returns the choices for a select; `text`
+// fields render a plain input. valueHTML/valueText render the read-only view and
+// the plain-text used in the diff.
+const FIELD_DEFS = [
+  { key: "status", label: "Status", opts: () => STATUSES },
+  { key: "priority", label: "Priority", opts: () => ["high", "medium", "low"], optLabel: (o) => PRIO[o] },
+  { key: "assignee", label: "Assignee", opts: () => people },
+  { key: "tag", label: "Team", opts: () => TAGS },
+  { key: "due", label: "Due", text: true },
+];
+const valueHTML = (key, v) =>
+  key === "status" ? `<span class="badge badge-neutral">${esc(v)}</span>`
+  : key === "priority" ? prioHTML(v)
+  : key === "assignee" ? whoHTML(v)
+  : esc(String(v));
+const valueText = (key, v) => (key === "priority" ? PRIO[v] : String(v));
+const editControl = (f, v) =>
+  f.text
+    ? `<input class="ios-edit" type="text" data-field="${f.key}" value="${esc(String(v))}" aria-label="${f.label}" />`
+    : `<select class="ios-edit" data-field="${f.key}" aria-label="${f.label}">${f
+        .opts()
+        .map((o) => `<option value="${esc(o)}"${o === v ? " selected" : ""}>${esc(f.optLabel ? f.optLabel(o) : o)}</option>`)
+        .join("")}</select>`;
 
 const VIEWS = [
   { id: "chats", label: "Chat", render: () => `<mz-chats></mz-chats>` },
@@ -123,7 +150,17 @@ class MzApp extends HTMLElement {
     this.addEventListener("mz-select", (e) => this.openDetail(e.detail));
     this.addEventListener("mz-new", () => this.openCreate());
     this._pane.addEventListener("click", (e) => {
-      if (e.target.closest(".pane-cancel")) this.hidePane();
+      if (e.target.closest(".pane-cancel")) {
+        this.hidePane();
+        return;
+      }
+      const act = e.target.closest("[data-pane-act]");
+      if (!act) return;
+      const a = act.dataset.paneAct;
+      if (a === "edit") this.enterEdit();
+      else if (a === "save") this.saveEdit();
+      else if (a === "cancel") this.cancelEdit();
+      else if (a === "delete") this.hidePane();
     });
 
     this.show(VIEWS[0].id);
@@ -194,73 +231,133 @@ class MzApp extends HTMLElement {
   }
 
   openDetail(r) {
-    this._pane.innerHTML = `
-      <div class="pane-head">
-        <span class="pane-eyebrow t-caption">${r.tag}</span>
-        <div class="pane-tools">
-          <button type="button" class="btn-icon" title="Edit ${this._singular}" aria-label="Edit">${PENCIL}</button>
-          <button type="button" class="btn-icon" title="Duplicate" aria-label="Duplicate">${COPY}</button>
-          <button type="button" class="btn-icon" title="Delete" aria-label="Delete">${TRASH}</button>
-        </div>
-      </div>
-      <h3 class="pane-title">${r.title}</h3>
-
-      <div class="ios-section">
-        <div class="ios-group">
-          <div class="ios-row"><span class="ios-row-label">Status</span><span class="ios-row-value"><span class="badge badge-neutral">${r.status}</span></span></div>
-          <div class="ios-row"><span class="ios-row-label">Priority</span><span class="ios-row-value">${prioHTML(r.priority)}</span></div>
-          <div class="ios-row"><span class="ios-row-label">Assignee</span><span class="ios-row-value">${whoHTML(r.assignee)}</span></div>
-          <div class="ios-row"><span class="ios-row-label">Team</span><span class="ios-row-value">${r.tag}</span></div>
-          <div class="ios-row"><span class="ios-row-label">Due</span><span class="ios-row-value">${r.due}</span></div>
-        </div>
-      </div>
-
-      <div class="ios-section">
-        <ol class="chain">
-          <li class="chain-item">
-            <span class="chain-dot"></span>
-            <div class="chain-content">
-              <div class="chain-head"><b>Status changed</b><time>2h ago</time></div>
-              <div class="chain-card">
-                <span class="chain-diff"><span class="chain-from">In progress</span>→<span class="chain-to">${r.status}</span></span>
-                <span class="chain-who">${whoHTML("Marzy")}</span>
-              </div>
-            </div>
-          </li>
-          <li class="chain-item">
-            <span class="chain-dot"></span>
-            <div class="chain-content">
-              <div class="chain-head"><b>Assignee changed</b><time>1d ago</time></div>
-              <div class="chain-card">
-                <span class="chain-diff"><span class="chain-from">Unassigned</span>→<span class="chain-to">${r.assignee}</span></span>
-                <span class="chain-who">${whoHTML("Marzy")}</span>
-              </div>
-            </div>
-          </li>
-          <li class="chain-item">
-            <span class="chain-dot"></span>
-            <div class="chain-content">
-              <div class="chain-head"><b>Priority changed</b><time>3d ago</time></div>
-              <div class="chain-card">
-                <span class="chain-diff"><span class="chain-from">Low</span>→<span class="chain-to">${PRIO[r.priority]}</span></span>
-                <span class="chain-who">${whoHTML(r.assignee)}</span>
-              </div>
-            </div>
-          </li>
-          <li class="chain-item">
-            <span class="chain-dot"></span>
-            <div class="chain-content">
-              <div class="chain-head"><b>Created</b><time>${r.due}</time></div>
-              <div class="chain-card">
-                <span class="chain-diff">${r.title}</span>
-                <span class="chain-who">${whoHTML(r.assignee)}</span>
-              </div>
-            </div>
-          </li>
-        </ol>
-      </div>`;
+    this._record = r; // the live record (mutated on save)
+    this._detail = { ...r }; // working copy while editing
+    this._editing = false;
+    this._cid = 0;
+    this._chain = this.seedChain(r);
+    this.renderDetail();
     this.setCrumb(r.title);
     this.showPane();
+  }
+
+  // The starting commit history for a record.
+  seedChain(r) {
+    const cid = () => `c${++this._cid}`;
+    return [
+      { id: cid(), head: "Status changed", from: "In progress", to: r.status, who: "Marzy", time: "2h ago" },
+      { id: cid(), head: "Assignee changed", from: "Unassigned", to: r.assignee, who: "Marzy", time: "1d ago" },
+      { id: cid(), head: "Priority changed", from: "Low", to: PRIO[r.priority], who: r.assignee, time: "3d ago" },
+      { id: cid(), head: "Created", text: r.title, who: r.assignee, time: r.due },
+    ];
+  }
+
+  chainItem(c) {
+    const body = c.text
+      ? `<span class="chain-diff">${esc(c.text)}</span>`
+      : `<span class="chain-diff"><span class="chain-from">${esc(String(c.from))}</span>→<span class="chain-to">${esc(String(c.to))}</span></span>`;
+    return `<li class="chain-item${c.fresh ? " is-fresh" : ""}" data-cid="${c.id}">
+        <span class="chain-dot"></span>
+        <div class="chain-content">
+          <div class="chain-head"><b>${esc(c.head)}</b><time>${esc(c.time)}</time></div>
+          <div class="chain-card">${body}<span class="chain-who">${whoHTML(c.who)}</span></div>
+        </div>
+      </li>`;
+  }
+
+  renderDetail() {
+    const d = this._detail;
+    const editing = this._editing;
+    const tools = editing
+      ? ""
+      : `<div class="pane-tools">
+          <button type="button" class="btn-icon" data-pane-act="edit" title="Edit ${this._singular}" aria-label="Edit">${PENCIL}</button>
+          <button type="button" class="btn-icon" data-pane-act="duplicate" title="Duplicate" aria-label="Duplicate">${COPY}</button>
+          <button type="button" class="btn-icon" data-pane-act="delete" title="Delete" aria-label="Delete">${TRASH}</button>
+        </div>`;
+    const rows = FIELD_DEFS.map(
+      (f) => `
+        <div class="ios-row">
+          <span class="ios-row-label">${f.label}</span>
+          <span class="ios-row-value">${editing ? editControl(f, d[f.key]) : valueHTML(f.key, d[f.key])}</span>
+        </div>`
+    ).join("");
+    const editActions = editing
+      ? `<div class="ios-section pane-edit-actions">
+          <mz-btn variant="ghost" data-pane-act="cancel">Cancel</mz-btn>
+          <mz-btn variant="primary" data-pane-act="save">Save changes</mz-btn>
+        </div>`
+      : "";
+    this._pane.innerHTML = `
+      <div class="pane-head">
+        <span class="pane-eyebrow t-caption">${esc(d.tag)}</span>
+        ${tools}
+      </div>
+      <h3 class="pane-title">${esc(d.title)}</h3>
+      <div class="ios-section"><div class="ios-group">${rows}</div></div>
+      ${editActions}
+      <div class="ios-section"><ol class="chain">${this._chain.map((c) => this.chainItem(c)).join("")}</ol></div>`;
+  }
+
+  enterEdit() {
+    this._editing = true;
+    this.renderDetail();
+    const first = this._pane.querySelector(".ios-edit");
+    if (first) first.focus();
+  }
+
+  cancelEdit() {
+    this._editing = false;
+    this._detail = { ...this._record };
+    this.renderDetail();
+  }
+
+  saveEdit() {
+    // diff each field; every change becomes a fresh commit at the top of the chain
+    const changes = [];
+    FIELD_DEFS.forEach((f) => {
+      const el = this._pane.querySelector(`[data-field="${f.key}"]`);
+      if (!el) return;
+      const nv = el.value;
+      const ov = this._detail[f.key];
+      if (String(nv) !== String(ov)) {
+        changes.push({ id: `c${++this._cid}`, head: `${f.label} changed`, from: valueText(f.key, ov), to: valueText(f.key, nv), who: "You", time: "just now", fresh: true });
+        this._detail[f.key] = nv;
+      }
+    });
+    Object.assign(this._record, this._detail); // persist to the live record
+
+    // capture chain positions before the re-render so survivors can slide down (FLIP)
+    const oldRects = new Map();
+    this._pane.querySelectorAll(".chain-item").forEach((li) => oldRects.set(li.dataset.cid, li.getBoundingClientRect()));
+
+    this._chain = [...changes, ...this._chain];
+    this._editing = false;
+    this.renderDetail();
+    this.animateChainAppend(oldRects);
+  }
+
+  // New commits drop in at the top while the existing ones slide down to make room.
+  animateChainAppend(oldRects) {
+    if (reduce) return;
+    let i = 0;
+    this._pane.querySelectorAll(".chain-item").forEach((li) => {
+      if (li.classList.contains("is-fresh")) {
+        li.style.opacity = "0";
+        animate(li, { opacity: [0, 1], y: [-14, 0], scale: [0.97, 1] }, { ...SPRING_SOFT, delay: i * 0.06 }).finished.then(
+          () => (li.style.opacity = "")
+        );
+        i++;
+      } else {
+        const prev = oldRects.get(li.dataset.cid);
+        if (!prev) return;
+        const now = li.getBoundingClientRect();
+        const dy = prev.top - now.top;
+        if (!dy) return;
+        li.style.transform = `translateY(${dy}px)`;
+        animate(li, { y: [dy, 0] }, SPRING_SOFT).finished.then(() => (li.style.transform = ""));
+      }
+    });
   }
 
   openCreate() {

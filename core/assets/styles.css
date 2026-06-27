@@ -4148,6 +4148,31 @@ body.is-dragging-card * {
   gap: 6px;
   color: var(--color-muted);
 }
+/* inline edit controls in the detail pane */
+.ios-edit {
+  max-width: 64%;
+  padding: 5px 8px;
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+  font: inherit;
+  font-size: var(--text-small);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+input.ios-edit {
+  cursor: text;
+}
+.ios-edit:focus {
+  outline: none;
+  border-color: var(--color-volt);
+  box-shadow: 0 0 0 3px var(--color-volt-soft);
+}
+.pane-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
 /* audit / activity history: a timeline (dot + connecting line) where each entry
    has a black title + date above a card holding the change (diff) and the actor */
 .chain {
