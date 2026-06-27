@@ -3177,11 +3177,11 @@ body.is-dragging-card * {
   flex-wrap: wrap;
   /* pull the row up so the cards peek over the composer's top edge */
   margin-top: calc(-1 * (var(--space-4) + 40px));
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-5);
 }
-/* slick overlapping stack — each card tucks behind the next */
+/* slick, light overlap — each card just tucks behind the next */
 .chats-file + .chats-file {
-  margin-left: -32px;
+  margin-left: -16px;
 }
 .chats-files[hidden] {
   display: none;
