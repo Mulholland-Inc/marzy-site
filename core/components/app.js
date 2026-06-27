@@ -3,7 +3,8 @@
 // only when an object is open. On mobile the sidebar becomes a hamburger drawer
 // and the pane becomes an overlay. Object pages render an <mz-collection>; the
 // app owns the pane and fills it from collections' mz-select / mz-new events.
-import { STATUSES, RECORDS, PRIO, TAGS, prioHTML, whoHTML } from "./data.js";
+import { STATUSES, RECORDS, PRIO, TAGS, prioHTML, whoHTML, initials } from "./data.js";
+import { SPARK } from "./spark.js";
 import { icon } from "./icons.js";
 import { animate, SPRING_SOFT, EASE_IN, reduce } from "./motion.js";
 
@@ -273,10 +274,15 @@ class MzApp extends HTMLElement {
     const rows = c.diffs
       ? c.diffs.map((d) => `<div class="chain-change"><span class="chain-field">${esc(d.label)}</span>${diff(d.from, d.to)}</div>`).join("")
       : `<div class="chain-change">${c.label ? `<span class="chain-field">${esc(c.label)}</span>` : ""}<span class="chain-diff">${esc(c.text)}</span></div>`;
+    // the timeline node IS the person's avatar (Marzy gets the spark)
+    const avatar =
+      c.who === "Marzy"
+        ? `<span class="chain-av chain-av-marzy" aria-hidden="true">${SPARK}</span>`
+        : `<span class="chain-av" aria-hidden="true">${initials(c.who)}</span>`;
     return `<li class="chain-item${c.fresh ? " is-fresh" : ""}" data-cid="${c.id}">
-        <span class="chain-dot"></span>
+        ${avatar}
         <div class="chain-content">
-          <div class="chain-head">${whoHTML(c.who)}<time>${esc(c.time)}</time></div>
+          <div class="chain-head"><span class="chain-name">${esc(c.who)}</span><time>${esc(c.time)}</time></div>
           <div class="chain-card"><div class="chain-changes">${rows}</div></div>
         </div>
       </li>`;

@@ -4199,8 +4199,8 @@ body.is-dragging-card * {
 .chain-item::before {
   content: "";
   position: absolute;
-  left: 4px;
-  top: 18px;
+  left: 12px;
+  top: 30px;
   bottom: -2px;
   width: 2px;
   background: var(--color-line);
@@ -4208,20 +4208,34 @@ body.is-dragging-card * {
 .chain-item:last-child::before {
   display: none;
 }
-.chain-dot {
+/* the timeline node is the actor's avatar */
+.chain-av {
   position: relative;
   z-index: 1;
   flex: 0 0 auto;
-  width: 10px;
-  height: 10px;
-  margin-top: 5px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  background: var(--color-surface);
-  border: 2px solid var(--color-line-strong);
+  background: var(--color-surface-2);
+  color: var(--color-ink-2);
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  box-shadow: 0 0 0 3px var(--color-surface);
 }
-.chain-item:first-child .chain-dot {
-  background: var(--color-volt);
-  border-color: var(--color-volt);
+.chain-av-marzy {
+  background: var(--color-volt-soft);
+  color: var(--color-volt);
+}
+.chain-av svg {
+  width: 14px;
+  height: 14px;
+}
+.chain-item.is-fresh .chain-av {
+  box-shadow:
+    0 0 0 3px var(--color-surface),
+    0 0 0 5px var(--color-volt-soft);
 }
 .chain-content {
   flex: 1;
@@ -4234,7 +4248,8 @@ body.is-dragging-card * {
   gap: var(--space-3);
   margin-bottom: var(--space-2);
 }
-.chain-head b {
+.chain-head b,
+.chain-name {
   font-size: var(--text-13);
   font-weight: var(--weight-semibold);
   color: var(--color-ink);
