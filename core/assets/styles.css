@@ -2845,29 +2845,43 @@ mz-tab-panel:not([hidden]) {
 /* Board view (Trello-style) — columns scroll horizontally inside the page. */
 .board {
   display: flex;
-  gap: var(--space-5);
+  align-items: flex-start;
+  gap: var(--space-4);
   overflow-x: auto;
   padding-bottom: var(--space-2);
 }
-/* plain columns — no container fill, no dividers */
+/* each column is a recessed container; the cards float above it */
 .board-col {
-  flex: 0 0 248px;
+  flex: 0 0 272px;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-paper);
+  border: var(--border);
+  border-radius: var(--radius-lg);
 }
 .board-col-head {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  padding: var(--space-1) var(--space-1) var(--space-2);
   font-size: var(--text-13);
   font-weight: var(--weight-semibold);
   color: var(--color-ink);
-  padding: var(--space-1) var(--space-1) var(--space-2);
 }
 .board-col-head span {
+  margin-left: auto;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+  font-size: var(--text-12);
   font-weight: var(--weight-medium);
-  color: var(--color-muted);
+  color: var(--color-ink-2);
 }
 .board-list {
   display: flex;
@@ -2877,13 +2891,17 @@ mz-tab-panel:not([hidden]) {
 .board-card {
   background: var(--color-surface);
   border: var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   padding: var(--space-3);
+  box-shadow: var(--shadow-xs);
   cursor: grab;
   touch-action: none;
-  transition: border-color var(--duration-base) var(--ease);
+  transition:
+    box-shadow var(--duration-base) var(--ease),
+    border-color var(--duration-base) var(--ease);
 }
 .board-card:hover {
+  box-shadow: var(--shadow-sm);
   border-color: var(--color-line-strong);
 }
 /* drag-and-drop */
@@ -2895,9 +2913,9 @@ mz-tab-panel:not([hidden]) {
   pointer-events: none;
 }
 .board-ph {
-  border: 1px dashed var(--color-volt-line);
-  border-radius: var(--radius-sm);
-  background: var(--color-volt-soft);
+  border: 1px dashed var(--color-line-strong);
+  border-radius: var(--radius);
+  background: var(--color-surface-2);
 }
 body.is-dragging-card,
 body.is-dragging-card * {
