@@ -1,7 +1,7 @@
 // <mz-view-grid></mz-view-grid>, a Notion-style gallery of cards over the shared
 // data. Renders from this._records (set via setData by mz-collection's toolbar
 // query), defaulting to all RECORDS.
-import { RECORDS, byId, emitSelect, prioHTML, whoHTML } from "./data.js";
+import { RECORDS, byId, emitSelect, PRIO } from "./data.js";
 
 class MzViewGrid extends HTMLElement {
   connectedCallback() {
@@ -23,12 +23,12 @@ class MzViewGrid extends HTMLElement {
           .map(
             (r) => `<div class="vcard" data-id="${r.id}">
         <div class="vcard-title">${r.title}</div>
-        <div class="vcard-props">
-          <span class="badge badge-neutral">${r.status}</span>
-          <span class="vcard-tag">${r.tag}</span>
-          ${prioHTML(r.priority)}
-        </div>
-        <div class="vcard-foot">${whoHTML(r.assignee)}<span class="vcard-due">${r.due}</span></div>
+        <dl class="vcard-props">
+          <div class="vcard-row"><dt>Status</dt><dd>${r.status}</dd></div>
+          <div class="vcard-row"><dt>Assignee</dt><dd>${r.assignee}</dd></div>
+          <div class="vcard-row"><dt>Priority</dt><dd>${PRIO[r.priority]}</dd></div>
+          <div class="vcard-row"><dt>Due</dt><dd>${r.due}</dd></div>
+        </dl>
       </div>`
           )
           .join("")}</div>`
