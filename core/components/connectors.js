@@ -29,12 +29,27 @@ const CONNECTORS = [
   ["Snowflake", "snowflake.com", "API", "Data", "Warehouse & queries", false],
 ];
 
-const CATS = ["Finance", "Comms", "Productivity", "Payments", "Records", "Dev", "Data"];
+// Identity is a category of its own: your linked accounts on external platforms
+// (OIDC) so Marzy can verify who it's talking to. [name, domain, handle, as]
+const IDENTITY = [
+  ["Slack", "slack.com", "@marijn", "@marijn"],
+  ["Discord", "discord.com", null, "marijn"],
+  ["Google", "google.com", "marijn@mulholland.inc", "marijn@mulholland.inc"],
+  ["Microsoft", "microsoft.com", null, "marijn@mulholland.inc"],
+  ["GitHub", "github.com", "ietsnut", "ietsnut"],
+  ["Apple", "apple.com", null, "marijn@icloud.com"],
+];
+
+const CATS = ["Finance", "Comms", "Productivity", "Payments", "Records", "Dev", "Data", "Identity"];
 
 class MzConnectors extends HTMLElement {
   connectedCallback() {
     this.classList.add("cnx");
-    this._items = CONNECTORS.map(([name, domain, kind, cat, desc, connected]) => ({ name, domain, kind, cat, desc, connected }));
+    this._items = [
+      ...CONNECTORS.map(([name, domain, kind, cat, desc, connected]) => ({ name, domain, kind, cat, desc, connected })),
+      // identity accounts: `connected` mirrors "linked"; the button links/unlinks
+      ...IDENTITY.map(([name, domain, handle, as]) => ({ name, domain, cat: "Identity", identity: true, handle, as })),
+    ];
     this._q = "";
 
     this.innerHTML = `
@@ -56,7 +71,8 @@ class MzConnectors extends HTMLElement {
       const btn = e.target.closest("[data-i]");
       if (!btn) return;
       const it = this._items[Number(btn.dataset.i)];
-      it.connected = !it.connected;
+      if (it.identity) it.handle = it.handle ? null : it.as; // link / unlink
+      else it.connected = !it.connected;
       this.render();
     });
 
@@ -65,18 +81,23 @@ class MzConnectors extends HTMLElement {
 
   render() {
     const term = this._q.trim().toLowerCase();
-    const match = (it) => !term || `${it.name} ${it.kind} ${it.cat} ${it.desc}`.toLowerCase().includes(term);
+    const text = (it) =>
+      it.identity ? `${it.name} ${it.cat} ${it.handle || ""} ${it.as}` : `${it.name} ${it.kind} ${it.cat} ${it.desc}`;
+    const match = (it) => !term || text(it).toLowerCase().includes(term);
 
     const row = (it) => {
       const i = this._items.indexOf(it);
-      return `<div class="cnx-row${it.connected ? " is-connected" : ""}">
+      const on = it.identity ? !!it.handle : it.connected;
+      const desc = it.identity ? (it.handle ? esc(it.handle) : "Not linked") : esc(it.desc);
+      const label = it.identity ? (on ? "Unlink" : "Link account") : on ? "Manage" : "Connect";
+      return `<div class="cnx-row${on ? " is-connected" : ""}">
         <img class="cnx-logo" src="${LOGO(it.domain)}" alt="" loading="lazy"
           onerror="this.outerHTML='<span class=&quot;cnx-logo cnx-mono&quot;>${mono(it.name)}</span>'" />
         <div class="cnx-main">
           <div class="cnx-name">${esc(it.name)}</div>
-          <div class="cnx-desc t-meta">${esc(it.desc)}</div>
+          <div class="cnx-desc t-meta">${desc}</div>
         </div>
-        <button type="button" class="btn ${it.connected ? "btn-ghost" : "btn-primary"} btn-sm" data-i="${i}">${it.connected ? "Manage" : "Connect"}</button>
+        <button type="button" class="btn ${on ? "btn-ghost" : "btn-primary"} btn-sm" data-i="${i}">${label}</button>
       </div>`;
     };
 

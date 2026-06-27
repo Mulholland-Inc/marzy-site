@@ -16,7 +16,6 @@ const ICON = {
   connectors: icon("plug"),
   users: icon("users"),
   roles: icon("shield"),
-  identity: icon("link-2"),
   settings: icon("settings"),
 };
 const BURGER = icon("menu");
@@ -54,9 +53,6 @@ const VIEWS = [
         </mz-tab-panel>
         <mz-tab-panel label="Connections">
           <mz-connectors></mz-connectors>
-        </mz-tab-panel>
-        <mz-tab-panel label="Identity">
-          <mz-identity></mz-identity>
         </mz-tab-panel>
         <mz-tab-panel label="Automation">
           <mz-stack gap="3">
