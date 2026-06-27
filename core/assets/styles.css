@@ -4225,12 +4225,17 @@ body.is-dragging-card * {
   box-shadow: 0 0 0 3px var(--color-surface);
 }
 .chain-av-marzy {
-  background: var(--color-volt-soft);
+  background: none;
+  box-shadow: none;
   color: var(--color-volt);
 }
 .chain-av svg {
   width: 14px;
   height: 14px;
+}
+.chain-av-marzy svg {
+  width: 20px;
+  height: 20px;
 }
 .chain-item.is-fresh .chain-av {
   box-shadow:
