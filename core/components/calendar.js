@@ -58,17 +58,17 @@ class MzCalendar extends HTMLElement {
       <div class="cal-head">
         <div class="cal-title"></div>
         <div class="cal-nav">
-          <label class="cal-tz">
+          <div class="cal-tz">
             <span class="cal-tz-ico" aria-hidden="true">${GLOBE}</span>
-            <select class="cal-tz-select" aria-label="Timezone">
+            <mz-select class="cal-tz-select" no-search value="-5" aria-label="Timezone">
               <option value="-8">Pacific · PT</option>
               <option value="-7">Mountain · MT</option>
               <option value="-6">Central · CT</option>
-              <option value="-5" selected>Eastern · ET</option>
+              <option value="-5">Eastern · ET</option>
               <option value="0">UTC</option>
               <option value="1">Central Europe · CET</option>
-            </select>
-          </label>
+            </mz-select>
+          </div>
           <div class="seg viewseg cal-modes" role="tablist">
             <span class="seg-thumb" aria-hidden="true"></span>
             <button type="button" class="seg-btn is-active" data-mode="month"><span>Month</span></button>

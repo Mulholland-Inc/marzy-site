@@ -4148,45 +4148,37 @@ body.is-dragging-card * {
   gap: 6px;
   color: var(--color-muted);
 }
-/* inline edit controls in the detail pane — uniform right-aligned column */
-.ios-edit {
-  box-sizing: border-box;
-  width: 196px;
-  padding: 6px 10px;
-  border: var(--border-strong);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  font: inherit;
-  font-size: var(--text-small);
-  color: var(--color-ink);
-  cursor: pointer;
+/* small, reusable control sizes (the Users role picker uses these too) */
+.input-sm {
+  height: var(--control-h-sm);
+  padding: 0 10px;
+  font-size: var(--text-13);
+  box-shadow: none;
 }
-/* let the value cell hold the fixed-width control without shrinking it */
+.select-sm .select {
+  height: var(--control-h-sm);
+  padding-right: 28px;
+  font-size: var(--text-13);
+  box-shadow: none;
+}
+.select-sm svg {
+  right: 9px;
+}
+
+/* edit-mode action bar in the pane header — Cancel + Save, top right */
+.pane-edit-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* inline edit controls in the detail pane — compact, right-aligned column */
+.ios-edit {
+  width: 150px;
+}
+/* keep the value cell from squeezing the fixed-width control */
 .ios-row:has(.ios-edit) .ios-row-value {
   flex: 0 0 auto;
-}
-select.ios-edit {
-  appearance: none;
-  -webkit-appearance: none;
-  /* room for a chevron */
-  padding-right: 26px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2398989f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  background-size: 14px;
-}
-input.ios-edit {
-  cursor: text;
-}
-.ios-edit:focus {
-  outline: none;
-  border-color: var(--color-volt);
-  box-shadow: 0 0 0 3px var(--color-volt-soft);
-}
-.pane-edit-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-3);
 }
 /* audit / activity history: a timeline (dot + connecting line) where each entry
    has a black title + date above a card holding the change (diff) and the actor */
@@ -5960,4 +5952,334 @@ input.ios-edit {
     opacity: 1;
     transform: none;
   }
+}
+
+/* ─────────────────────────────────────── Custom select (mz-select) ── */
+.cs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.cs-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  width: 100%;
+  height: var(--control-h);
+  padding: 0 12px;
+  border: var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+  font: inherit;
+  font-size: var(--text-small);
+  color: var(--color-ink);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-base) var(--ease),
+    box-shadow var(--duration-base) var(--ease);
+}
+.cs-trigger-sm {
+  height: var(--control-h-sm);
+  padding: 0 10px;
+  font-size: var(--text-13);
+  box-shadow: none;
+}
+.cs-trigger:hover {
+  border-color: var(--color-ink-2);
+}
+.cs-trigger[aria-expanded="true"] {
+  border-color: var(--color-volt);
+  box-shadow: 0 0 0 3px var(--color-volt-soft);
+}
+.cs-trigger > svg {
+  flex: 0 0 auto;
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  color: var(--color-muted);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cs-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cs-value.is-placeholder {
+  color: var(--color-muted);
+}
+
+/* shared floating pane for select + date picker */
+.cs-pop,
+.cd-pop {
+  position: fixed;
+  z-index: var(--z-modal);
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 4px;
+}
+.cs-pop {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 168px;
+  max-width: 320px;
+}
+.cs-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.cs-search > svg {
+  position: absolute;
+  left: 9px;
+  width: 15px;
+  height: 15px;
+  color: var(--color-muted);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.cs-search-input {
+  width: 100%;
+  height: 30px;
+  padding: 0 10px 0 30px;
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+  font: inherit;
+  font-size: var(--text-13);
+  color: var(--color-ink);
+}
+.cs-search-input:focus {
+  outline: none;
+  border-color: var(--color-volt);
+}
+.cs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 216px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.cs-opt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 5px 9px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-13);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+.cs-opt-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cs-opt.is-active {
+  background: var(--color-surface-2);
+}
+.cs-check {
+  flex: 0 0 auto;
+  display: flex;
+  color: var(--color-volt);
+  opacity: 0;
+}
+.cs-check svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cs-opt.is-selected .cs-check {
+  opacity: 1;
+}
+.cs-empty {
+  padding: 12px;
+  text-align: center;
+  font-size: var(--text-13);
+  color: var(--color-muted);
+}
+
+/* timezone picker in the calendar: borderless trigger inside the pill */
+.cal-tz .cal-tz-select {
+  width: auto;
+}
+.cal-tz .cs-trigger {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  gap: 6px;
+  font-size: var(--text-13);
+  font-weight: var(--weight-medium);
+}
+.cal-tz .cs-trigger[aria-expanded="true"] {
+  box-shadow: none;
+}
+
+/* ─────────────────────────────────────── Custom date picker (mz-datepicker) ── */
+.cd {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.cd-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  width: 100%;
+  height: var(--control-h);
+  padding: 0 12px;
+  border: var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+  font: inherit;
+  font-size: var(--text-small);
+  color: var(--color-ink);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-base) var(--ease),
+    box-shadow var(--duration-base) var(--ease);
+}
+.cd-trigger-sm {
+  height: var(--control-h-sm);
+  padding: 0 10px;
+  font-size: var(--text-13);
+  box-shadow: none;
+}
+.cd-trigger:hover {
+  border-color: var(--color-ink-2);
+}
+.cd-trigger[aria-expanded="true"] {
+  border-color: var(--color-volt);
+  box-shadow: 0 0 0 3px var(--color-volt-soft);
+}
+.cd-trigger > svg {
+  flex: 0 0 auto;
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  color: var(--color-muted);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cd-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cd-value.is-placeholder {
+  color: var(--color-muted);
+}
+.cd-pop {
+  width: 244px;
+}
+.cd-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+.cd-title {
+  font-size: var(--text-13);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+.cd-nav {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-ink-2);
+  cursor: pointer;
+}
+.cd-nav:hover {
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+}
+.cd-nav svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cd-prev svg {
+  transform: rotate(180deg);
+}
+.cd-dow,
+.cd-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.cd-dow {
+  margin-bottom: 2px;
+}
+.cd-dow span {
+  text-align: center;
+  font-size: var(--text-12);
+  color: var(--color-muted);
+  padding: 4px 0;
+}
+.cd-grid {
+  gap: 2px;
+}
+.cd-day {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  font: inherit;
+  font-size: var(--text-13);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+.cd-day:hover {
+  background: var(--color-surface-2);
+}
+.cd-day.is-empty {
+  pointer-events: none;
+}
+.cd-day.is-today {
+  font-weight: var(--weight-semibold);
+  color: var(--color-volt);
+}
+.cd-day.is-selected {
+  background: var(--color-volt);
+  color: #fff;
+}
+.cd-day.is-selected.is-today {
+  color: #fff;
 }

@@ -58,12 +58,13 @@ const isoToDue = (iso) => {
   return m ? `${MONTHS[Number(m[1]) - 1]} ${Number(m[2])}` : String(iso);
 };
 
+// Compact custom controls — searchable dropdown / calendar (read via `.value`).
 const editControl = (f, v) => {
-  if (f.date) return `<input class="ios-edit" type="date" data-field="${f.key}" value="${dueToISO(v)}" aria-label="${f.label}" />`;
-  return `<select class="ios-edit" data-field="${f.key}" aria-label="${f.label}">${f
+  if (f.date) return `<mz-datepicker class="ios-edit" size="sm" data-field="${f.key}" value="${dueToISO(v)}"></mz-datepicker>`;
+  return `<mz-select class="ios-edit" size="sm" data-field="${f.key}" value="${esc(String(v))}">${f
     .opts()
-    .map((o) => `<option value="${esc(o)}"${o === v ? " selected" : ""}>${esc(f.optLabel ? f.optLabel(o) : o)}</option>`)
-    .join("")}</select>`;
+    .map((o) => `<option value="${esc(o)}">${esc(f.optLabel ? f.optLabel(o) : o)}</option>`)
+    .join("")}</mz-select>`;
 };
 
 const VIEWS = [
@@ -283,7 +284,10 @@ class MzApp extends HTMLElement {
     const d = this._detail;
     const editing = this._editing;
     const tools = editing
-      ? ""
+      ? `<div class="pane-edit-bar">
+          <button type="button" class="btn btn-ghost btn-sm" data-pane-act="cancel">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm" data-pane-act="save">Save changes</button>
+        </div>`
       : `<div class="pane-tools">
           <button type="button" class="btn-icon" data-pane-act="edit" title="Edit ${this._singular}" aria-label="Edit">${PENCIL}</button>
           <button type="button" class="btn-icon" data-pane-act="duplicate" title="Duplicate" aria-label="Duplicate">${COPY}</button>
@@ -296,12 +300,6 @@ class MzApp extends HTMLElement {
           <span class="ios-row-value">${editing ? editControl(f, d[f.key]) : valueHTML(f.key, d[f.key])}</span>
         </div>`
     ).join("");
-    const editActions = editing
-      ? `<div class="ios-section pane-edit-actions">
-          <mz-btn variant="ghost" data-pane-act="cancel">Cancel</mz-btn>
-          <mz-btn variant="primary" data-pane-act="save">Save changes</mz-btn>
-        </div>`
-      : "";
     this._pane.innerHTML = `
       <div class="pane-head">
         <span class="pane-eyebrow t-caption">${esc(d.tag)}</span>
@@ -309,7 +307,6 @@ class MzApp extends HTMLElement {
       </div>
       <h3 class="pane-title">${esc(d.title)}</h3>
       <div class="ios-section"><div class="ios-group">${rows}</div></div>
-      ${editActions}
       <div class="ios-section"><ol class="chain">${this._chain.map((c) => this.chainItem(c)).join("")}</ol></div>`;
   }
 

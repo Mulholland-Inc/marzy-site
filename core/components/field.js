@@ -13,7 +13,9 @@ class MzField extends HTMLElement {
     const control =
       type === "textarea"
         ? `<textarea class="input" rows="3"${id ? ` id="${id}"` : ""}${ph ? ` placeholder="${ph}"` : ""}></textarea>`
-        : `<input class="input" type="${type}"${id ? ` id="${id}"` : ""}${ph ? ` placeholder="${ph}"` : ""} />`;
+        : type === "date"
+          ? `<mz-datepicker${ph ? ` placeholder="${ph}"` : ""}></mz-datepicker>`
+          : `<input class="input" type="${type}"${id ? ` id="${id}"` : ""}${ph ? ` placeholder="${ph}"` : ""} />`;
     const hintHtml = hint ? `<span class="field-hint t-meta">${hint}</span>` : "";
     this.innerHTML = `${labelHtml}${control}${hintHtml}`;
   }

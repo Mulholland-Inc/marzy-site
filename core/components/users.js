@@ -23,12 +23,9 @@ const fmtDate = (iso) =>
   iso ? new Date(iso + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—";
 
 const roleSelect = (u) => `
-  <div class="select-wrap users-role">
-    <select class="input select" data-role="${u.id}" aria-label="Role for ${esc(u.name)}">
-      ${ROLES.map((r) => `<option${r === u.role ? " selected" : ""}>${r}</option>`).join("")}
-    </select>
-    ${icon("chevron-down")}
-  </div>`;
+  <mz-select class="users-role" size="sm" data-role="${u.id}" value="${esc(u.role)}" aria-label="Role for ${esc(u.name)}">
+    ${ROLES.map((r) => `<option>${r}</option>`).join("")}
+  </mz-select>`;
 
 class MzUsers extends HTMLElement {
   connectedCallback() {
@@ -45,12 +42,9 @@ class MzUsers extends HTMLElement {
         </div>
         <form class="users-add">
           <input type="email" class="input users-add-email" placeholder="name@company.com" aria-label="Email to add" />
-          <div class="select-wrap users-role">
-            <select class="input select users-add-role" aria-label="Role">
-              ${ROLES.map((r) => `<option${r === "Member" ? " selected" : ""}>${r}</option>`).join("")}
-            </select>
-            ${icon("chevron-down")}
-          </div>
+          <mz-select class="users-role users-add-role" size="sm" value="Member" aria-label="Role">
+            ${ROLES.map((r) => `<option>${r}</option>`).join("")}
+          </mz-select>
           <button type="submit" class="btn btn-primary btn-sm">${icon("plus")}<span>Add user</span></button>
         </form>
       </div>
