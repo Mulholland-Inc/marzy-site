@@ -33,7 +33,7 @@ const VIEWS = [
   { id: "projects", label: "Projects", collection: { singular: "project", view: "grid", views: "grid,gallery,table,board" } },
   { id: "calendar", label: "Calendar", render: () => `<mz-calendar></mz-calendar>` },
   { id: "users", label: "Users", render: () => `<mz-users></mz-users>` },
-  { id: "roles", label: "Roles", render: () => `<mz-roles></mz-roles>` },
+  { id: "roles", label: "Access", render: () => `<mz-roles></mz-roles>` },
   {
     id: "settings",
     label: "Settings",
