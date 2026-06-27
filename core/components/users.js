@@ -82,10 +82,7 @@ class MzUsers extends HTMLElement {
     this._promptUser = null;
 
     this._popText.addEventListener("input", () => {
-      if (!this._promptUser) return;
-      this._promptUser.prompt = this._popText.value;
-      const btn = this._body.querySelector(`[data-act='prompt'][data-id='${this._promptUser.id}']`);
-      if (btn) btn.classList.toggle("is-set", !!this._popText.value.trim());
+      if (this._promptUser) this._promptUser.prompt = this._popText.value;
     });
     this.querySelector(".upp-done").addEventListener("click", () => this.closePrompt());
 
@@ -209,7 +206,7 @@ class MzUsers extends HTMLElement {
           <td>${roleSelect(u)}</td>
           <td class="cell-muted">${fmtDate(u.last)}</td>
           <td><div class="row-actions">
-            <button class="btn-icon${u.prompt && u.prompt.trim() ? " is-set" : ""}" type="button" data-act="prompt" data-id="${u.id}" title="Edit what Marzy knows about ${esc(u.name)}" aria-label="Edit prompt for ${esc(u.name)}">${icon("message-square")}</button>
+            <button class="btn-icon" type="button" data-act="prompt" data-id="${u.id}" title="Edit what Marzy knows about ${esc(u.name)}" aria-label="Edit prompt for ${esc(u.name)}">${icon("message-square")}</button>
             <button class="btn-icon" type="button" data-act="remove" data-id="${u.id}" title="Remove" aria-label="Remove ${esc(u.name)}">${icon("trash-2")}</button>
           </div></td>
         </tr>`

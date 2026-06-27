@@ -3534,10 +3534,6 @@ body.is-dragging-card * {
   background: var(--color-surface-2);
   color: var(--color-ink);
 }
-/* prompt button lights up Volt when a person has context set */
-.users .row-actions .btn-icon.is-set {
-  color: var(--color-volt);
-}
 
 /* per-person prompt editor — a hovering pane anchored to the row button */
 .users-prompt-pop {
