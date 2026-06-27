@@ -3051,6 +3051,12 @@ body.is-dragging-card * {
   /* lift slightly above true center, like the chat apps */
   margin-bottom: 6vh;
 }
+.chats-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+}
 .chats-mark {
   width: 44px;
   color: var(--color-volt);
@@ -3118,11 +3124,128 @@ body.is-dragging-card * {
 .chats-send:hover {
   background: var(--color-volt-700);
 }
+.chats-send:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
 .chats-send svg {
   width: 16px;
   height: 16px;
   color: #fff;
 }
+
+/* conversation mode — composer docks at the bottom, thread scrolls above */
+.chats.is-conversing {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+}
+.chats-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-6) var(--space-4) var(--space-4);
+}
+.chats-thread {
+  width: 100%;
+  max-width: 640px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.chats.is-conversing .chats-composer {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 640px;
+  margin-inline: auto;
+  margin-bottom: var(--space-4);
+}
+
+/* messages */
+.msg {
+  display: flex;
+  gap: var(--space-3);
+}
+.msg-user {
+  justify-content: flex-end;
+}
+.msg-user .bubble {
+  max-width: 78%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+  font-size: var(--text-15);
+  line-height: var(--leading-relaxed);
+  white-space: pre-wrap;
+}
+.msg-marzy {
+  align-items: flex-start;
+}
+.msg-avatar {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--color-volt-soft);
+  color: var(--color-volt);
+}
+.msg-body {
+  flex: 1;
+  min-width: 0;
+  padding-top: 3px;
+  color: var(--color-ink);
+  font-size: var(--text-15);
+  line-height: var(--leading-relaxed);
+}
+.msg-body .w {
+  /* streamed-in words; keep natural wrapping */
+  display: inline;
+}
+
+/* typing indicator — three soft pulsing dots */
+.typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 1.2em;
+}
+.typing i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-muted);
+  animation: chats-typing 1.2s var(--ease) infinite;
+}
+.typing i:nth-child(2) {
+  animation-delay: 0.18s;
+}
+.typing i:nth-child(3) {
+  animation-delay: 0.36s;
+}
+@keyframes chats-typing {
+  0%, 60%, 100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .typing i {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
 @media (max-width: 860px) {
   .chats {
     min-height: calc(100dvh - 148px);
@@ -3327,7 +3450,7 @@ body.is-dragging-card * {
   display: block;
 }
 .identity-list {
-  max-width: 720px;
+  max-width: 640px;
   border: var(--border);
   border-radius: var(--radius);
   overflow: hidden;
