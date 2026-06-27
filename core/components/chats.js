@@ -94,9 +94,18 @@ class MzChats extends HTMLElement {
       this.addFiles(e.target.files);
       this._fileInput.value = ""; // let the same file be picked again later
     });
+    // Click (or Enter/Space) a card to remove it — it flies up and out.
     this._filesRow.addEventListener("click", (e) => {
-      const x = e.target.closest(".chats-file-x");
-      if (x) this.removeFile(x.dataset.id);
+      const card = e.target.closest(".chats-file");
+      if (card) this.flyAway(card);
+    });
+    this._filesRow.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const card = e.target.closest(".chats-file");
+      if (card) {
+        e.preventDefault();
+        this.flyAway(card);
+      }
     });
     this.wireDrop();
 
@@ -276,11 +285,39 @@ class MzChats extends HTMLElement {
     }
   }
 
-  removeFile(id) {
+  // Remove a card: it flies up and fades, then the rest spring in to fill the
+  // gap (FLIP). Rotation lives on an inner wrapper, so the outer card is free to
+  // animate translate without fighting the jumble transform.
+  async flyAway(card) {
+    if (card.dataset.removing) return;
+    card.dataset.removing = "1";
+    const id = card.dataset.id;
+    const others = [...this._filesRow.querySelectorAll(".chats-file")].filter((c) => c !== card);
+    const first = others.map((c) => ({ el: c, r: c.getBoundingClientRect() }));
+
+    card.style.pointerEvents = "none";
+    if (!reduce) {
+      await animate(card, { y: [0, -68], opacity: [1, 0], scale: [1, 0.9] }, { duration: 0.3, ease: [0.4, 0, 1, 1] }).finished;
+    }
+
     const f = this._files.find((f) => f.id === id);
     if (f && f.url) URL.revokeObjectURL(f.url);
     this._files = this._files.filter((f) => f.id !== id);
-    this.renderFiles();
+    card.remove();
+    this._filesRow.hidden = this._files.length === 0;
+    if (reduce) return;
+
+    // FLIP the survivors into their new spots with a slight bounce.
+    for (const { el, r } of first) {
+      const now = el.getBoundingClientRect();
+      const dx = r.left - now.left;
+      const dy = r.top - now.top;
+      if (!dx && !dy) continue;
+      el.style.transform = `translate(${dx}px, ${dy}px)`;
+      animate(el, { x: [dx, 0], y: [dy, 0] }, { type: "spring", stiffness: 480, damping: 17 }).finished.then(
+        () => (el.style.transform = "")
+      );
+    }
   }
 
   clearFiles() {
@@ -295,10 +332,11 @@ class MzChats extends HTMLElement {
     this._filesRow.innerHTML = this._files
       .map(({ id, file, rot, ty, url }) => {
         const preview = url ? `<img src="${url}" alt="" />` : icon("file");
-        return `<span class="chats-file" data-id="${id}" style="--rot:${rot.toFixed(2)}deg; --ty:${ty.toFixed(2)}px">
-          <button type="button" class="chats-file-x" data-id="${id}" aria-label="Remove ${esc(file.name)}">${icon("x")}</button>
-          <span class="chats-file-preview">${preview}</span>
-          <span class="chats-file-name">${esc(file.name)}</span>
+        return `<span class="chats-file" data-id="${id}" role="button" tabindex="0" aria-label="Remove ${esc(file.name)}">
+          <span class="chats-file-inner" style="--rot:${rot.toFixed(2)}deg; --ty:${ty.toFixed(2)}px">
+            <span class="chats-file-preview">${preview}</span>
+            <span class="chats-file-name">${esc(file.name)}</span>
+          </span>
         </span>`;
       })
       .join("");

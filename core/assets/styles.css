@@ -3170,20 +3170,25 @@ body.is-dragging-card * {
   height: 18px;
 }
 
-/* attached files — little cards, tossed down at a slight angle */
+/* attached files — little cards that half-poke out the top of the bar, tossed
+   down at a slight angle. Click one to remove it. */
 .chats-files {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
-  padding: var(--space-2) 0;
+  /* pull the row up so the cards peek over the composer's top edge */
+  margin-top: calc(-1 * (var(--space-4) + 40px));
   margin-bottom: var(--space-2);
 }
 .chats-files[hidden] {
   display: none;
 }
 .chats-file {
-  position: relative;
   width: 84px;
+  cursor: pointer;
+}
+.chats-file-inner {
+  display: block;
   padding: 6px;
   border: var(--border);
   border-radius: var(--radius);
@@ -3194,11 +3199,14 @@ body.is-dragging-card * {
     transform var(--duration-base) var(--ease),
     box-shadow var(--duration-base) var(--ease);
 }
-.chats-file:hover {
+.chats-file:hover .chats-file-inner,
+.chats-file:focus-visible .chats-file-inner {
   /* straighten and lift when you reach for it */
-  transform: rotate(0deg) translateY(-2px);
+  transform: rotate(0deg) translateY(-4px);
   box-shadow: var(--shadow-lg);
-  z-index: 1;
+}
+.chats-file:focus-visible {
+  outline: none;
 }
 .chats-file-preview {
   display: grid;
@@ -3227,29 +3235,6 @@ body.is-dragging-card * {
   white-space: nowrap;
   font-size: var(--text-12);
   color: var(--color-ink);
-}
-.chats-file-x {
-  position: absolute;
-  top: -7px;
-  right: -7px;
-  display: grid;
-  place-items: center;
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--color-surface);
-  border-radius: var(--radius-pill);
-  background: var(--color-ink);
-  color: #fff;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity var(--duration-fast) var(--ease);
-}
-.chats-file:hover .chats-file-x {
-  opacity: 1;
-}
-.chats-file-x svg {
-  width: 11px;
-  height: 11px;
 }
 
 /* drag-and-drop affordance */
