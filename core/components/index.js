@@ -27,6 +27,7 @@ import "./accordion.js";
 import "./pricing.js";
 import "./progress.js";
 import "./activity.js";
+import "./chats.js";
 import "./calendar.js";
 import "./kanban.js";
 import "./invoice.js";

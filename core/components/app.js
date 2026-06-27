@@ -8,7 +8,8 @@ import { icon } from "./icons.js";
 import { animate, SPRING_SOFT, EASE_IN, reduce } from "./motion.js";
 
 const ICON = {
-  overview: icon("layout-dashboard"),
+  chats: icon("message-square"),
+  activity: icon("activity"),
   tasks: icon("square-kanban"),
   projects: icon("layout-grid"),
   calendar: icon("calendar"),
@@ -26,22 +27,8 @@ const TRASH = icon("trash-2");
 const people = [...new Set(RECORDS.map((r) => r.assignee))];
 
 const VIEWS = [
-  {
-    id: "overview",
-    label: "Overview",
-    render: () => `
-      <mz-grid cols="2" align="start">
-        <mz-card>
-          <h3>This week</h3>
-          <mz-stack gap="5">
-            <mz-progress value="68" label="June payroll"></mz-progress>
-            <mz-progress value="42" label="Onboarding tasks"></mz-progress>
-            <mz-progress value="91" label="Synced records"></mz-progress>
-          </mz-stack>
-        </mz-card>
-        <mz-activity></mz-activity>
-      </mz-grid>`,
-  },
+  { id: "chats", label: "Chats", render: () => `<mz-chats></mz-chats>` },
+  { id: "activity", label: "Activity", render: () => `<mz-activity></mz-activity>` },
   { id: "tasks", label: "Tasks", dot: true, collection: { singular: "task", view: "board", views: "board,table,grid,gallery,todo,calendar" } },
   { id: "projects", label: "Projects", collection: { singular: "project", view: "grid", views: "grid,gallery,table,board" } },
   { id: "calendar", label: "Calendar", render: () => `<mz-calendar></mz-calendar>` },
