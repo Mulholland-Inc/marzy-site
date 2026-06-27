@@ -14,6 +14,8 @@ const VIEW_TAG = {
   gallery: "mz-view-gallery",
   timeline: "mz-view-timeline",
   workload: "mz-view-workload",
+  gantt: "mz-view-gantt",
+  files: "mz-view-files",
   calendar: "mz-calendar",
 };
 const VIEW_LABEL = {
@@ -23,6 +25,8 @@ const VIEW_LABEL = {
   gallery: "Gallery",
   timeline: "Timeline",
   workload: "Workload",
+  gantt: "Gantt",
+  files: "Files",
   calendar: "Calendar",
 };
 const VICON = {
@@ -32,6 +36,8 @@ const VICON = {
   gallery: icon("image"),
   timeline: icon("activity"),
   workload: icon("users"),
+  gantt: icon("align-left"),
+  files: icon("file"),
   calendar: icon("calendar"),
 };
 

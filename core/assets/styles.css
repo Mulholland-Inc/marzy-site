@@ -3163,6 +3163,168 @@ body.is-dragging-card * {
   color: var(--color-ink);
 }
 
+/* Gantt view — bars across a date axis. */
+.gantt-scroll {
+  overflow-x: auto;
+}
+.gantt-inner {
+  min-width: 560px;
+}
+.gantt-axis {
+  display: flex;
+  align-items: center;
+  height: 26px;
+  margin-bottom: var(--space-2);
+  border-bottom: var(--border);
+}
+.gantt-row {
+  display: flex;
+  align-items: center;
+  height: 34px;
+}
+.gantt-label {
+  flex: 0 0 156px;
+  min-width: 0;
+  padding-right: var(--space-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-13);
+  color: var(--color-ink);
+}
+.gantt-track {
+  position: relative;
+  flex: 1;
+  height: 100%;
+}
+.gantt-tick {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: var(--text-12);
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+.gantt-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--color-line);
+  opacity: 0.6;
+}
+.gantt-bar {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 22px;
+  min-width: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  border: 1px solid var(--color-volt-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-volt-soft);
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    border-color var(--duration-base) var(--ease),
+    box-shadow var(--duration-base) var(--ease);
+}
+.gantt-bar:hover {
+  border-color: var(--color-volt);
+  box-shadow: var(--shadow-sm);
+}
+.gantt-bar.is-done {
+  background: var(--color-volt);
+  border-color: var(--color-volt);
+}
+.gantt-bar.is-done .prio-dot {
+  display: none;
+}
+.gantt-bar.is-done .gantt-bar-label {
+  color: #fff;
+}
+.gantt-bar-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-12);
+  color: var(--color-ink);
+}
+
+/* Files view — a document library of tiles. */
+.files {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-4);
+}
+.file-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color var(--duration-base) var(--ease);
+}
+.file-item:hover {
+  border-color: var(--color-ink-2);
+}
+.file-thumb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+  color: var(--color-muted);
+}
+.file-thumb svg {
+  width: 30px;
+  height: 30px;
+}
+.file-ext {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 1px 5px;
+  border: var(--border);
+  border-radius: 4px;
+  background: var(--color-surface);
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-2);
+}
+.file-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.file-meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-13);
+  color: var(--color-ink);
+}
+.file-sub {
+  font-size: var(--text-12);
+  color: var(--color-muted);
+}
+
 /* ─────────────────────────────────────────── Chats (mz-chats) ── */
 /* landing: greeting + composer as one centered cluster. On first send the
    composer reparents to the bottom (.is-conversing) and FLIPs into place;

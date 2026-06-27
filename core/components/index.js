@@ -65,6 +65,8 @@ import "./view-grid.js";
 import "./view-gallery.js";
 import "./view-timeline.js";
 import "./view-workload.js";
+import "./view-gantt.js";
+import "./view-files.js";
 import "./users.js";
 import "./roles.js";
 import "./workspace.js";
