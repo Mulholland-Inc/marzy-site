@@ -3207,6 +3207,119 @@ body.is-dragging-card * {
   }
 }
 
+/* Marzy thinking — a run of steps / tool calls that tick off one by one */
+.think {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 420px;
+  text-align: left;
+}
+.think-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+.think-mark {
+  width: 22px;
+  color: var(--color-volt);
+  animation: think-pulse 1.4s var(--ease) infinite;
+}
+.think-title {
+  font-size: var(--text-15);
+  color: var(--color-ink-2);
+}
+.think-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.think-step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.think-ind {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+}
+.think-ind.is-loading {
+  border: 2px solid var(--color-line-strong);
+  border-top-color: var(--color-volt);
+  border-radius: 50%;
+  animation: think-spin 0.7s linear infinite;
+}
+.think-ind.is-done {
+  color: var(--color-volt);
+}
+.think-ind svg {
+  width: 16px;
+  height: 16px;
+}
+.think-label {
+  font-size: var(--text-15);
+  color: var(--color-ink);
+  transition: color var(--duration-base) var(--ease);
+}
+.think-step.is-done .think-label {
+  color: var(--color-muted);
+}
+.think-tool {
+  margin-left: auto;
+  padding: 2px var(--space-2);
+  border: var(--border);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-12);
+  color: var(--color-muted);
+}
+@keyframes think-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes think-pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .think-mark,
+  .think-ind.is-loading {
+    animation: none;
+  }
+}
+
+/* Marzy report — a line plus an embedded card */
+.chats-report {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+.chats-report-lead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+.chats-report-embed {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 @media (max-width: 860px) {
   .chats {
     min-height: calc(100dvh - 148px);
