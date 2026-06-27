@@ -3175,17 +3175,31 @@ body.is-dragging-card * {
 .chats-files {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
   /* pull the row up so the cards peek over the composer's top edge */
   margin-top: calc(-1 * (var(--space-4) + 40px));
   margin-bottom: var(--space-2);
 }
+/* slick overlapping stack — each card tucks behind the next */
+.chats-file + .chats-file {
+  margin-left: -32px;
+}
 .chats-files[hidden] {
   display: none;
+}
+/* landing only: when cards are attached, open up the gap above the composer so
+   the poking cards clear the greeting (in conversation the composer isn't in
+   the stage, so this doesn't apply). */
+.chats-stage:has(.chats-file) {
+  gap: calc(var(--space-5) + 52px);
 }
 .chats-file {
   width: 84px;
   cursor: pointer;
+}
+.chats-file:hover,
+.chats-file:focus-visible {
+  /* lift the reached-for card above its neighbours in the stack */
+  z-index: 2;
 }
 .chats-file-inner {
   display: block;

@@ -314,7 +314,7 @@ class MzChats extends HTMLElement {
       const dy = r.top - now.top;
       if (!dx && !dy) continue;
       el.style.transform = `translate(${dx}px, ${dy}px)`;
-      animate(el, { x: [dx, 0], y: [dy, 0] }, { type: "spring", stiffness: 480, damping: 17 }).finished.then(
+      animate(el, { x: [dx, 0], y: [dy, 0] }, { type: "spring", stiffness: 420, damping: 30 }).finished.then(
         () => (el.style.transform = "")
       );
     }
