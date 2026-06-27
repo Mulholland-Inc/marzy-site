@@ -4,13 +4,6 @@
 import { SPARK } from "./spark.js";
 import { icon } from "./icons.js";
 
-// Starter prompts shown under the composer.
-const SUGGESTIONS = [
-  "Draft this month's payroll",
-  "Reconcile Q2 invoices",
-  "Summarize this week",
-];
-
 class MzChats extends HTMLElement {
   connectedCallback() {
     this.classList.add("chats");
@@ -18,14 +11,6 @@ class MzChats extends HTMLElement {
 
     this._input = this.querySelector(".chats-input");
 
-    // Suggestion chips drop their text into the composer.
-    this.querySelectorAll(".chats-chip").forEach((chip) =>
-      chip.addEventListener("click", () => {
-        this._input.value = chip.textContent;
-        this.grow();
-        this._input.focus();
-      })
-    );
     // Auto-grow the textarea; submit just clears it (stateless surface).
     this._input.addEventListener("input", () => this.grow());
     this.querySelector(".chats-composer").addEventListener("submit", (e) => {
@@ -52,9 +37,6 @@ class MzChats extends HTMLElement {
             <button type="submit" class="chats-send" aria-label="Send">${icon("send")}</button>
           </div>
         </form>
-        <div class="chats-suggest">
-          ${SUGGESTIONS.map((s) => `<button type="button" class="chats-chip">${s}</button>`).join("")}
-        </div>
       </div>`;
   }
 }
