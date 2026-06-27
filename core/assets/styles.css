@@ -705,6 +705,7 @@ textarea.input {
 .auth-card h2 {
   font-size: var(--text-h3);
   text-align: center;
+  margin-bottom: var(--space-6);
 }
 .auth-sub {
   text-align: center;
@@ -725,6 +726,14 @@ textarea.input {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.auth-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-13);
+  color: var(--color-ink-2);
+  cursor: pointer;
 }
 .auth-forgot {
   font-size: var(--text-13);
@@ -754,6 +763,7 @@ textarea.input {
 .auth-google {
   width: 100%;
   justify-content: center;
+  margin-top: var(--space-5);
 }
 
 /* ─────────────────────────────────────────── Sidebar (mz-app) ── */
