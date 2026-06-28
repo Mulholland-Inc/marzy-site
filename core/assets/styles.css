@@ -1206,13 +1206,13 @@ button.sidebar-item {
 }
 .notif-btn {
   position: relative;
-  width: var(--control-h);
-  height: var(--control-h);
+  width: 48px;
+  height: 48px;
   cursor: pointer;
 }
 .notif-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
 }
 /* unread indicator on the bell */
 .notif-badge {
