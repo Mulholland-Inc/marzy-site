@@ -1226,7 +1226,14 @@ button.sidebar-item {
   position: relative;
   width: 40px;
   height: 40px;
+  /* plain button — no boxed outline */
+  border: 0;
+  background: none;
   cursor: pointer;
+}
+.notif-btn.btn-icon:hover {
+  border-color: transparent;
+  color: var(--color-ink);
 }
 .notif-btn.btn-icon svg {
   width: 20px;
