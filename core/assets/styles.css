@@ -3581,7 +3581,7 @@ body.is-dragging-card * {
   margin-inline: auto;
   overflow-y: auto;
   padding-block: var(--space-6);
-  gap: var(--space-2);
+  gap: var(--space-5);
 }
 /* the greeting belongs to the landing only */
 .chats.is-conversing .chats-answer {
@@ -3594,7 +3594,7 @@ body.is-dragging-card * {
   margin: 0 auto var(--space-4);
 }
 
-/* ── Conversation messages (iMessage-style bubbles) ────────────── */
+/* ── Conversation messages — plain text, no container ──────────── */
 .msg {
   display: flex;
   width: 100%;
@@ -3606,23 +3606,20 @@ body.is-dragging-card * {
   justify-content: flex-start;
 }
 .msg-bubble {
-  max-width: 75%;
-  padding: var(--space-2) var(--space-4);
-  border-radius: 20px;
+  max-width: 100%;
   font-size: var(--text-16);
-  line-height: var(--leading-snug);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+/* your message: a gray bubble. Marzy's reply: plain text, no container. */
 .msg-user .msg-bubble {
-  background: var(--color-volt);
-  color: #fff;
-  border-bottom-right-radius: 6px;
-}
-.msg-marzy .msg-bubble {
+  max-width: 80%;
+  padding: var(--space-3) var(--space-4);
   background: var(--color-surface-2);
-  color: var(--color-ink);
-  border-bottom-left-radius: 6px;
+  border-radius: var(--radius-lg);
+  line-height: var(--leading-snug);
 }
 .msg-text {
   margin: 0;
