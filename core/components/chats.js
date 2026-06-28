@@ -169,9 +169,7 @@ class MzChats extends HTMLElement {
   async addMarzyReply(text) {
     const msg = document.createElement("div");
     msg.className = "msg msg-marzy";
-    msg.innerHTML = `
-      <span class="chats-mark msg-av" aria-hidden="true">${SPARK}</span>
-      <div class="msg-body"><div class="typing" aria-label="Marzy is typing"><i></i><i></i><i></i></div></div>`;
+    msg.innerHTML = `<div class="msg-bubble"><div class="typing" aria-label="Marzy is typing"><i></i><i></i><i></i></div></div>`;
     this._stage.appendChild(msg);
     if (!reduce) {
       msg.style.opacity = "0";
@@ -183,13 +181,13 @@ class MzChats extends HTMLElement {
 
     await sleep(reduce ? 0 : 700);
 
-    const body = msg.querySelector(".msg-body");
+    const bubble = msg.querySelector(".msg-bubble");
     const words = text.split(" ").map((w) => `<span class="w">${esc(w)}</span>`).join(" ");
-    body.innerHTML = `<p class="msg-text">${words}</p>`;
+    bubble.innerHTML = `<p class="msg-text">${words}</p>`;
     this.scrollDown();
     if (reduce) return;
 
-    const wEls = body.querySelectorAll(".w");
+    const wEls = bubble.querySelectorAll(".w");
     wEls.forEach((w) => (w.style.opacity = "0"));
     await animate(
       wEls,

@@ -3581,7 +3581,7 @@ body.is-dragging-card * {
   margin-inline: auto;
   overflow-y: auto;
   padding-block: var(--space-6);
-  gap: var(--space-5);
+  gap: var(--space-2);
 }
 /* the greeting belongs to the landing only */
 .chats.is-conversing .chats-answer {
@@ -3594,7 +3594,7 @@ body.is-dragging-card * {
   margin: 0 auto var(--space-4);
 }
 
-/* ── Conversation messages ─────────────────────────────────────── */
+/* ── Conversation messages (iMessage-style bubbles) ────────────── */
 .msg {
   display: flex;
   width: 100%;
@@ -3602,39 +3602,30 @@ body.is-dragging-card * {
 .msg-user {
   justify-content: flex-end;
 }
-.msg-user .msg-bubble {
-  max-width: 80%;
-  padding: var(--space-3) var(--space-4);
-  background: var(--color-surface-2);
-  border-radius: var(--radius-lg);
+.msg-marzy {
+  justify-content: flex-start;
+}
+.msg-bubble {
+  max-width: 75%;
+  padding: var(--space-2) var(--space-4);
+  border-radius: 20px;
   font-size: var(--text-16);
   line-height: var(--leading-snug);
-  color: var(--color-ink);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-.msg-marzy {
-  align-items: flex-start;
-  gap: var(--space-3);
+.msg-user .msg-bubble {
+  background: var(--color-volt);
+  color: #fff;
+  border-bottom-right-radius: 6px;
 }
-.msg-av {
-  flex: 0 0 auto;
-  width: 24px;
-  margin-top: 3px;
-  color: var(--color-volt);
-}
-.msg-body {
-  flex: 1;
-  min-width: 0;
-  padding-top: 2px;
+.msg-marzy .msg-bubble {
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+  border-bottom-left-radius: 6px;
 }
 .msg-text {
   margin: 0;
-  font-size: var(--text-16);
-  line-height: var(--leading-relaxed);
-  color: var(--color-ink);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
 }
 .msg-text .w {
   display: inline;
