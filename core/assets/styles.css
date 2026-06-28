@@ -5907,6 +5907,17 @@ body.is-dragging-card * {
   grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
   gap: var(--space-4);
 }
+/* dashboard gallery view: gray panel, tighter gaps, less-rounded tiles
+   (scoped to .view so the marketing gallery is untouched) */
+.view .shots {
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--color-surface-2);
+  border-radius: var(--radius);
+}
+.view .gal-media {
+  border-radius: var(--radius-sm);
+}
 .gal-item {
   display: block;
   margin: 0;
