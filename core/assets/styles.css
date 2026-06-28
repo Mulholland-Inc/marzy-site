@@ -3385,11 +3385,14 @@ body.is-dragging-card * {
   color: var(--color-muted);
 }
 
-/* Files view — a document library of tiles. */
+/* Files view — a document library of tiles on a gray panel. */
 .files {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: var(--space-4);
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--color-surface-2);
+  border-radius: var(--radius);
 }
 .file-item {
   display: flex;
