@@ -3634,8 +3634,16 @@ body.is-dragging-card * {
   align-items: flex-start;
   gap: var(--space-3);
 }
+/* give the card a stable width — the bubble is shrink-to-fit, so without this
+   the .embed collapses and the chart has nothing to size against */
 .chats-msg-embed {
   width: 100%;
+  max-width: 380px;
+  white-space: normal;
+}
+.chats-msg-embed .embed {
+  width: 100%;
+  max-width: 100%;
 }
 
 /* typing indicator — three soft pulsing dots */
@@ -5566,6 +5574,25 @@ body.is-dragging-card * {
   display: block;
   width: 100%;
   height: auto;
+}
+.ec-axis {
+  stroke: var(--color-line);
+  stroke-width: 1;
+}
+.ec-area {
+  fill: url(#mz-embed-area);
+}
+.ec-line {
+  fill: none;
+  stroke: var(--color-volt);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ec-dot {
+  fill: var(--color-surface);
+  stroke: var(--color-volt);
+  stroke-width: 2;
 }
 
 /* Embed: table */
