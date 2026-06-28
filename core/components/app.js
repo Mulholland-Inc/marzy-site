@@ -220,9 +220,13 @@ class MzApp extends HTMLElement {
       return;
     }
 
+    // a tween (not a spring) — a spring overshoots past 64px and momentarily
+    // clips the icons, which reads as a glitch at the end of the collapse
+    const WIDTH_ANIM = { duration: 0.34, ease: EASE_OUT };
+
     if (collapsed) {
       animate(labels, { opacity: 0 }, { duration: 0.1, ease: EASE_IN });
-      animate(sb, { width: ["208px", "64px"] }, SPRING_SOFT).finished.then(() => {
+      animate(sb, { width: ["208px", "64px"] }, WIDTH_ANIM).finished.then(() => {
         this.classList.add("nav-collapsed");
         sb.style.width = "";
         labels.forEach((l) => (l.style.opacity = ""));
@@ -231,8 +235,8 @@ class MzApp extends HTMLElement {
       labels.forEach((l) => (l.style.opacity = "0"));
       this.classList.remove("nav-collapsed");
       sb.style.width = "64px";
-      animate(sb, { width: ["64px", "208px"] }, SPRING_SOFT).finished.then(() => (sb.style.width = ""));
-      animate(labels, { opacity: [0, 1] }, { duration: 0.2, delay: 0.1, ease: EASE_OUT }).finished.then(() =>
+      animate(sb, { width: ["64px", "208px"] }, WIDTH_ANIM).finished.then(() => (sb.style.width = ""));
+      animate(labels, { opacity: [0, 1] }, { duration: 0.2, delay: 0.12, ease: EASE_OUT }).finished.then(() =>
         labels.forEach((l) => (l.style.opacity = ""))
       );
     }

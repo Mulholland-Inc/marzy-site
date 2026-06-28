@@ -1040,8 +1040,9 @@ button.sidebar-item {
   /* softer: same gray as the body, no hard divider */
   background: var(--color-bg-soft);
   border-right: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
+  /* visible so the workspace dropdown can escape the rail; labels are clipped
+     by each .sidebar-item (overflow:hidden), not the aside */
+  overflow: visible;
   padding: var(--space-3);
 }
 /* Collapsed icon-rail (desktop only — on mobile the sidebar is a drawer).
@@ -1067,6 +1068,13 @@ button.sidebar-item {
   .app.nav-collapsed .ws-btn {
     justify-content: center;
     gap: 0;
+    /* equal inset around the 28px avatar in the 40px rail button */
+    padding: 6px;
+  }
+  /* the dropdown must escape the narrow rail instead of matching its width */
+  .app.nav-collapsed .ws-menu {
+    right: auto;
+    width: 248px;
   }
 }
 .app-main {
@@ -1187,6 +1195,10 @@ button.sidebar-item {
 .app-bar mz-notifications {
   margin-left: auto;
 }
+/* right breathing room in the desktop header, matching the top inset */
+.app-head mz-notifications {
+  margin-inline-end: var(--space-3);
+}
 .notif {
   position: relative;
   display: inline-flex;
@@ -1194,7 +1206,13 @@ button.sidebar-item {
 }
 .notif-btn {
   position: relative;
+  width: var(--control-h);
+  height: var(--control-h);
   cursor: pointer;
+}
+.notif-btn svg {
+  width: 20px;
+  height: 20px;
 }
 /* unread indicator on the bell */
 .notif-badge {
@@ -1313,11 +1331,9 @@ button.sidebar-item {
   border-radius: 50%;
   background: var(--color-volt);
 }
-.notif-item.is-unread {
-  background: var(--color-volt-soft);
-}
-.notif-item.is-unread:hover {
-  background: var(--color-volt-soft);
+/* unread weight comes from the text + dot, not a colored fill */
+.notif-item.is-unread .notif-text {
+  color: var(--color-ink);
 }
 /* click-catcher behind the floating drawer (transparent on desktop, so the
    drawer hovers without dimming; dimmed on mobile) */
