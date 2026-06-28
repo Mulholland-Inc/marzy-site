@@ -1106,8 +1106,9 @@ button.sidebar-item {
   min-height: 0;
   overflow-y: auto;
   /* top matches the sidebar inset so the breadcrumb lines up with the
-     workspace card; tight to the sidebar on the left */
-  padding: var(--space-3) var(--space-4) var(--space-4) var(--space-2);
+     workspace card; no left padding — the sidebar's own padding is the single
+     gutter (avoids a doubled gap against the content) */
+  padding: var(--space-3) var(--space-4) var(--space-4) 0;
   background: var(--color-paper);
   display: grid;
   /* cap the column to the available width so wide views scroll inside */
