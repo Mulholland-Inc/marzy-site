@@ -3318,7 +3318,7 @@ body.is-dragging-card * {
 }
 .month-weekdays {
   display: grid;
-  grid-template-columns: repeat(5, minmax(132px, 1fr));
+  grid-template-columns: repeat(7, minmax(116px, 1fr));
   gap: var(--space-2);
   margin-bottom: var(--space-2);
 }
@@ -3331,7 +3331,7 @@ body.is-dragging-card * {
 /* a grid of day-cards inside the panel */
 .month-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(132px, 1fr));
+  grid-template-columns: repeat(7, minmax(116px, 1fr));
   gap: var(--space-2);
 }
 .month-cell {
