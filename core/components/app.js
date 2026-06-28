@@ -23,6 +23,7 @@ const ICON = {
   settings: icon("settings"),
 };
 const BURGER = icon("menu");
+const COLLAPSE = icon("panel-left");
 const PENCIL = icon("pencil");
 const COPY = icon("copy");
 const TRASH = icon("trash-2");
@@ -127,12 +128,13 @@ class MzApp extends HTMLElement {
     this._singular = "item";
     const nav = VIEWS.map(
       (v, i) =>
-        `<button class="sidebar-item${i === 0 ? " is-active" : ""}" type="button" data-view="${v.id}">${ICON[v.id]}<span>${v.label}</span>${v.dot ? `<span class="sidebar-dot"></span>` : ""}</button>`
+        `<button class="sidebar-item${i === 0 ? " is-active" : ""}" type="button" data-view="${v.id}" title="${v.label}">${ICON[v.id]}<span>${v.label}</span>${v.dot ? `<span class="sidebar-dot"></span>` : ""}</button>`
     ).join("");
     this.innerHTML = `
       <aside class="sidebar">
         <mz-workspace></mz-workspace>
         <nav class="sidebar-nav" aria-label="Sidebar">${nav}</nav>
+        <button class="sidebar-item sidebar-collapse" type="button" aria-label="Collapse sidebar" title="Collapse sidebar">${COLLAPSE}<span>Collapse</span></button>
       </aside>
       <div class="app-main">
         <header class="app-bar">
@@ -145,6 +147,7 @@ class MzApp extends HTMLElement {
       <div class="app-scrim" hidden></div>`;
 
     this._body = this.querySelector(".app-body");
+    this._sidebar = this.querySelector(".sidebar");
     this._nav = this.querySelector(".sidebar-nav");
     this._pane = this.querySelector(".app-pane");
     this._scrim = this.querySelector(".app-scrim");
@@ -158,6 +161,7 @@ class MzApp extends HTMLElement {
       this.show(btn.dataset.view);
     });
     this.querySelector(".app-burger").addEventListener("click", () => this.toggleNav());
+    this.querySelector(".sidebar-collapse").addEventListener("click", () => this.toggleRail());
     this._scrim.addEventListener("click", () => {
       this.closeNav();
       this.hidePane();
@@ -180,7 +184,57 @@ class MzApp extends HTMLElement {
     });
 
     this.show(VIEWS[0].id);
+
+    // restore the rail preference (desktop only — mobile uses the drawer)
+    this._collapsed = false;
+    let railPref = null;
+    try {
+      railPref = localStorage.getItem("mz-rail");
+    } catch {}
+    if (railPref === "1" && matchMedia("(min-width: 901px)").matches) this.setRail(true, false);
+
     this.buildIn();
+  }
+
+  toggleRail() {
+    this.setRail(!this._collapsed);
+  }
+
+  // Collapse the sidebar to an icon-only rail (or expand it back). The width
+  // springs via motion.js while the labels fade; paddings keep the icons fixed
+  // in x so only the text moves. `animateIt=false` applies the state instantly
+  // (used to restore the saved preference on load).
+  setRail(collapsed, animateIt = true) {
+    if (this._collapsed === collapsed) return;
+    this._collapsed = collapsed;
+    try {
+      localStorage.setItem("mz-rail", collapsed ? "1" : "0");
+    } catch {}
+
+    const sb = this._sidebar;
+    const labels = sb.querySelectorAll(".sidebar-item > span:not(.sidebar-dot), .ws-meta, .ws-caret");
+
+    if (reduce || !animateIt) {
+      this.classList.toggle("nav-collapsed", collapsed);
+      return;
+    }
+
+    if (collapsed) {
+      animate(labels, { opacity: 0 }, { duration: 0.1, ease: EASE_IN });
+      animate(sb, { width: ["208px", "64px"] }, SPRING_SOFT).finished.then(() => {
+        this.classList.add("nav-collapsed");
+        sb.style.width = "";
+        labels.forEach((l) => (l.style.opacity = ""));
+      });
+    } else {
+      labels.forEach((l) => (l.style.opacity = "0"));
+      this.classList.remove("nav-collapsed");
+      sb.style.width = "64px";
+      animate(sb, { width: ["64px", "208px"] }, SPRING_SOFT).finished.then(() => (sb.style.width = ""));
+      animate(labels, { opacity: [0, 1] }, { duration: 0.2, delay: 0.1, ease: EASE_OUT }).finished.then(() =>
+        labels.forEach((l) => (l.style.opacity = ""))
+      );
+    }
   }
 
   // On first load, the workspace "builds": the sidebar (workspace switcher + nav

@@ -802,9 +802,17 @@ button.sidebar-item {
   font-family: inherit;
   cursor: pointer;
 }
+/* labels clip cleanly while the rail collapses; icon never shrinks */
+.sidebar-item {
+  overflow: hidden;
+}
+.sidebar-item > span:not(.sidebar-dot) {
+  white-space: nowrap;
+}
 .sidebar-item svg {
   width: var(--icon-sm);
   height: var(--icon-sm);
+  flex: 0 0 auto;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.75;
@@ -831,6 +839,14 @@ button.sidebar-item {
   height: 7px;
   border-radius: 50%;
   background: var(--color-volt);
+}
+/* desktop collapse toggle, parked at the foot of the sidebar */
+.sidebar-collapse {
+  margin-top: auto;
+  color: var(--color-muted);
+}
+.sidebar-collapse svg {
+  transition: transform var(--duration-base) var(--ease);
 }
 
 /* ─────────────────────────────────────────── Workspace switcher (mz-workspace) ── */
@@ -1018,12 +1034,40 @@ button.sidebar-item {
   overflow: hidden;
 }
 .app .sidebar {
-  flex: 0 0 208px;
+  /* width (not flex-basis) so motion.js can spring it between rail states */
+  flex: 0 0 auto;
+  width: 208px;
   /* softer: same gray as the body, no hard divider */
   background: var(--color-bg-soft);
   border-right: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: var(--space-3);
+}
+/* Collapsed icon-rail (desktop only — on mobile the sidebar is a drawer).
+   Paddings are tuned so a 16px icon sits centred in the 64px rail at the same
+   x as in the expanded bar: the icon never moves, only the label fades out. */
+@media (min-width: 901px) {
+  .app.nav-collapsed .sidebar {
+    width: 64px;
+  }
+  .app.nav-collapsed .sidebar-item > span:not(.sidebar-dot) {
+    display: none;
+  }
+  .app.nav-collapsed .sidebar-dot {
+    display: none;
+  }
+  .app.nav-collapsed .sidebar-collapse svg {
+    transform: scaleX(-1);
+  }
+  .app.nav-collapsed .ws-meta,
+  .app.nav-collapsed .ws-caret {
+    display: none;
+  }
+  .app.nav-collapsed .ws-btn {
+    justify-content: center;
+    gap: 0;
+  }
 }
 .app-main {
   flex: 1 1 auto;
@@ -1189,6 +1233,10 @@ button.sidebar-item {
   }
   .app.nav-open .sidebar {
     transform: none;
+  }
+  /* collapsing is a desktop-only affordance */
+  .sidebar-collapse {
+    display: none;
   }
   .app-scrim {
     background: rgba(11, 13, 18, 0.4);
