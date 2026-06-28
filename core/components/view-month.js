@@ -1,32 +1,30 @@
-// <mz-view-month></mz-view-month>, a Notion-style month calendar: a Mon–Fri grid
-// where each day lists the teams active that day — a small icon, the team name,
-// and the team's member count (fixed per team, like the reference). Self-
-// contained sample data (June 2026), the same pattern as <mz-calendar>. Clicking
-// an entry emits mz-select so the host opens a detail pane.
+// <mz-view-month></mz-view-month>, a month calendar as a grid of day-cards on a
+// gray panel (Mon–Fri). Each day lists its events — just a name and a time.
+// Self-contained sample data (June 2026), the same pattern as <mz-calendar>.
+// Clicking an event emits mz-select so the host opens a detail pane.
 import { emitSelect } from "./data.js";
-import { icon } from "./icons.js";
 
 const MONTHS_LONG = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
-// Teams carry a fixed member count, shown on every occurrence (as in the
-// reference, where each team's number is constant across the month).
-const TEAMS = {
-  finance: { name: "Finance", icon: "table", count: 4 },
-  ops: { name: "Operations", icon: "settings", count: 12 },
-  eng: { name: "Engineering", icon: "square-kanban", count: 6 },
-  people: { name: "People", icon: "users", count: 4 },
-};
-// A stable pattern so most weekdays carry 1–2 teams, like the reference.
-const teamsForDay = (d) => {
-  switch (d % 5) {
-    case 1: return [TEAMS.finance, TEAMS.ops];
-    case 2: return [TEAMS.ops];
-    case 3: return [TEAMS.finance, TEAMS.ops];
-    case 4: return [TEAMS.people, TEAMS.ops];
-    default: return [TEAMS.eng];
-  }
+// [name, time] — a small pool, spread across the weekdays for texture.
+const EVENTS = [
+  ["Demo call", "9:00 AM"],
+  ["Pay run review", "2:00 PM"],
+  ["Team standup", "10:00 AM"],
+  ["Vendor sync", "11:30 AM"],
+  ["Onboarding call", "1:00 PM"],
+  ["Invoices due", "9:00 AM"],
+  ["1:1 with Sam", "3:00 PM"],
+  ["Close the books", "4:00 PM"],
+  ["Board prep", "11:00 AM"],
+  ["Design review", "2:30 PM"],
+];
+const eventsForDay = (d) => {
+  const evs = [EVENTS[d % EVENTS.length]];
+  if (d % 3 === 0) evs.push(EVENTS[(d + 4) % EVENTS.length]);
+  return evs;
 };
 
 const PREV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14 6-6 6 6 6"/></svg>';
@@ -52,7 +50,7 @@ class MzViewMonth extends HTMLElement {
           title: ev.dataset.title,
           status: "Scheduled",
           assignee: "Marzy",
-          tag: ev.dataset.team,
+          tag: "Event",
           priority: "medium",
           due: ev.dataset.due,
         });
@@ -86,12 +84,11 @@ class MzViewMonth extends HTMLElement {
       const out = date.getMonth() !== this._month;
       const dnum = date.getDate();
       const due = `${MONTHS_SHORT[date.getMonth()]} ${dnum}`;
-      const rows = teamsForDay(dnum)
+      const rows = eventsForDay(dnum)
         .map(
-          (t) => `<button type="button" class="month-ev" data-team="${t.name}" data-title="${t.name} team — ${due}" data-due="${due}">
-            ${icon(t.icon)}
-            <span class="month-ev-name">${t.name} team</span>
-            <span class="month-ev-count">${t.count}</span>
+          ([name, time]) => `<button type="button" class="month-ev" data-title="${name}" data-due="${due} · ${time}">
+            <span class="month-ev-name">${name}</span>
+            <span class="month-ev-time">${time}</span>
           </button>`
         )
         .join("");

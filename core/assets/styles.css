@@ -3306,50 +3306,54 @@ body.is-dragging-card * {
 .month-weekdays {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1px;
+  gap: var(--space-2);
+  padding-inline: var(--space-2);
 }
 .month-weekdays span {
-  padding-left: var(--space-2);
+  padding-left: var(--space-1);
   font-size: var(--text-12);
   font-weight: var(--weight-medium);
   color: var(--color-muted);
 }
+/* a grid of day-cards on a gray panel */
 .month-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1px;
-  background: var(--color-line);
-  border: var(--border);
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--color-surface-2);
   border-radius: var(--radius);
-  overflow: hidden;
 }
 .month-cell {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
   min-height: 132px;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2);
   background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-sm);
 }
 .month-cell.is-out {
-  background: var(--color-paper);
+  background: transparent;
+  border-color: transparent;
 }
 .month-daynum {
   font-size: var(--text-13);
   color: var(--color-ink-2);
 }
 .month-cell.is-out .month-daynum {
-  color: var(--color-line-strong);
+  color: var(--color-muted);
 }
 .month-evs {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-1);
   margin-top: auto;
 }
 .month-ev {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: var(--space-2);
   width: 100%;
   padding: 3px var(--space-1);
@@ -3358,19 +3362,13 @@ body.is-dragging-card * {
   border-radius: var(--radius-sm);
   font: inherit;
   font-size: var(--text-12);
-  color: var(--color-ink-2);
+  color: var(--color-ink);
   text-align: left;
   cursor: pointer;
   transition: background var(--duration-base) var(--ease);
 }
 .month-ev:hover {
   background: var(--color-bg-soft);
-}
-.month-ev svg {
-  flex: 0 0 auto;
-  width: 13px;
-  height: 13px;
-  color: var(--color-muted);
 }
 .month-ev-name {
   flex: 1;
@@ -3379,14 +3377,12 @@ body.is-dragging-card * {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.month-ev-count {
+.month-ev-time {
   flex: 0 0 auto;
   color: var(--color-muted);
 }
-.month-cell.is-out .month-ev,
-.month-cell.is-out .month-ev svg,
-.month-cell.is-out .month-ev-count {
-  color: var(--color-line-strong);
+.month-cell.is-out .month-ev {
+  color: var(--color-muted);
 }
 
 /* Files view — a document library of tiles. */
