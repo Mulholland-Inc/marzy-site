@@ -3582,6 +3582,11 @@ body.is-dragging-card * {
   overflow-y: auto;
   padding-block: var(--space-6);
   gap: var(--space-5);
+  /* hide the scrollbar (still scrolls) */
+  scrollbar-width: none;
+}
+.chats.is-conversing .chats-stage::-webkit-scrollbar {
+  display: none;
 }
 /* the greeting belongs to the landing only */
 .chats.is-conversing .chats-answer {
@@ -5566,33 +5571,24 @@ body.is-dragging-card * {
   color: var(--color-muted);
 }
 
-/* Embed: image (an on-brand SVG chart) */
-.embed-figure {
-  padding: var(--space-4);
+/* Embed: image — a files-view tile with an image preview in the thumb */
+.embed-file {
+  width: 240px;
+  max-width: 100%;
+  cursor: default;
 }
-.embed-chart {
-  display: block;
+.embed-file:hover {
+  border-color: var(--color-line);
+}
+.embed-file .file-thumb {
+  overflow: hidden;
+}
+.embed-file .file-thumb svg,
+.embed-file .file-thumb img {
   width: 100%;
-  height: auto;
-}
-.ec-axis {
-  stroke: var(--color-line);
-  stroke-width: 1;
-}
-.ec-area {
-  fill: url(#mz-embed-area);
-}
-.ec-line {
-  fill: none;
-  stroke: var(--color-volt);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.ec-dot {
-  fill: var(--color-surface);
-  stroke: var(--color-volt);
-  stroke-width: 2;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* Embed: table */

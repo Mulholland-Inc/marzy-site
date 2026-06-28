@@ -1,31 +1,34 @@
-// <mz-embed-image></mz-embed-image>, a display-only image card for embedding in
-// Marzy's replies. Self-contained: the "image" is an on-brand SVG area chart
-// (Volt palette), so there's no external asset to load. No inputs.
-import { SPARK } from "./spark.js";
+// <mz-embed-image></mz-embed-image>, an image-attachment card for Marzy's
+// replies — styled like a tile in the files view, with an image preview filling
+// the thumbnail. Self-contained: the preview is an on-brand abstract SVG, so
+// there's no external asset to load. No inputs.
 
-// A 6-point area chart — reads as a generated cash-flow visual. Colors come
-// from CSS (.ec-* classes) so they track the palette; the gradient stops use
-// the Volt hex literal since stops can't take currentColor.
-const CHART = `
-  <svg class="embed-chart" viewBox="0 0 320 160" role="img" aria-label="Cash flow, last 6 months">
+// An abstract on-brand "image" (Volt + neutrals) that fills the thumbnail.
+const PREVIEW = `
+  <svg class="embed-file-img" viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Image preview">
     <defs>
-      <linearGradient id="mz-embed-area" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#1b43ff" stop-opacity="0.18" />
-        <stop offset="100%" stop-color="#1b43ff" stop-opacity="0" />
+      <linearGradient id="mz-img-bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#eef1f6" />
+        <stop offset="1" stop-color="#dfe6ff" />
       </linearGradient>
     </defs>
-    <line class="ec-axis" x1="16" y1="130" x2="304" y2="130" />
-    <path class="ec-area" d="M16 100 L74 84 L131 92 L189 60 L246 70 L304 36 L304 130 L16 130 Z" />
-    <path class="ec-line" d="M16 100 L74 84 L131 92 L189 60 L246 70 L304 36" />
-    <circle class="ec-dot" cx="304" cy="36" r="3.5" />
+    <rect width="320" height="240" fill="url(#mz-img-bg)" />
+    <circle cx="92" cy="96" r="74" fill="#1b43ff" opacity="0.14" />
+    <circle cx="226" cy="156" r="96" fill="#1b43ff" opacity="0.20" />
+    <circle cx="168" cy="64" r="42" fill="#1b43ff" opacity="0.30" />
   </svg>`;
 
 class MzEmbedImage extends HTMLElement {
   connectedCallback() {
-    this.classList.add("embed", "embed-image");
+    this.classList.add("file-item", "embed-file");
     this.innerHTML = `
-      <div class="embed-head"><span class="embed-mark">${SPARK}</span><span class="embed-title">Cash flow</span><span class="embed-meta">+18% MoM</span></div>
-      <div class="embed-figure">${CHART}</div>`;
+      <span class="file-thumb embed-file-thumb">${PREVIEW}</span>
+      <span class="file-foot">
+        <span class="file-meta">
+          <span class="file-name">q2-overview.png</span>
+          <span class="file-sub">PNG · 1.2 MB</span>
+        </span>
+      </span>`;
   }
 }
 customElements.define("mz-embed-image", MzEmbedImage);
