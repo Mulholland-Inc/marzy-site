@@ -3272,8 +3272,6 @@ body.is-dragging-card * {
   gap: var(--space-3);
 }
 .month-title {
-  /* fixed width so the nav arrows don't shift as the month name changes length */
-  min-width: 168px;
   font-family: var(--font-display);
   font-size: var(--text-18);
   font-weight: var(--weight-semibold);

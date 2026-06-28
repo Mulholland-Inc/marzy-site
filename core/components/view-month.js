@@ -101,11 +101,11 @@ class MzViewMonth extends HTMLElement {
     const label = `${MONTHS_LONG[this._month]} ${this._year}`;
     this.innerHTML = `
       <div class="month-head">
-        <div class="month-title">${label}</div>
         <div class="month-nav">
           <button type="button" class="month-nav-btn" data-nav="-1" aria-label="Previous month">${PREV}</button>
           <button type="button" class="month-nav-btn" data-nav="1" aria-label="Next month">${NEXT}</button>
         </div>
+        <div class="month-title">${label}</div>
         <button type="button" class="month-nav-btn month-more" aria-label="More">${MORE}</button>
       </div>
       <div class="month-weekdays">${WEEKDAYS.map((d) => `<span>${d}</span>`).join("")}</div>
