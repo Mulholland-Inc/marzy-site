@@ -108,8 +108,10 @@ class MzViewMonth extends HTMLElement {
         <div class="month-title">${label}</div>
         <button type="button" class="month-nav-btn month-more" aria-label="More">${MORE}</button>
       </div>
-      <div class="month-weekdays">${WEEKDAYS.map((d) => `<span>${d}</span>`).join("")}</div>
-      <div class="month-grid">${cells.join("")}</div>`;
+      <div class="month-scroll">
+        <div class="month-weekdays">${WEEKDAYS.map((d) => `<span>${d}</span>`).join("")}</div>
+        <div class="month-grid">${cells.join("")}</div>
+      </div>`;
   }
 }
 customElements.define("mz-view-month", MzViewMonth);

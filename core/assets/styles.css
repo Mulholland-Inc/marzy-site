@@ -3307,10 +3307,20 @@ body.is-dragging-card * {
   width: 18px;
   height: 18px;
 }
+/* weekday row + grid share one horizontal scroller (so they scroll together
+   and stay aligned); columns keep a comfortable min width and scroll on mobile */
+.month-scroll {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.month-scroll::-webkit-scrollbar {
+  display: none;
+}
 .month-weekdays {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(132px, 1fr));
   gap: var(--space-2);
+  margin-bottom: var(--space-2);
 }
 .month-weekdays span {
   padding-left: var(--space-1);
@@ -3321,7 +3331,7 @@ body.is-dragging-card * {
 /* a grid of day-cards inside the panel */
 .month-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(132px, 1fr));
   gap: var(--space-2);
 }
 .month-cell {
@@ -3385,29 +3395,6 @@ body.is-dragging-card * {
 }
 .month-cell.is-out .month-ev {
   color: var(--color-muted);
-}
-/* Mobile: five columns get tight, so shrink the chrome and drop the time */
-@media (max-width: 640px) {
-  .month-view {
-    padding: var(--space-2);
-    gap: var(--space-2);
-  }
-  .month-weekdays,
-  .month-grid {
-    gap: var(--space-1);
-  }
-  .month-cell {
-    min-height: 92px;
-    padding: var(--space-1);
-    gap: var(--space-1);
-  }
-  .month-ev {
-    padding: 2px;
-    font-size: var(--text-12);
-  }
-  .month-ev-time {
-    display: none;
-  }
 }
 
 /* Files view — a document library of tiles on a gray panel. */
