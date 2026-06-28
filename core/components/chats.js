@@ -1,77 +1,43 @@
 // <mz-chats></mz-chats> — the Chats home. The composer starts centered with the
-// greeting and glides to the bottom on first send (FLIP). You never see your own
-// message: the center shows Marzy *working* — a short run of thinking steps /
-// tool calls that tick off one by one — then it crossfades to her report (a line
-// plus an embedded card). Ask again and the report clears, she thinks afresh, and
-// writes a new one. Stateless, no thread. Built on house tokens, the spark, the
-// shared embed cards, and Motion.
+// greeting and glides to the bottom on first send (FLIP). After that it's a
+// normal conversation thread (Claude/ChatGPT-style): your message appears as a
+// right-aligned bubble, then Marzy replies with the spark, a short typing beat,
+// and text that streams in word by word (a blur/fade reveal). Built on house
+// tokens, the spark, and Motion.
 import { SPARK } from "./spark.js";
 import { icon } from "./icons.js";
-import { animate, stagger, reduce, SPRING_SOFT } from "./motion.js";
+import { animate, stagger, reduce, SPRING_SOFT, EASE_OUT } from "./motion.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const esc = (s) =>
   String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-// What Marzy does for a prompt: the steps she works through (with the tool each
-// touches), the line she lands on, and the embedded card she returns. Lightly
-// keyword-routed so it feels like she read the request.
-const PLANS = [
+// Marzy's replies — plain conversational text, lightly keyword-routed so it
+// feels like she read the request. No steps, no embedded cards.
+const REPLIES = [
   {
     match: ["payroll", "pay"],
-    steps: [
-      { label: "Reading June timesheets", tool: "Gusto" },
-      { label: "Matching hours to employees", tool: "" },
-      { label: "Calculating taxes & deductions", tool: "" },
-      { label: "Drafting the pay run", tool: "" },
-    ],
-    lead: "June payroll is drafted from all 14 timesheets, with hours matched to every employee and taxes and deductions applied. Totals line up against last month within the usual range, so there's nothing unusual to flag — it's ready for your approval whenever you are.",
-    embed: "mz-embed-table",
+    text: "June payroll is drafted from all 14 timesheets, with hours matched to every employee and taxes and deductions applied. Totals line up against last month within the usual range, so there's nothing unusual to flag — it's ready for your approval whenever you are.",
   },
   {
     match: ["invoice", "reconcile", "books", "ledger"],
-    steps: [
-      { label: "Pulling open invoices", tool: "QuickBooks" },
-      { label: "Matching against the ledger", tool: "" },
-      { label: "Flagging anomalies", tool: "" },
-    ],
-    lead: "I reconciled all 412 transactions for the period against the ledger, and 409 matched cleanly on the first pass. Three are flagged for a second look — a duplicated vendor payment and two charges missing a receipt. Want me to walk you through them?",
-    embed: "mz-embed-table",
+    text: "I reconciled all 412 transactions for the period against the ledger, and 409 matched cleanly on the first pass. Three are flagged for a second look — a duplicated vendor payment and two charges missing a receipt. Want me to walk you through them?",
   },
   {
     match: ["onboard", "hire", "new hire"],
-    steps: [
-      { label: "Creating the employee profile", tool: "Gusto" },
-      { label: "Requesting I-9 & direct deposit", tool: "" },
-      { label: "Scheduling orientation", tool: "Calendar" },
-    ],
-    lead: "I've kicked off onboarding for the new hire and created their Gusto profile. The offer letter and tax forms are signed, and I've requested the I-9 and direct-deposit details. Accounts and orientation are the last steps — here's where everything stands.",
-    embed: "mz-embed-checklist",
+    text: "I've kicked off onboarding for the new hire and created their Gusto profile. The offer letter and tax forms are signed, and I've requested the I-9 and direct-deposit details. Accounts and orientation are the last steps — want me to schedule orientation now?",
   },
   {
     match: ["summary", "summar", "week", "status", "standup"],
-    steps: [
-      { label: "Gathering this week's activity", tool: "" },
-      { label: "Checking task progress", tool: "" },
-      { label: "Summarizing", tool: "" },
-    ],
-    lead: "Here's where things stand this week: payroll is on track, onboarding is at 42%, and 412 transactions synced overnight. A couple of items are still in review, but nothing is blocked on you right now. I'll keep moving on the rest and flag anything that needs a decision.",
-    embed: "mz-embed-kanban",
+    text: "Here's where things stand this week: payroll is on track, onboarding is at 42%, and 412 transactions synced overnight. A couple of items are still in review, but nothing is blocked on you right now. I'll keep moving on the rest and flag anything that needs a decision.",
   },
 ];
-const DEFAULT_PLAN = {
-  steps: [
-    { label: "Understanding the request", tool: "" },
-    { label: "Checking connected tools", tool: "" },
-    { label: "Preparing a plan", tool: "" },
-  ],
-  lead: "Here's what I pulled together. I checked the systems you've connected, gathered the relevant records, and drafted a plan I can run on your say-so. Take a look below — if it's right, I'll take it from here and only loop you in when something needs your call.",
-  embed: "mz-embed-doc",
-};
+const DEFAULT_REPLY =
+  "Here's what I pulled together. I checked the systems you've connected, gathered the relevant records, and drafted a plan I can run on your say-so. If it looks right, I'll take it from here and only loop you in when something needs your call.";
 
-function planFor(text) {
+function replyFor(text) {
   const t = text.toLowerCase();
-  return PLANS.find((p) => p.match.some((m) => t.includes(m))) || DEFAULT_PLAN;
+  return (REPLIES.find((p) => p.match.some((m) => t.includes(m))) || { text: DEFAULT_REPLY }).text;
 }
 
 class MzChats extends HTMLElement {
@@ -142,7 +108,8 @@ class MzChats extends HTMLElement {
 
   async send() {
     const text = this._input.value.trim();
-    if ((!text && !this._files.length) || this._busy) return;
+    const fileCount = this._files.length;
+    if ((!text && !fileCount) || this._busy) return;
     this._busy = true;
     this._input.value = "";
     this.grow();
@@ -151,11 +118,9 @@ class MzChats extends HTMLElement {
 
     if (!this._conversing) this.dockComposer();
 
-    const plan = planFor(text);
-    await this.swap(this.thinkNode());          // Marzy starts working
-    await this.runSteps(plan.steps);            // steps tick off one by one
-    await sleep(reduce ? 0 : 380);
-    await this.swap(this.reportNode(plan), (n) => this.revealReport(n)); // her report
+    this.addUserMessage(text, fileCount); // your message
+    await sleep(reduce ? 0 : 240);
+    await this.addMarzyReply(replyFor(text)); // her reply, streamed in
 
     this.setSending(false);
     this._busy = false;
@@ -176,93 +141,63 @@ class MzChats extends HTMLElement {
     }
   }
 
-  // Crossfade the centered card: out with the old, in with the new. `enter`
-  // customizes the entrance (default: a soft fade-up).
-  async swap(node, enter) {
-    const old = this._stage.firstElementChild;
-    if (old) {
-      if (reduce) old.remove();
-      else {
-        await animate(old, { opacity: [1, 0], y: [0, -8], scale: [1, 0.98] }, { duration: 0.2 }).finished;
-        old.remove();
-      }
+  // Keep the latest message in view as the thread grows.
+  scrollDown() {
+    this._stage.scrollTop = this._stage.scrollHeight;
+  }
+
+  // Your message — a right-aligned bubble.
+  addUserMessage(text, fileCount) {
+    const msg = document.createElement("div");
+    msg.className = "msg msg-user";
+    const bubble = document.createElement("div");
+    bubble.className = "msg-bubble";
+    bubble.textContent = text || (fileCount ? `${fileCount} attachment${fileCount > 1 ? "s" : ""}` : "");
+    msg.appendChild(bubble);
+    this._stage.appendChild(msg);
+    if (!reduce) {
+      msg.style.opacity = "0";
+      animate(msg, { opacity: [0, 1], y: [8, 0] }, { duration: 0.22, ease: EASE_OUT }).finished.then(
+        () => (msg.style.opacity = "")
+      );
     }
-    this._stage.appendChild(node);
+    this.scrollDown();
+  }
+
+  // Marzy's reply — spark + a short typing beat, then the text streams in word
+  // by word (the blur/fade reveal that reads like live output).
+  async addMarzyReply(text) {
+    const msg = document.createElement("div");
+    msg.className = "msg msg-marzy";
+    msg.innerHTML = `
+      <span class="chats-mark msg-av" aria-hidden="true">${SPARK}</span>
+      <div class="msg-body"><div class="typing" aria-label="Marzy is typing"><i></i><i></i><i></i></div></div>`;
+    this._stage.appendChild(msg);
+    if (!reduce) {
+      msg.style.opacity = "0";
+      animate(msg, { opacity: [0, 1], y: [8, 0] }, { duration: 0.22, ease: EASE_OUT }).finished.then(
+        () => (msg.style.opacity = "")
+      );
+    }
+    this.scrollDown();
+
+    await sleep(reduce ? 0 : 700);
+
+    const body = msg.querySelector(".msg-body");
+    const words = text.split(" ").map((w) => `<span class="w">${esc(w)}</span>`).join(" ");
+    body.innerHTML = `<p class="msg-text">${words}</p>`;
+    this.scrollDown();
     if (reduce) return;
-    if (enter) {
-      enter(node);
-    } else {
-      // Pre-hide before the first paint, then fade up — avoids a one-frame flash.
-      node.style.opacity = "0";
-      animate(node, { opacity: [0, 1], y: [10, 0] }, SPRING_SOFT).finished.then(() => (node.style.opacity = ""));
-    }
-  }
 
-  thinkNode() {
-    const el = document.createElement("div");
-    el.className = "think";
-    el.innerHTML = `
-      <div class="think-head">
-        <span class="chats-mark think-mark" aria-hidden="true">${SPARK}</span>
-        <span class="think-title">Working on it…</span>
-      </div>
-      <div class="think-list"></div>`;
-    return el;
-  }
-
-  // Append the steps one at a time: each shows a spinner, then resolves to a
-  // check and dims as the next appears.
-  async runSteps(steps) {
-    const list = this._stage.querySelector(".think-list");
-    for (const s of steps) {
-      const row = document.createElement("div");
-      row.className = "think-step";
-      row.innerHTML = `<span class="think-ind is-loading"></span><span class="think-label">${esc(s.label)}</span>${
-        s.tool ? `<span class="think-tool">${esc(s.tool)}</span>` : ""
-      }`;
-      list.appendChild(row);
-      if (!reduce) {
-        row.style.opacity = "0";
-        animate(row, { opacity: [0, 1], y: [6, 0] }, { duration: 0.28 }).finished.then(() => (row.style.opacity = ""));
-      }
-      await sleep(reduce ? 0 : 620);
-      const ind = row.querySelector(".think-ind");
-      ind.classList.replace("is-loading", "is-done");
-      ind.innerHTML = icon("check");
-      row.classList.add("is-done");
-      await sleep(reduce ? 0 : 150);
-    }
-  }
-
-  reportNode(plan) {
-    const el = document.createElement("div");
-    el.className = "chats-report";
-    const words = plan.lead.split(" ").map((w) => `<span class="w">${esc(w)}</span>`).join(" ");
-    el.innerHTML = `
-      <div class="chats-report-lead">
-        <span class="chats-mark" aria-hidden="true">${SPARK}</span>
-        <p class="chats-reply">${words}</p>
-      </div>
-      <div class="chats-report-embed"><${plan.embed}></${plan.embed}></div>`;
-    return el;
-  }
-
-  // Report entrance: spark pops, the line ripples in word by word, the card
-  // rises in just after. Everything is pre-hidden synchronously (before the
-  // first paint) so nothing flashes at full opacity before animating.
-  revealReport(n) {
-    const mark = n.querySelector(".chats-mark");
-    const words = n.querySelectorAll(".w");
-    const embed = n.querySelector(".chats-report-embed");
-    mark.style.opacity = "0";
-    words.forEach((w) => (w.style.opacity = "0"));
-    embed.style.opacity = "0";
-
-    animate(mark, { opacity: [0, 1], scale: [0.7, 1] }, SPRING_SOFT).finished.then(() => (mark.style.opacity = ""));
-    animate(words, { opacity: [0, 1], filter: ["blur(2px)", "blur(0px)"] }, { delay: stagger(0.02), duration: 0.26 })
-      .finished.then(() => words.forEach((w) => (w.style.opacity = "")));
-    animate(embed, { opacity: [0, 1], y: [14, 0], scale: [0.97, 1] }, { ...SPRING_SOFT, delay: 0.18 })
-      .finished.then(() => (embed.style.opacity = ""));
+    const wEls = body.querySelectorAll(".w");
+    wEls.forEach((w) => (w.style.opacity = "0"));
+    await animate(
+      wEls,
+      { opacity: [0, 1], filter: ["blur(2px)", "blur(0px)"] },
+      { delay: stagger(0.02), duration: 0.26 }
+    ).finished;
+    wEls.forEach((w) => (w.style.opacity = ""));
+    this.scrollDown();
   }
 
   setSending(on) {
