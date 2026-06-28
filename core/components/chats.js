@@ -149,9 +149,9 @@ class MzChats extends HTMLElement {
   // Your message — a right-aligned bubble.
   addUserMessage(text, fileCount) {
     const msg = document.createElement("div");
-    msg.className = "msg msg-user";
+    msg.className = "chats-msg chats-msg-user";
     const bubble = document.createElement("div");
-    bubble.className = "msg-bubble";
+    bubble.className = "chats-msg-bubble";
     bubble.textContent = text || (fileCount ? `${fileCount} attachment${fileCount > 1 ? "s" : ""}` : "");
     msg.appendChild(bubble);
     this._stage.appendChild(msg);
@@ -168,8 +168,8 @@ class MzChats extends HTMLElement {
   // by word (the blur/fade reveal that reads like live output).
   async addMarzyReply(text) {
     const msg = document.createElement("div");
-    msg.className = "msg msg-marzy";
-    msg.innerHTML = `<div class="msg-bubble"><div class="typing" aria-label="Marzy is typing"><i></i><i></i><i></i></div></div>`;
+    msg.className = "chats-msg chats-msg-marzy";
+    msg.innerHTML = `<div class="chats-msg-bubble"><div class="typing" aria-label="Marzy is typing"><i></i><i></i><i></i></div></div>`;
     this._stage.appendChild(msg);
     if (!reduce) {
       msg.style.opacity = "0";
@@ -181,9 +181,9 @@ class MzChats extends HTMLElement {
 
     await sleep(reduce ? 0 : 700);
 
-    const bubble = msg.querySelector(".msg-bubble");
+    const bubble = msg.querySelector(".chats-msg-bubble");
     const words = text.split(" ").map((w) => `<span class="w">${esc(w)}</span>`).join(" ");
-    bubble.innerHTML = `<p class="msg-text">${words}</p>`;
+    bubble.innerHTML = `<p class="chats-msg-text">${words}</p>`;
     this.scrollDown();
     if (reduce) return;
 

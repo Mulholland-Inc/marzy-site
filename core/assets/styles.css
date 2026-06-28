@@ -3594,18 +3594,18 @@ body.is-dragging-card * {
   margin: 0 auto var(--space-4);
 }
 
-/* ── Conversation messages — plain text, no container ──────────── */
-.msg {
+/* ── Conversation messages (namespaced to avoid the .msg thread card) ── */
+.chats-msg {
   display: flex;
   width: 100%;
 }
-.msg-user {
+.chats-msg-user {
   justify-content: flex-end;
 }
-.msg-marzy {
+.chats-msg-marzy {
   justify-content: flex-start;
 }
-.msg-bubble {
+.chats-msg-bubble {
   max-width: 100%;
   font-size: var(--text-16);
   line-height: var(--leading-relaxed);
@@ -3614,17 +3614,17 @@ body.is-dragging-card * {
   overflow-wrap: anywhere;
 }
 /* your message: a gray bubble. Marzy's reply: plain text, no container. */
-.msg-user .msg-bubble {
+.chats-msg-user .chats-msg-bubble {
   max-width: 80%;
   padding: var(--space-3) var(--space-4);
   background: var(--color-surface-2);
   border-radius: var(--radius-lg);
   line-height: var(--leading-snug);
 }
-.msg-text {
+.chats-msg-text {
   margin: 0;
 }
-.msg-text .w {
+.chats-msg-text .w {
   display: inline;
 }
 
