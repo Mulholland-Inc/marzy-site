@@ -6073,6 +6073,11 @@ body.is-dragging-card * {
   /* plain white image placeholder for now */
   background: var(--color-surface);
 }
+/* caption sits closer to its card, with a small indent */
+.view .gal-cap {
+  margin-top: var(--space-1);
+  padding-left: var(--space-1);
+}
 .gal-item {
   display: block;
   margin: 0;
