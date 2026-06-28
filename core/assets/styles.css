@@ -3357,19 +3357,13 @@ body.is-dragging-card * {
 .month-cell.is-out .month-daynum {
   color: var(--color-muted);
 }
-/* today, highlighted in Volt */
+/* today, highlighted in Volt (no circle — just the number + border) */
 .month-cell.is-today {
   border-color: var(--color-volt);
 }
 .month-cell.is-today .month-daynum {
-  align-self: flex-start;
-  display: inline-grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--color-volt);
-  color: #fff;
+  color: var(--color-volt);
+  font-weight: var(--weight-semibold);
 }
 .month-evs {
   display: flex;
