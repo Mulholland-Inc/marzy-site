@@ -45,7 +45,6 @@ class MzWorkspace extends HTMLElement {
         <span class="ws-caret" aria-hidden="true">${CHEVRON}</span>
       </button>
       <div class="ws-menu" hidden role="menu">
-        <div class="ws-menu-head">Workspaces</div>
         ${WORKSPACES.map(
           ([n, s], i) =>
             `<button type="button" class="ws-item${i === this._i ? " is-active" : ""}" data-i="${i}" role="menuitemradio" aria-checked="${i === this._i}">
