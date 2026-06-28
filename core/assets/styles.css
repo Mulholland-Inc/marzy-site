@@ -3278,6 +3278,9 @@ body.is-dragging-card * {
   display: inline-flex;
   gap: var(--space-1);
 }
+.month-more {
+  margin-left: auto;
+}
 .month-nav-btn {
   display: grid;
   place-items: center;
@@ -3324,29 +3327,19 @@ body.is-dragging-card * {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  min-height: 118px;
-  padding: var(--space-2);
+  min-height: 132px;
+  padding: var(--space-2) var(--space-3);
   background: var(--color-surface);
 }
 .month-cell.is-out {
   background: var(--color-paper);
 }
 .month-daynum {
-  font-size: var(--text-12);
-  font-weight: var(--weight-medium);
+  font-size: var(--text-13);
   color: var(--color-ink-2);
 }
 .month-cell.is-out .month-daynum {
   color: var(--color-line-strong);
-}
-.month-cell.is-today .month-daynum {
-  display: inline-grid;
-  place-items: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--color-volt);
-  color: #fff;
 }
 .month-evs {
   display: flex;

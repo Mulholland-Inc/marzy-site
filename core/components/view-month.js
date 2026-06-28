@@ -1,34 +1,39 @@
 // <mz-view-month></mz-view-month>, a Notion-style month calendar: a Mon–Fri grid
-// where each day lists the teams with work due, each with a small icon and an
-// item count. Renders from this._records (set via setData by the collection's
-// toolbar query), defaulting to all RECORDS. Clicking an entry opens its record.
-import { RECORDS, byId, emitSelect } from "./data.js";
+// where each day lists the teams active that day — a small icon, the team name,
+// and the team's member count (fixed per team, like the reference). Self-
+// contained sample data (June 2026), the same pattern as <mz-calendar>. Clicking
+// an entry emits mz-select so the host opens a detail pane.
+import { emitSelect } from "./data.js";
 import { icon } from "./icons.js";
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTHS_LONG = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-const TAG_ICON = {
-  Finance: "table",
-  Payroll: "table",
-  Ops: "settings",
-  People: "users",
-  Eng: "square-kanban",
-  Clinic: "activity",
-  Legal: "file",
+
+// Teams carry a fixed member count, shown on every occurrence (as in the
+// reference, where each team's number is constant across the month).
+const TEAMS = {
+  finance: { name: "Finance", icon: "table", count: 4 },
+  ops: { name: "Operations", icon: "settings", count: 12 },
+  eng: { name: "Engineering", icon: "square-kanban", count: 6 },
+  people: { name: "People", icon: "users", count: 4 },
 };
+// A stable pattern so most weekdays carry 1–2 teams, like the reference.
+const teamsForDay = (d) => {
+  switch (d % 5) {
+    case 1: return [TEAMS.finance, TEAMS.ops];
+    case 2: return [TEAMS.ops];
+    case 3: return [TEAMS.finance, TEAMS.ops];
+    case 4: return [TEAMS.people, TEAMS.ops];
+    default: return [TEAMS.eng];
+  }
+};
+
 const PREV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14 6-6 6 6 6"/></svg>';
 const NEXT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10 6 6 6-6 6"/></svg>';
+const MORE = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>';
 
-const YEAR = 2026, MONTH = 5, TODAY = 28; // June 2026, matches the sample data
-
-const parseDue = (due) => {
-  const m = String(due).match(/([A-Za-z]{3})\s+(\d{1,2})/);
-  if (!m) return null;
-  const mi = MONTHS.indexOf(m[1]);
-  return mi < 0 ? null : { m: mi, d: Number(m[2]) };
-};
-// sample "items in this team" count — stable per record, just for texture
-const evCount = (r) => 2 + ((r.id * 7) % 12);
+const YEAR = 2026, MONTH = 5; // June 2026
 
 class MzViewMonth extends HTMLElement {
   connectedCallback() {
@@ -41,14 +46,18 @@ class MzViewMonth extends HTMLElement {
         this.shift(Number(nav.dataset.nav));
         return;
       }
-      const ev = e.target.closest(".month-ev[data-id]");
-      if (ev) emitSelect(this, byId(ev.dataset.id));
+      const ev = e.target.closest(".month-ev");
+      if (ev) {
+        emitSelect(this, {
+          title: ev.dataset.title,
+          status: "Scheduled",
+          assignee: "Marzy",
+          tag: ev.dataset.team,
+          priority: "medium",
+          due: ev.dataset.due,
+        });
+      }
     });
-    this.render();
-  }
-
-  setData(records) {
-    this._records = records;
     this.render();
   }
 
@@ -62,13 +71,6 @@ class MzViewMonth extends HTMLElement {
   }
 
   render() {
-    const recs = this._records || RECORDS;
-    const byDay = {};
-    recs.forEach((r) => {
-      const due = parseDue(r.due);
-      if (due && due.m === this._month) (byDay[due.d] = byDay[due.d] || []).push(r);
-    });
-
     const first = new Date(this._year, this._month, 1);
     const startOffset = (first.getDay() + 6) % 7; // days back to Monday (Mon=0)
     const daysIn = new Date(this._year, this._month + 1, 0).getDate();
@@ -82,24 +84,24 @@ class MzViewMonth extends HTMLElement {
       const dow = (date.getDay() + 6) % 7; // Mon=0 .. Sun=6
       if (dow > 4) continue; // weekdays only
       const out = date.getMonth() !== this._month;
-      const isToday = !out && date.getDate() === TODAY && this._month === MONTH && this._year === YEAR;
-      const evs = out ? [] : byDay[date.getDate()] || [];
-      const rows = evs
+      const dnum = date.getDate();
+      const due = `${MONTHS_SHORT[date.getMonth()]} ${dnum}`;
+      const rows = teamsForDay(dnum)
         .map(
-          (r) => `<button type="button" class="month-ev" data-id="${r.id}">
-            ${icon(TAG_ICON[r.tag] || "square-kanban")}
-            <span class="month-ev-name">${r.tag} team</span>
-            <span class="month-ev-count">${evCount(r)}</span>
+          (t) => `<button type="button" class="month-ev" data-team="${t.name}" data-title="${t.name} team — ${due}" data-due="${due}">
+            ${icon(t.icon)}
+            <span class="month-ev-name">${t.name} team</span>
+            <span class="month-ev-count">${t.count}</span>
           </button>`
         )
         .join("");
-      cells.push(`<div class="month-cell${out ? " is-out" : ""}${isToday ? " is-today" : ""}">
-          <span class="month-daynum">${date.getDate()}</span>
+      cells.push(`<div class="month-cell${out ? " is-out" : ""}">
+          <span class="month-daynum">${dnum}</span>
           <div class="month-evs">${rows}</div>
         </div>`);
     }
 
-    const label = `${new Date(this._year, this._month, 1).toLocaleString("en-US", { month: "long" })} ${this._year}`;
+    const label = `${MONTHS_LONG[this._month]} ${this._year}`;
     this.innerHTML = `
       <div class="month-head">
         <div class="month-title">${label}</div>
@@ -107,6 +109,7 @@ class MzViewMonth extends HTMLElement {
           <button type="button" class="month-nav-btn" data-nav="-1" aria-label="Previous month">${PREV}</button>
           <button type="button" class="month-nav-btn" data-nav="1" aria-label="Next month">${NEXT}</button>
         </div>
+        <button type="button" class="month-nav-btn month-more" aria-label="More">${MORE}</button>
       </div>
       <div class="month-weekdays">${WEEKDAYS.map((d) => `<span>${d}</span>`).join("")}</div>
       <div class="month-grid">${cells.join("")}</div>`;
