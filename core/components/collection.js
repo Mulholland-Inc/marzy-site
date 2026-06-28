@@ -14,6 +14,7 @@ const VIEW_TAG = {
   gallery: "mz-view-gallery",
   files: "mz-view-files",
   calendar: "mz-calendar",
+  month: "mz-view-month",
 };
 const VIEW_LABEL = {
   table: "Table",
@@ -22,6 +23,7 @@ const VIEW_LABEL = {
   gallery: "Gallery",
   files: "Files",
   calendar: "Calendar",
+  month: "Month",
 };
 const VICON = {
   table: icon("table"),
@@ -30,6 +32,7 @@ const VICON = {
   gallery: icon("image"),
   files: icon("file"),
   calendar: icon("calendar"),
+  month: icon("calendar"),
 };
 
 class MzCollection extends HTMLElement {

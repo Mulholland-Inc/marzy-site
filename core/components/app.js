@@ -73,7 +73,7 @@ const VIEWS = [
   { id: "chats", label: "Chat", render: () => `<mz-chats></mz-chats>` },
   { id: "activity", label: "Activity", render: () => `<mz-activity></mz-activity>` },
   { id: "tasks", label: "Tasks", collection: { singular: "task", view: "board", views: "board,table,files,calendar" } },
-  { id: "projects", label: "Projects", collection: { singular: "project", view: "grid", views: "grid,gallery,table,board" } },
+  { id: "projects", label: "Projects", collection: { singular: "project", view: "grid", views: "grid,gallery,table,board,month" } },
   { id: "calendar", label: "Calendar", render: () => `<mz-calendar></mz-calendar>` },
   { id: "users", label: "Users", render: () => `<mz-users></mz-users>` },
   { id: "roles", label: "Access", render: () => `<mz-roles></mz-roles>` },

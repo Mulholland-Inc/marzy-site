@@ -3256,6 +3256,146 @@ body.is-dragging-card * {
   color: var(--color-ink);
 }
 
+/* Month calendar view (mz-view-month) — Notion-style Mon–Fri grid. */
+.month-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.month-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.month-title {
+  font-family: var(--font-display);
+  font-size: var(--text-18);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-ink);
+}
+.month-nav {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+.month-nav-btn {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  background: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+  cursor: pointer;
+  transition:
+    background var(--duration-base) var(--ease),
+    color var(--duration-base) var(--ease);
+}
+.month-nav-btn:hover {
+  background: var(--color-bg-soft);
+  color: var(--color-ink);
+}
+.month-nav-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.month-weekdays {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+}
+.month-weekdays span {
+  padding-left: var(--space-2);
+  font-size: var(--text-12);
+  font-weight: var(--weight-medium);
+  color: var(--color-muted);
+}
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--color-line);
+  border: var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.month-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-height: 118px;
+  padding: var(--space-2);
+  background: var(--color-surface);
+}
+.month-cell.is-out {
+  background: var(--color-paper);
+}
+.month-daynum {
+  font-size: var(--text-12);
+  font-weight: var(--weight-medium);
+  color: var(--color-ink-2);
+}
+.month-cell.is-out .month-daynum {
+  color: var(--color-line-strong);
+}
+.month-cell.is-today .month-daynum {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-volt);
+  color: #fff;
+}
+.month-evs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: auto;
+}
+.month-ev {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 3px var(--space-1);
+  border: 0;
+  background: none;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: var(--text-12);
+  color: var(--color-ink-2);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--duration-base) var(--ease);
+}
+.month-ev:hover {
+  background: var(--color-bg-soft);
+}
+.month-ev svg {
+  flex: 0 0 auto;
+  width: 13px;
+  height: 13px;
+  color: var(--color-muted);
+}
+.month-ev-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.month-ev-count {
+  flex: 0 0 auto;
+  color: var(--color-muted);
+}
+.month-cell.is-out .month-ev,
+.month-cell.is-out .month-ev svg,
+.month-cell.is-out .month-ev-count {
+  color: var(--color-line-strong);
+}
+
 /* Files view — a document library of tiles. */
 .files {
   display: grid;
