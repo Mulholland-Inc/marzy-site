@@ -825,8 +825,12 @@ button.sidebar-item {
   color: var(--color-ink);
 }
 .sidebar-item.is-active {
-  background: var(--color-volt-soft);
-  color: var(--color-volt);
+  background: var(--color-ink);
+  color: #fff;
+}
+.sidebar-item.is-active:hover {
+  background: var(--color-ink);
+  color: #fff;
 }
 .sidebar-item.is-active svg {
   opacity: 1;
