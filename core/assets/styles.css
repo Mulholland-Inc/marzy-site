@@ -3627,6 +3627,16 @@ body.is-dragging-card * {
 .chats-msg-text .w {
   display: inline;
 }
+/* Marzy's bubble can stack text + an embed (table / image) below it */
+.chats-msg-marzy .chats-msg-bubble {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.chats-msg-embed {
+  width: 100%;
+}
 
 /* typing indicator — three soft pulsing dots */
 .typing {
@@ -5546,6 +5556,16 @@ body.is-dragging-card * {
   flex: 0 0 auto;
   font-size: var(--text-12);
   color: var(--color-muted);
+}
+
+/* Embed: image (an on-brand SVG chart) */
+.embed-figure {
+  padding: var(--space-4);
+}
+.embed-chart {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* Embed: table */

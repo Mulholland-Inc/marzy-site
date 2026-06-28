@@ -40,6 +40,7 @@ import "./data-control.js";
 import "./data-clean.js";
 import "./timeline.js";
 import "./embed-table.js";
+import "./embed-image.js";
 import "./embed-doc.js";
 import "./embed-checklist.js";
 import "./embed-kanban.js";

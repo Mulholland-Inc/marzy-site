@@ -118,9 +118,13 @@ class MzChats extends HTMLElement {
 
     if (!this._conversing) this.dockComposer();
 
+    // first reply embeds a data table, the second an image — below the text
+    this._replyCount = (this._replyCount || 0) + 1;
+    const embed = this._replyCount === 1 ? "mz-embed-table" : this._replyCount === 2 ? "mz-embed-image" : null;
+
     this.addUserMessage(text, fileCount); // your message
     await sleep(reduce ? 0 : 240);
-    await this.addMarzyReply(replyFor(text)); // her reply, streamed in
+    await this.addMarzyReply(replyFor(text), embed); // her reply, streamed in
 
     this.setSending(false);
     this._busy = false;
@@ -166,7 +170,7 @@ class MzChats extends HTMLElement {
 
   // Marzy's reply — spark + a short typing beat, then the text streams in word
   // by word (the blur/fade reveal that reads like live output).
-  async addMarzyReply(text) {
+  async addMarzyReply(text, embed) {
     const msg = document.createElement("div");
     msg.className = "chats-msg chats-msg-marzy";
     msg.innerHTML = `<div class="chats-msg-bubble"><div class="typing" aria-label="Marzy is typing"><i></i><i></i><i></i></div></div>`;
@@ -185,7 +189,11 @@ class MzChats extends HTMLElement {
     const words = text.split(" ").map((w) => `<span class="w">${esc(w)}</span>`).join(" ");
     bubble.innerHTML = `<p class="chats-msg-text">${words}</p>`;
     this.scrollDown();
-    if (reduce) return;
+
+    if (reduce) {
+      if (embed) this.appendEmbed(bubble, embed);
+      return;
+    }
 
     const wEls = bubble.querySelectorAll(".w");
     wEls.forEach((w) => (w.style.opacity = "0"));
@@ -196,6 +204,23 @@ class MzChats extends HTMLElement {
     ).finished;
     wEls.forEach((w) => (w.style.opacity = ""));
     this.scrollDown();
+
+    if (embed) this.appendEmbed(bubble, embed); // the card rises in under the text
+  }
+
+  // Drop an embed (table / image) below the reply text and float it in.
+  appendEmbed(bubble, embed) {
+    const wrap = document.createElement("div");
+    wrap.className = "chats-msg-embed";
+    wrap.innerHTML = `<${embed}></${embed}>`;
+    bubble.appendChild(wrap);
+    this.scrollDown();
+    if (reduce) return;
+    wrap.style.opacity = "0";
+    animate(wrap, { opacity: [0, 1], y: [14, 0], scale: [0.97, 1] }, { ...SPRING_SOFT, delay: 0.05 }).finished.then(() => {
+      wrap.style.opacity = "";
+      this.scrollDown();
+    });
   }
 
   setSending(on) {
