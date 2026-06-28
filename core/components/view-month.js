@@ -6,7 +6,7 @@ import { emitSelect } from "./data.js";
 
 const MONTHS_LONG = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
 // [name, time] — a small pool, spread across the weekdays for texture.
 const EVENTS = [
@@ -79,6 +79,8 @@ class MzViewMonth extends HTMLElement {
     const cells = [];
     for (let i = 0; i < total; i++) {
       const date = new Date(this._year, this._month, 1 - startOffset + i);
+      const dow = (date.getDay() + 6) % 7; // Mon=0 .. Sun=6
+      if (dow > 4) continue; // weekdays only (Mon–Fri)
       const out = date.getMonth() !== this._month;
       const dnum = date.getDate();
       const isToday = !out && dnum === TODAY && this._month === MONTH && this._year === YEAR;
