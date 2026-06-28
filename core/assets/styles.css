@@ -860,6 +860,9 @@ button.sidebar-item {
   align-items: center;
   gap: var(--space-2);
   width: 100%;
+  /* fixed height so the collapsed rail reserves the same slot (no nav shift) */
+  box-sizing: border-box;
+  min-height: 48px;
   padding: var(--space-2);
   background: var(--color-surface);
   border: var(--border);
@@ -1065,11 +1068,20 @@ button.sidebar-item {
   .app.nav-collapsed .ws-caret {
     display: none;
   }
+  /* reserve the expanded slot height so the nav below doesn't shift up */
+  .app.nav-collapsed .ws {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
+  /* a centred square button → uniform inset around the 28px avatar */
   .app.nav-collapsed .ws-btn {
+    width: 40px;
+    height: 40px;
+    min-height: 0;
+    padding: 0;
     justify-content: center;
     gap: 0;
-    /* equal inset around the 28px avatar in the 40px rail button */
-    padding: 6px;
   }
   /* the dropdown must escape the narrow rail instead of matching its width */
   .app.nav-collapsed .ws-menu {
@@ -1204,15 +1216,17 @@ button.sidebar-item {
   display: inline-flex;
   flex: 0 0 auto;
 }
-.notif-btn {
+/* .btn-icon is defined later with equal specificity, so qualify with both
+   classes to win the size override */
+.notif-btn.btn-icon {
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
 }
-.notif-btn svg {
-  width: 24px;
-  height: 24px;
+.notif-btn.btn-icon svg {
+  width: 20px;
+  height: 20px;
 }
 /* unread indicator on the bell */
 .notif-badge {
