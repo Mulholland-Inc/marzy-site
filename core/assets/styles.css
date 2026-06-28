@@ -825,11 +825,11 @@ button.sidebar-item {
   color: var(--color-ink);
 }
 .sidebar-item.is-active {
-  background: var(--color-line-strong);
+  background: var(--color-line);
   color: var(--color-volt);
 }
 .sidebar-item.is-active:hover {
-  background: var(--color-line-strong);
+  background: var(--color-line);
   color: var(--color-volt);
 }
 .sidebar-item.is-active svg {
