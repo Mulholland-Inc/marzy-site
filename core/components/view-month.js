@@ -31,7 +31,7 @@ const PREV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
 const NEXT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10 6 6 6-6 6"/></svg>';
 const MORE = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>';
 
-const YEAR = 2026, MONTH = 5; // June 2026
+const YEAR = 2026, MONTH = 5, TODAY = 28; // June 2026
 
 class MzViewMonth extends HTMLElement {
   connectedCallback() {
@@ -83,6 +83,7 @@ class MzViewMonth extends HTMLElement {
       if (dow > 4) continue; // weekdays only
       const out = date.getMonth() !== this._month;
       const dnum = date.getDate();
+      const isToday = !out && dnum === TODAY && this._month === MONTH && this._year === YEAR;
       const due = `${MONTHS_SHORT[date.getMonth()]} ${dnum}`;
       const rows = eventsForDay(dnum)
         .map(
@@ -92,7 +93,7 @@ class MzViewMonth extends HTMLElement {
           </button>`
         )
         .join("");
-      cells.push(`<div class="month-cell${out ? " is-out" : ""}">
+      cells.push(`<div class="month-cell${out ? " is-out" : ""}${isToday ? " is-today" : ""}">
           <span class="month-daynum">${dnum}</span>
           <div class="month-evs">${rows}</div>
         </div>`);
