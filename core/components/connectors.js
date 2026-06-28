@@ -105,7 +105,7 @@ class MzConnectors extends HTMLElement {
       const items = this._items.filter((it) => it.cat === cat && match(it));
       if (!items.length) return "";
       return `<section class="cnx-cat-sec">
-        <h3 class="cnx-cat">${cat}<span>${items.length}</span></h3>
+        <h3 class="cnx-cat">${cat}</h3>
         <div class="cnx-list">${items.map(row).join("")}</div>
       </section>`;
     }).join("");
