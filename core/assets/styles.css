@@ -5917,6 +5917,8 @@ body.is-dragging-card * {
 }
 .view .gal-media {
   border-radius: var(--radius-sm);
+  /* plain white image placeholder for now */
+  background: var(--color-surface);
 }
 .gal-item {
   display: block;
