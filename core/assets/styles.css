@@ -3180,7 +3180,11 @@ body.is-dragging-card * {
 .vgrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(244px, 1fr));
-  gap: var(--space-3);
+  gap: var(--space-2);
+  /* gray panel wrapping the whole gallery */
+  padding: var(--space-2);
+  background: var(--color-surface-2);
+  border-radius: var(--radius);
 }
 .vcard {
   display: flex;
@@ -3189,7 +3193,7 @@ body.is-dragging-card * {
   padding: var(--space-3);
   background: var(--color-surface);
   border: var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   box-shadow: var(--shadow-xs);
   cursor: pointer;
   transition:
