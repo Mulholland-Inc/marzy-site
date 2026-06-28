@@ -3261,6 +3261,10 @@ body.is-dragging-card * {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  /* the whole calendar — header, weekdays and cards — sits in one gray panel */
+  padding: var(--space-3);
+  background: var(--color-surface-2);
+  border-radius: var(--radius);
 }
 .month-head {
   display: flex;
@@ -3307,7 +3311,6 @@ body.is-dragging-card * {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: var(--space-2);
-  padding-inline: var(--space-2);
 }
 .month-weekdays span {
   padding-left: var(--space-1);
@@ -3315,14 +3318,11 @@ body.is-dragging-card * {
   font-weight: var(--weight-medium);
   color: var(--color-muted);
 }
-/* a grid of day-cards on a gray panel */
+/* a grid of day-cards inside the panel */
 .month-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: var(--space-2);
-  padding: var(--space-2);
-  background: var(--color-surface-2);
-  border-radius: var(--radius);
 }
 .month-cell {
   display: flex;
