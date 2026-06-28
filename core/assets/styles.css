@@ -3348,6 +3348,8 @@ body.is-dragging-card * {
 .chats-composer {
   position: relative;
   width: 100%;
+  /* the whole box reads as the text field — click anywhere to focus */
+  cursor: text;
   border: var(--border-strong);
   border-radius: var(--radius-lg);
   background: var(--color-surface);

@@ -121,6 +121,17 @@ class MzChats extends HTMLElement {
       e.preventDefault();
       this.send();
     });
+
+    // Click anywhere on the prompt area (padding, the foot row, empty space) to
+    // focus the textarea — except on the real interactive children. mousedown +
+    // preventDefault keeps focus from flashing to the clicked element first.
+    this._composer.addEventListener("mousedown", (e) => {
+      if (e.target.closest("button, a, input, textarea, .chats-file")) return;
+      e.preventDefault();
+      const end = this._input.value.length;
+      this._input.focus();
+      this._input.setSelectionRange(end, end);
+    });
   }
 
   grow() {
