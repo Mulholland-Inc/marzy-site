@@ -1183,6 +1183,142 @@ button.sidebar-item {
   font-size: var(--text-15);
   color: var(--color-ink);
 }
+/* Notifications bell + dropdown (top-right of the header / mobile bar) */
+.app-bar mz-notifications {
+  margin-left: auto;
+}
+.notif {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+.notif-btn {
+  position: relative;
+  cursor: pointer;
+}
+/* unread indicator on the bell */
+.notif-badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-volt);
+  box-shadow: 0 0 0 2px var(--color-surface);
+}
+.notif-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: var(--z-nav);
+  width: 340px;
+  max-width: min(340px, calc(100vw - var(--space-6)));
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-2);
+}
+.notif-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--space-2) var(--space-2);
+}
+.notif-title {
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-14);
+  color: var(--color-ink);
+}
+.notif-clear {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-size: var(--text-12);
+  font-weight: var(--weight-medium);
+  color: var(--color-volt);
+  cursor: pointer;
+}
+.notif-clear:hover {
+  color: var(--color-volt-700);
+}
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  max-height: min(420px, 60vh);
+  overflow-y: auto;
+}
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2);
+  border: 0;
+  background: none;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--duration-base) var(--ease);
+}
+.notif-item:hover {
+  background: var(--color-bg-soft);
+}
+.notif-av {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--color-surface-2);
+  color: var(--color-ink-2);
+  font-size: var(--text-12);
+  font-weight: var(--weight-semibold);
+}
+.notif-av-marzy {
+  background: var(--color-volt-soft);
+  color: var(--color-volt);
+  padding: 7px;
+}
+.notif-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.notif-text {
+  font-size: var(--text-13);
+  line-height: 1.4;
+  color: var(--color-ink-2);
+}
+.notif-text b {
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+.notif-time {
+  font-size: var(--text-12);
+  color: var(--color-muted);
+}
+.notif-dot {
+  flex: 0 0 auto;
+  align-self: center;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-volt);
+}
+.notif-item.is-unread {
+  background: var(--color-volt-soft);
+}
+.notif-item.is-unread:hover {
+  background: var(--color-volt-soft);
+}
 /* click-catcher behind the floating drawer (transparent on desktop, so the
    drawer hovers without dimming; dimmed on mobile) */
 .app-scrim {

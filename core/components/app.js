@@ -140,6 +140,7 @@ class MzApp extends HTMLElement {
         <header class="app-bar">
           <button type="button" class="app-burger" aria-label="Menu">${BURGER}</button>
           <span class="app-bar-title"></span>
+          <mz-notifications></mz-notifications>
         </header>
         <div class="app-body" tabindex="-1"></div>
       </div>
@@ -328,6 +329,7 @@ class MzApp extends HTMLElement {
     this._barTitle.textContent = view.label;
     const head = `<header class="app-head">
         <nav class="crumbs" aria-label="Breadcrumb">${this.crumbsHTML(view, null)}</nav>
+        <mz-notifications></mz-notifications>
       </header>`;
     this._singular = view.collection ? view.collection.singular : "item";
     this._body.innerHTML = view.collection

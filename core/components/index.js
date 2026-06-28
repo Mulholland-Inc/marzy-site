@@ -67,6 +67,7 @@ import "./view-files.js";
 import "./users.js";
 import "./roles.js";
 import "./workspace.js";
+import "./notifications.js";
 import "./toolbar.js";
 import "./collection.js";
 import "./connectors.js";
