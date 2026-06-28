@@ -817,8 +817,11 @@ button.sidebar-item {
   color: var(--color-ink);
 }
 .sidebar-item.is-active {
-  background: var(--color-surface);
-  color: var(--color-ink);
+  background: var(--color-volt-soft);
+  color: var(--color-volt);
+}
+.sidebar-item.is-active svg {
+  opacity: 1;
 }
 /* unread / activity indicator, pushed to the right edge of the item */
 .sidebar-dot {
