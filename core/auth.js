@@ -16,20 +16,24 @@
 // while the gateway is being stood up.
 
 const C = (typeof window !== "undefined" && window.MZ_SITE) || {};
+const params = new URLSearchParams(location.search);
 
-// A ?api=… override is remembered so it survives the login → dashboard hop while
-// the gateway is being stood up. Order: query → remembered → site config → default.
-const qApi = new URLSearchParams(location.search).get("api");
+// The API lives behind one host (api.marzy.com); the tenant is the gateway's
+// path argument — api.marzy.com/<tenant>/…  A ?api=… override replaces the whole
+// base (handy for hitting a backend directly) and is remembered so it survives
+// the login → dashboard hop; ?tenant=… overrides the configured workspace.
+const qApi = params.get("api");
 if (qApi) { try { localStorage.setItem("mz_api", qApi); } catch {} }
-const rememberedApi = () => { try { return localStorage.getItem("mz_api"); } catch { return null; } };
+const override = qApi || (() => { try { return localStorage.getItem("mz_api"); } catch { return null; } })();
 
-export const API_BASE =
-  qApi ||
-  rememberedApi() ||
-  C.api ||
-  (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)
-    ? "http://localhost:8080"
-    : "https://api.marzy.com");
+const apiHost = C.api || (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? "http://localhost:8080" : "https://api.marzy.com");
+const tenant = params.get("tenant") || C.tenant || "";
+
+export const API_BASE = override
+  ? override
+  : tenant && !/(localhost|127\.0\.0\.1)/.test(apiHost)
+    ? `${apiHost.replace(/\/+$/, "")}/${tenant}`
+    : apiHost;
 
 // Where the dashboard sends signed-out visitors, and where login returns them.
 const LOGIN = (C.routes && C.routes.signin) || "login.html";

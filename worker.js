@@ -17,10 +17,14 @@ export default {
       return fetch(`${AUTH_ORIGIN}${p}${url.search}`, request);
     }
 
-    // OAuth connector callback (Slack/Drive/Gusto/…) → the API. The gateway reads
-    // the tenant from `state`; this is pure routing, no secret.
+    // OAuth connector callback (Slack/Drive/Gusto/…) → the tenant's API behind the
+    // gateway. state is "<nonce>.<tenant>"; the tenant becomes the path argument.
+    // Pure routing, no secret here.
     if (p === "/connect/callback") {
-      return Response.redirect(`${API_ORIGIN}/connect/callback${url.search}`, 302);
+      const state = url.searchParams.get("state") || "";
+      const tenant = state.slice(state.lastIndexOf(".") + 1);
+      if (!tenant || tenant === state) return new Response("missing tenant in state", { status: 400 });
+      return Response.redirect(`${API_ORIGIN}/${tenant}/connect/callback${url.search}`, 302);
     }
 
     // Everyone lands in the app; the dashboard guards to the login screen.

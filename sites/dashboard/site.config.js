@@ -3,9 +3,12 @@
 window.MZ_SITE = {
   brand: "Marzy",
   home: "index.html",
-  // One API origin for the whole fleet; the tenant is an argument the gateway
-  // resolves, not a subdomain. Override with ?api=… while the gateway is stood up.
+  // One API host for the whole fleet; the tenant is the gateway's path argument
+  // (api.marzy.com/<tenant>/…), not a subdomain. `tenant` is the workspace this
+  // deployment serves until per-user resolution exists. Override either with
+  // ?api=… / ?tenant=… .
   api: "https://api.marzy.com",
+  tenant: "mulholland",
   routes: {
     signin: "login.html",
     contact: "#",
