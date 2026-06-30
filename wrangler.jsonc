@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "marzy-site",
+  "account_id": "6c076286f15a83422c0820534c5464e8",
   "compatibility_date": "2025-05-01",
   "main": "worker.js",
   "observability": {
@@ -10,6 +11,7 @@
     "directory": "./",
     "binding": "ASSETS",
     "html_handling": "drop-trailing-slash",
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
+    "run_worker_first": true
   }
 }
