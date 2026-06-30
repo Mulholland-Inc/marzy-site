@@ -145,8 +145,10 @@ class MzToolbar extends HTMLElement {
       this.emit();
       return;
     }
-    // export / display are mock actions — just close
-    if (e.target.closest("[data-export]")) {
+    // export → let the collection (which owns the rows) produce the file
+    const exp = e.target.closest("[data-export]");
+    if (exp) {
+      this.dispatchEvent(new CustomEvent("mz-export", { detail: { format: exp.dataset.export }, bubbles: true }));
       this.closeAll();
     }
   }

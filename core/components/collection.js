@@ -3,7 +3,7 @@
 // a row emits mz-select and "New" emits mz-new; <mz-app> owns the detail pane and
 // responds to both.
 import { icon } from "./icons.js";
-import { objects, columns, label, viewModes } from "../catalog.js";
+import { objects, columns, label, viewModes, display } from "../catalog.js";
 import { fadeIn, animate, EASE_OUT, reduce } from "./motion.js";
 
 const VIEW_TAG = {
@@ -78,6 +78,7 @@ class MzCollection extends HTMLElement {
       this._query = e.detail;
       this.applyQuery();
     });
+    this.addEventListener("mz-export", (e) => this.exportData(e.detail.format));
 
     const settle = () => this.moveThumb(this._seg.querySelector(".seg-btn.is-active"), false);
     requestAnimationFrame(settle);
@@ -96,6 +97,27 @@ class MzCollection extends HTMLElement {
   // reload re-fetches the current view (e.g. after a create/edit/delete).
   reload() {
     this.applyQuery();
+  }
+
+  // exportData turns the current (filtered) rows into a CSV download; print/pdf
+  // hand off to the browser's print dialog (which can save as PDF).
+  async exportData(format) {
+    if (format === "print" || format === "pdf") {
+      window.print();
+      return;
+    }
+    const rows = await objects(this._type, this._query).catch(() => []);
+    const { title, cols } = columns(this._type);
+    const head = [title.label, ...cols.map((c) => c.label)];
+    const cell = (s) => (/[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s);
+    const body = rows.map((r) => [display(r, title), ...cols.map((c) => display(r, c))].map((v) => cell(String(v ?? ""))).join(","));
+    const csv = [head.map((h) => cell(h)).join(","), ...body].join("\n");
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${this._type}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   moveThumb(btn, animateIt = true) {

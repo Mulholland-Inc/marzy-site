@@ -113,6 +113,23 @@ export function calendarTypes() {
   return types().filter((t) => !NOT_EVENTS.has(t.name) && calendarProps(t.name).length);
 }
 
+// ── actions (object-bound capabilities) ─────────────────────────────────────────
+
+// actionsOn returns the actions bound to a type (ActionType.on) — the object's
+// capabilities the dashboard surfaces as buttons. Each is invoked at
+// POST /actions/{name} and gated server-side by its roles; the UI hides those
+// the viewer's roles don't grant (canRunAction).
+export function actionsOn(typeName) {
+  return (_catalog?.actions ?? []).filter((a) => a.on === typeName);
+}
+
+// canRunAction mirrors the server's gate: an action with no roles is open to any
+// viewer; otherwise the viewer must hold one of them.
+export function canRunAction(action, roles) {
+  const need = action?.roles ?? [];
+  return need.length === 0 || (roles ?? []).some((r) => need.includes(r));
+}
+
 // ── property kinds (how to render/edit a property) ─────────────────────────────
 
 // kind maps a property to a UI control family. Enums (a fixed value set) come

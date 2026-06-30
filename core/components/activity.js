@@ -29,10 +29,14 @@ const action = (c) => {
   const t = `<b>${esc(label(c.type))}</b>`;
   if (c.op === "create") return `Created a ${t}`;
   if (c.op === "delete") return `Deleted a ${t}`;
-  const fields = Object.keys(c.changes || {})
-    .map(label)
-    .join(", ");
-  return `Updated a ${t}${fields ? ` — ${esc(fields)}` : ""}`;
+  if (c.op === "update") {
+    const fields = Object.keys(c.changes || {})
+      .map(label)
+      .join(", ");
+    return `Updated a ${t}${fields ? ` — ${esc(fields)}` : ""}`;
+  }
+  // Any other op is an action invocation (op = the action name).
+  return `Ran <b>${esc(label(c.op))}</b> on a ${t}`;
 };
 
 class MzActivity extends HTMLElement {

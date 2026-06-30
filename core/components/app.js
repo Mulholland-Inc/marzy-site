@@ -11,7 +11,7 @@
 import { SPARK } from "./spark.js";
 import { icon } from "./icons.js";
 import { animate, stagger, SPRING_SOFT, EASE_OUT, EASE_IN, reduce } from "./motion.js";
-import { requireAuth, api } from "../auth.js";
+import { requireAuth, api, whoami } from "../auth.js";
 import * as catalog from "../catalog.js";
 
 const esc = (s) =>
@@ -104,6 +104,8 @@ class MzApp extends HTMLElement {
       else if (a === "cancel") this.cancelEdit();
       else if (a === "delete") this.deleteRecord();
       else if (a === "create") this.submitCreate();
+      const act = e.target.closest("[data-action]")?.dataset.action;
+      if (act) this.runAction(act);
     });
 
     this._collapsed = false;
@@ -130,6 +132,8 @@ class MzApp extends HTMLElement {
     } catch {}
     // A userId → name map so the version history shows people, not raw ids.
     this.loadMembers();
+    // The viewer's roles gate which object actions show in the detail pane.
+    whoami().then((me) => { this._viewerRoles = me.roles || []; });
     // sections: Chat, Activity, <one per browsable type>, Calendar, Users, Access,
     // Settings. browsable() already hides interface implementers (you reach them
     // through the interface); we additionally drop infra types: users is the
@@ -278,6 +282,7 @@ class MzApp extends HTMLElement {
       <div class="ios-section"><div class="ios-group">${fields
         .map((p) => `<div class="ios-row"><span class="ios-row-label">${esc(catalog.label(p.name))}</span><span class="ios-row-value">${cell(p)}</span></div>`)
         .join("")}</div></div>
+      ${editing ? "" : this.actionsHTML(type)}
       ${editing ? "" : `<div class="ios-section"><ol class="chain"></ol></div>`}`;
   }
 
@@ -432,16 +437,18 @@ class MzApp extends HTMLElement {
     };
     const diff = (from, to) =>
       `<span class="chain-diff"><span class="chain-from">${esc(fmt(from))}</span>→<span class="chain-to">${esc(fmt(to))}</span></span>`;
+    const changeRows = Object.entries(c.changes || {})
+      .map(
+        ([field, d]) =>
+          `<div class="chain-change"><span class="chain-field">${esc(catalog.label(field))}</span>${diff(d?.from ?? "", d?.to ?? "")}</div>`
+      )
+      .join("");
     let body;
     if (c.op === "create") body = `<div class="chain-change"><span class="chain-field">Created</span></div>`;
     else if (c.op === "delete") body = `<div class="chain-change"><span class="chain-field">Deleted</span></div>`;
-    else
-      body = Object.entries(c.changes || {})
-        .map(
-          ([field, d]) =>
-            `<div class="chain-change"><span class="chain-field">${esc(catalog.label(field))}</span>${diff(d?.from ?? "", d?.to ?? "")}</div>`
-        )
-        .join("");
+    else if (c.op === "update") body = changeRows;
+    // Any other op is an action invocation (op = the action name).
+    else body = `<div class="chain-change"><span class="chain-field">Ran ${esc(catalog.label(c.op))}</span></div>${changeRows}`;
     const avatar =
       who === "Marzy"
         ? `<span class="chain-av chain-av-marzy" aria-hidden="true">${SPARK}</span>`
@@ -453,6 +460,86 @@ class MzApp extends HTMLElement {
           <div class="chain-card"><div class="chain-changes">${body}</div></div>
         </div>
       </li>`;
+  }
+
+  // ── object-bound actions (catalog actions whose `on` is this type) ─────────────
+
+  // actionsHTML renders a button per action bound to `type` that the viewer's
+  // roles permit; the server re-checks on invoke.
+  actionsHTML(type) {
+    const acts = catalog.actionsOn(type).filter((a) => catalog.canRunAction(a, this._viewerRoles || []));
+    if (!acts.length) return "";
+    const btns = acts
+      .map(
+        (a) =>
+          `<button type="button" class="btn btn-secondary btn-sm" data-action="${esc(a.name)}" title="${esc(a.desc || "")}">${esc(catalog.label(a.name))}</button>`
+      )
+      .join("");
+    return `<div class="ios-section pane-actions"><div class="pane-actions-row">${btns}</div><span class="pane-actions-status t-meta" role="status"></span></div>`;
+  }
+
+  // actionBody fills the action's target (its uuid param) with the open record's
+  // id, plus any collected extra params.
+  actionBody(a, extra) {
+    const body = { ...extra };
+    const idParam = (a.params || []).find((p) => p.type === "uuid");
+    if (idParam && this._record) body[idParam.name] = this._record.id;
+    return body;
+  }
+
+  runAction(name) {
+    const a = catalog.actionsOn(this._type).find((x) => x.name === name);
+    if (!a || !this._record) return;
+    const reqExtra = (a.params || []).filter((p) => p.type !== "uuid" && p.required);
+    if (reqExtra.length) return this.openActionForm(a, reqExtra);
+    this.invokeAction(a, this.actionBody(a, {}));
+  }
+
+  // For actions needing more than the target id, collect the required params with
+  // a small inline form under the action buttons.
+  openActionForm(a, reqExtra) {
+    const host = this._pane.querySelector(".pane-actions");
+    if (!host) return;
+    host.querySelector(".pane-action-form")?.remove();
+    const inputs = reqExtra
+      .map(
+        (p) =>
+          `<label class="field"><span class="field-label">${esc(catalog.label(p.name))}</span><input class="input" data-pname="${esc(p.name)}" /></label>`
+      )
+      .join("");
+    const form = document.createElement("div");
+    form.className = "pane-action-form";
+    form.innerHTML = `${inputs}<div class="pane-action-form-bar"><button type="button" class="btn btn-ghost btn-sm" data-aform="cancel">Cancel</button><button type="button" class="btn btn-primary btn-sm" data-aform="run">Run ${esc(catalog.label(a.name))}</button></div>`;
+    host.appendChild(form);
+    form.addEventListener("click", (e) => {
+      const act = e.target.closest("[data-aform]")?.dataset.aform;
+      if (act === "cancel") form.remove();
+      else if (act === "run") {
+        const extra = {};
+        form.querySelectorAll("[data-pname]").forEach((i) => (extra[i.dataset.pname] = i.value));
+        form.remove();
+        this.invokeAction(a, this.actionBody(a, extra));
+      }
+    });
+  }
+
+  async invokeAction(a, body) {
+    const status = this._pane.querySelector(".pane-actions-status");
+    if (status) status.textContent = `Running ${catalog.label(a.name)}…`;
+    try {
+      await api(`/actions/${encodeURIComponent(a.name)}`, { method: "POST", body });
+      if (status) status.textContent = `${catalog.label(a.name)} done.`;
+      // The action recorded an audit commit (and may have changed the object);
+      // refresh the history trail and the underlying collection.
+      const cur = this._record;
+      if (cur) {
+        const hist = await api(`/objects/${cur._type}/${cur.id}/history`).catch(() => []);
+        if (this._record === cur) this.renderChain(hist || []);
+      }
+      this.collection()?.reload();
+    } catch {
+      if (status) status.textContent = `${catalog.label(a.name)} failed.`;
+    }
   }
 
   async deleteRecord() {
