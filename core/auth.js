@@ -1,48 +1,44 @@
-// core/auth.js — real authentication for the dashboard.
+// core/auth.js — authentication for the dashboard.
 //
-// Mirrors the contract the marzy Go service already serves (and the marzy/web
-// app already proves): GET {API}/config returns either a Firebase/GIP config
-// (prod) or a dev principal (no Firebase configured):
+// Identity Platform multi-tenancy is kept: each tenant is its own GIP tenant,
+// and sign-in is scoped to it (the token only works against that tenant). A
+// single Google account can belong to several tenants; the switcher re-auths
+// into the target GIP tenant when you switch (the Google session makes that a
+// near-instant popup).
 //
-//   { name, firebase: { apiKey, authDomain, tenantId } }   ← prod
-//   { name, roles: […], account }                          ← dev
-//
-// Prod signs in with a Firebase/GIP Google popup; the ID token rides on every
-// API call as `Authorization: Bearer`. Dev has no popup — /config hands us a
-// principal and we send X-Ontology-* headers instead.
-//
-// One API origin (api.marzy.com). The tenant is an argument the gateway
-// resolves, not a subdomain — override the origin with MZ_SITE.api or ?api=…
-// while the gateway is being stood up.
+// GET {API}/<tenant>/config returns that tenant's Firebase config (apiKey,
+// authDomain, tenantId) — or a dev principal when Firebase isn't configured.
+// The active tenant is the gateway's path argument (api.marzy.com/<tenant>/…),
+// chosen via the switcher and remembered across loads.
 
 const C = (typeof window !== "undefined" && window.MZ_SITE) || {};
 const params = new URLSearchParams(location.search);
+const isLocal = (h) => /(localhost|127\.0\.0\.1)/.test(h);
 
-// The API lives behind one host (api.marzy.com); the tenant is the gateway's
-// path argument — api.marzy.com/<tenant>/…  A ?api=… override replaces the whole
-// base (handy for hitting a backend directly) and is remembered so it survives
-// the login → dashboard hop; ?tenant=… overrides the configured workspace.
+const ls = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+const lset = (k, v) => { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch {} };
+
+// The active tenant — switcher selection wins, then the remembered one, then the
+// site default. ?tenant= overrides for testing.
+const TKEY = "mz_tenant";
+export const activeTenant = () => params.get("tenant") || ls(TKEY) || C.tenant || "";
+export const setActiveTenant = (t) => lset(TKEY, t);
+
+// One API host; the tenant is its path argument. ?api= overrides the whole base
+// (remembered) for hitting a backend directly.
 const qApi = params.get("api");
-if (qApi) { try { localStorage.setItem("mz_api", qApi); } catch {} }
-const override = qApi || (() => { try { return localStorage.getItem("mz_api"); } catch { return null; } })();
-
-const apiHost = C.api || (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? "http://localhost:8080" : "https://api.marzy.com");
-const tenant = params.get("tenant") || C.tenant || "";
-
+if (qApi) lset("mz_api", qApi);
+const override = qApi || ls("mz_api");
+const apiHost = C.api || (isLocal(location.hostname) ? "http://localhost:8080" : "https://api.marzy.com");
 export const API_BASE = override
   ? override
-  : tenant && !/(localhost|127\.0\.0\.1)/.test(apiHost)
-    ? `${apiHost.replace(/\/+$/, "")}/${tenant}`
+  : activeTenant() && !isLocal(apiHost)
+    ? `${apiHost.replace(/\/+$/, "")}/${activeTenant()}`
     : apiHost;
 
-// Where the dashboard sends signed-out visitors, and where login returns them.
 const LOGIN = (C.routes && C.routes.signin) || "/login";
 const HOME = C.home || "/";
-
-// Firebase modular SDK over the gstatic ESM CDN — keeps the site build-step-free.
 const FB = "https://www.gstatic.com/firebasejs/10.14.1";
-
-// Last signed-in email, for a no-flash guard decision on the next load.
 const HINT = "mz_auth_hint";
 
 let fb = null; // firebase Auth instance (prod)
@@ -52,18 +48,13 @@ let signInImpl = async () => {};
 let signOutImpl = async () => {};
 let getTokenImpl = async () => null;
 
-function setHint(v) {
-  try {
-    v ? localStorage.setItem(HINT, v) : localStorage.removeItem(HINT);
-  } catch {}
-}
-export function authHint() {
-  try {
-    return localStorage.getItem(HINT);
-  } catch {
-    return null;
-  }
-}
+// Current user, broadcast to subscribers (the switcher) on every change.
+let user = null;
+const subs = new Set();
+const report = (u) => { user = u; lset(HINT, u ? u.email || "1" : null); subs.forEach((f) => { try { f(u); } catch {} }); };
+export const getUser = () => user;
+export const onUser = (cb) => { subs.add(cb); if (user) cb(user); return () => subs.delete(cb); };
+export const authHint = () => ls(HINT);
 
 export async function getConfig() {
   if (configCache) return configCache;
@@ -73,9 +64,9 @@ export async function getConfig() {
   return configCache;
 }
 
-// Boot auth. `onState(user|null)` fires whenever the signed-in user changes
-// (initial restore, sign-in, sign-out). Resolves to the /config payload.
+// Boot auth for the active tenant. `onState(user|null)` fires on every change.
 export async function initAuth(onState = () => {}) {
+  const tap = (u) => { report(u); onState(u); };
   const cfg = await getConfig();
   if (cfg.firebase) {
     const [{ initializeApp }, auth] = await Promise.all([
@@ -84,21 +75,17 @@ export async function initAuth(onState = () => {}) {
     ]);
     const app = initializeApp({ apiKey: cfg.firebase.apiKey, authDomain: cfg.firebase.authDomain });
     fb = auth.getAuth(app);
-    if (cfg.firebase.tenantId) fb.tenantId = cfg.firebase.tenantId;
+    if (cfg.firebase.tenantId) fb.tenantId = cfg.firebase.tenantId; // GIP tenant scope
     getTokenImpl = async () => (fb.currentUser ? fb.currentUser.getIdToken() : null);
     signInImpl = () => auth.signInWithPopup(fb, new auth.GoogleAuthProvider());
     signOutImpl = () => auth.signOut(fb);
-    auth.onAuthStateChanged(fb, (u) => {
-      setHint(u ? u.email || "1" : null);
-      onState(u ? { email: u.email || "" } : null);
-    });
+    auth.onAuthStateChanged(fb, (u) => tap(u ? { email: u.email || "" } : null));
   } else {
-    // Dev: /config hands us the principal; there's no session to restore.
     dev = { roles: cfg.roles && cfg.roles.length ? cfg.roles : ["admin"], account: cfg.account || "dev@local" };
-    signInImpl = async () => { setHint(dev.account); onState({ email: dev.account }); };
-    signOutImpl = async () => { setHint(null); onState(null); };
-    setHint(dev.account);
-    onState({ email: dev.account });
+    getTokenImpl = async () => null;
+    signInImpl = async () => tap({ email: dev.account });
+    signOutImpl = async () => tap(null);
+    tap({ email: dev.account });
   }
   return cfg;
 }
@@ -107,19 +94,14 @@ export const signIn = () => signInImpl();
 export const signOutUser = () => signOutImpl();
 export const getToken = () => getTokenImpl();
 
-// Headers for an authed API call: Bearer in prod, dev headers otherwise.
 export async function authHeaders() {
   const h = { "Content-Type": "application/json" };
   const t = await getTokenImpl();
   if (t) h.Authorization = `Bearer ${t}`;
-  else if (dev) {
-    h["X-Ontology-Roles"] = dev.roles.join(",");
-    h["X-Ontology-Account"] = dev.account;
-  }
+  else if (dev) { h["X-Ontology-Roles"] = dev.roles.join(","); h["X-Ontology-Account"] = dev.account; }
   return h;
 }
 
-// Thin JSON helper over the API — used as the dashboard goes live.
 export async function api(path, { method = "GET", body } = {}) {
   const r = await fetch(API_BASE + path, {
     method,
@@ -130,9 +112,27 @@ export async function api(path, { method = "GET", body } = {}) {
   return r.status === 204 ? undefined : r.json();
 }
 
-// Dashboard pages call this on load: bounce to the login screen unless signed in.
+// Dashboard guard: bounce to the login screen unless signed in.
 export function requireAuth() {
-  initAuth((user) => { if (!user) location.replace(LOGIN); }).catch(() => location.replace(LOGIN));
+  initAuth((u) => { if (!u) location.replace(LOGIN); }).catch(() => location.replace(LOGIN));
+}
+
+// The tenants the switcher offers (id, display name, GIP tenant id).
+export async function loadTenants() {
+  try { const r = await fetch("/tenants"); if (r.ok) return await r.json(); } catch {}
+  return [];
+}
+
+// Switch workspaces: re-auth into the target GIP tenant, then reload into it.
+export async function switchTo(tenant, tenantId) {
+  if (tenant === activeTenant()) return;
+  if (fb) {
+    fb.tenantId = tenantId || null;
+    try { await signInImpl(); }
+    catch (e) { if (e && e.code === "auth/popup-closed-by-user") return; }
+  }
+  setActiveTenant(tenant);
+  location.assign(HOME);
 }
 
 export { LOGIN, HOME };
