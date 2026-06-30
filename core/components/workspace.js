@@ -3,7 +3,8 @@
 // tenants. Switching re-auths into that tenant's WorkOS organization (see core/auth.js).
 import { icon } from "./icons.js";
 import { popIn, popOut } from "./motion.js";
-import { loadTenants, onUser, getUser, activeTenant, switchTo, signOutUser, api } from "../auth.js";
+import { loadTenants, onUser, getUser, activeTenant, switchTo, signOutUser } from "../auth.js";
+import { openContextEditor } from "./context-editor.js";
 
 const CHEVRON = icon("chevron-down");
 const CHECK = icon("check");
@@ -70,34 +71,8 @@ class MzWorkspace extends HTMLElement {
     this._menu.addEventListener("click", (e) => {
       const item = e.target.closest(".ws-item");
       if (item) { switchTo(item.dataset.tenant); return; }
-      if (e.target.closest('[data-act="context"]')) { this.close(); this.openContext(); return; }
+      if (e.target.closest('[data-act="context"]')) { this.close(); openContextEditor(); return; }
       if (e.target.closest('[data-act="signout"]')) { signOutUser(); return; }
-    });
-  }
-
-  // A focused overlay to edit the signed-in member's personal assistant context
-  // (PUT /prompts/user) — private to them, appended to the agent's prompt.
-  async openContext() {
-    const prompts = await api("/prompts").catch(() => ({}));
-    const ov = document.createElement("div");
-    ov.className = "ctx-overlay";
-    ov.innerHTML = `<div class="ctx-card" role="dialog" aria-modal="true" aria-label="Your assistant context">
-        <h3>Your assistant context</h3>
-        <p class="t-meta">Personal notes the assistant uses when it helps you — your role, preferences, anything it should know. Only you see this.</p>
-        <textarea class="input ctx-input" rows="6" placeholder="e.g. I'm in finance; default to numbers-first answers and flag anything over $10k.">${esc(prompts.user || "")}</textarea>
-        <div class="ctx-bar"><span class="ctx-status t-meta" role="status"></span><button type="button" class="btn btn-ghost btn-sm" data-ctx="close">Close</button><button type="button" class="btn btn-primary btn-sm" data-ctx="save">Save</button></div>
-      </div>`;
-    document.body.appendChild(ov);
-    const close = () => ov.remove();
-    ov.addEventListener("click", (e) => {
-      if (e.target === ov || e.target.closest('[data-ctx="close"]')) return close();
-      if (e.target.closest('[data-ctx="save"]')) {
-        const status = ov.querySelector(".ctx-status");
-        status.textContent = "Saving…";
-        api("/prompts/user", { method: "PUT", body: { body: ov.querySelector(".ctx-input").value } })
-          .then(close)
-          .catch(() => (status.textContent = "Couldn’t save."));
-      }
     });
   }
 

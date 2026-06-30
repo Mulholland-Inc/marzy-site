@@ -4,6 +4,7 @@
 // no local users table.
 import { icon } from "./icons.js";
 import { api, whoami } from "../auth.js";
+import { openContextEditor } from "./context-editor.js";
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -60,6 +61,8 @@ class MzUsers extends HTMLElement {
       if (sel) this.setRole(sel.dataset.role, sel.value);
     });
     this._body.addEventListener("click", (e) => {
+      const ctx = e.target.closest("[data-act='context']");
+      if (ctx) { openContextEditor({ ref: ctx.dataset.email, name: ctx.dataset.name }); return; }
       const btn = e.target.closest("[data-act='remove']");
       if (btn) this.remove(btn.dataset.id);
     });
@@ -149,7 +152,7 @@ class MzUsers extends HTMLElement {
           }</td>
           <td>${
             this._admin
-              ? `<div class="row-actions"><button class="btn-icon" type="button" data-act="remove" data-id="${esc(u.id)}" title="Remove" aria-label="Remove ${esc(u.name || u.email)}">${icon("trash-2")}</button></div>`
+              ? `<div class="row-actions"><button class="btn-icon" type="button" data-act="context" data-email="${esc(u.email)}" data-name="${esc(u.name || u.email)}" title="Assistant context" aria-label="Edit assistant context for ${esc(u.name || u.email)}">${icon("sliders-horizontal")}</button><button class="btn-icon" type="button" data-act="remove" data-id="${esc(u.id)}" title="Remove" aria-label="Remove ${esc(u.name || u.email)}">${icon("trash-2")}</button></div>`
               : ""
           }</td>
         </tr>`
