@@ -3973,7 +3973,7 @@ body.is-dragging-card * {
   min-height: 0;
   padding: var(--space-4);
   border: var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   background: var(--color-surface);
 }
 .studio-head h3 {
@@ -3986,6 +3986,7 @@ body.is-dragging-card * {
   flex: 1;
   min-height: 0;
   resize: none;
+  border-radius: var(--radius);
 }
 .studio-bar {
   display: flex;
@@ -4024,7 +4025,7 @@ body.is-dragging-card * {
 .studio-bubble {
   max-width: 80%;
   padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   background: var(--color-surface-2);
   white-space: pre-wrap;
 }
@@ -4074,7 +4075,7 @@ body.is-dragging-card * {
   padding: var(--space-5);
   background: var(--color-surface);
   border: var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
 }
 .ctx-card h3 {
@@ -4087,6 +4088,7 @@ body.is-dragging-card * {
   width: 100%;
   margin-top: var(--space-3);
   resize: vertical;
+  border-radius: var(--radius);
 }
 .ctx-bar {
   display: flex;
