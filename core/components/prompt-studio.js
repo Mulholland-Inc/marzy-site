@@ -30,16 +30,18 @@ class MzPromptStudio extends HTMLElement {
           <span class="studio-pick-select"></span>
         </div>
         <div class="studio-doc">
-          <div class="studio-base"></div>
-          <div class="studio-layer studio-layer-edit">
-            <span class="studio-layer-tag">Workspace instructions · editable</span>
-            <textarea class="studio-prompt" placeholder="e.g. We're a dental group — be precise about patient data and never guess at clinical details." aria-label="Workspace instructions"></textarea>
+          <div class="studio-doc-body">
+            <div class="studio-base"></div>
+            <div class="studio-layer studio-layer-edit">
+              <span class="studio-layer-tag">Workspace instructions · editable</span>
+              <textarea class="studio-prompt" placeholder="e.g. We're a dental group — be precise about patient data and never guess at clinical details." aria-label="Workspace instructions"></textarea>
+            </div>
+            <div class="studio-extra"></div>
           </div>
-          <div class="studio-extra"></div>
-        </div>
-        <div class="studio-foot">
-          <span class="studio-status t-meta" role="status"></span>
-          <button type="button" class="chats-send studio-save" data-act="save" aria-label="Save instructions">${icon("check")}</button>
+          <div class="studio-doc-foot">
+            <span class="studio-status t-meta" role="status"></span>
+            <button type="button" class="chats-send studio-save" data-act="save" aria-label="Save instructions">${icon("check")}</button>
+          </div>
         </div>
       </section>
       <section class="studio-pane">

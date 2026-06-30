@@ -3970,7 +3970,8 @@ body.is-dragging-card * {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-8);
-  min-height: calc(100dvh - 150px);
+  height: 60vh;
+  min-height: 420px;
 }
 .studio-pane {
   display: flex;
@@ -3998,11 +3999,25 @@ body.is-dragging-card * {
 .studio-doc {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   border: var(--border-strong);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
+}
+.studio-doc-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.studio-doc-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-top: var(--border);
 }
 .studio-layer {
   padding: var(--space-3) var(--space-4);
