@@ -51,6 +51,13 @@ export function browsable() {
   return [...standalone, ...domainInterfaces()];
 }
 
+// parentOf returns the domain interface a type implements (e.g. rugs → product),
+// or null for a standalone type — so the UI can show "Product › Rugs".
+export function parentOf(typeName) {
+  const ifaces = new Set(domainInterfaces().map((i) => i.name));
+  return (type(typeName)?.implements ?? []).find((n) => ifaces.has(n)) || null;
+}
+
 // props returns a type's properties, excluding the base lifecycle columns the UI
 // never edits (id/created_at/updated_at) — those are handled out of band.
 const BASE = new Set(["id", "created_at", "updated_at"]);

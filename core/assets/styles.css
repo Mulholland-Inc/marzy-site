@@ -3915,6 +3915,9 @@ body.is-dragging-card * {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.roles-parent {
+  color: var(--color-muted);
+}
 /* object access: a compact None/Read/Edit segmented (reuses .seg) */
 .roles-access {
   flex: 0 0 auto;

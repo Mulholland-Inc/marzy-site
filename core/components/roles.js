@@ -103,8 +103,12 @@ class MzRoles extends HTMLElement {
     const rows = this.objectTypes()
       .map((o) => {
         const lvl = level(access[o]);
+        const parent = catalog.parentOf(o);
+        const name = parent
+          ? `<span class="roles-parent">${esc(catalog.label(parent))} ›</span> ${esc(catalog.label(o))}`
+          : esc(catalog.label(o));
         return `<div class="roles-row">
-          <span class="roles-row-name">${esc(catalog.label(o))}</span>
+          <span class="roles-row-name">${name}</span>
           <div class="seg roles-access" role="group" aria-label="${esc(o)} access">
             ${LEVELS.map((l) => `<button type="button" class="roles-acc-opt${lvl === l ? " is-active" : ""}" disabled>${l}</button>`).join("")}
           </div>
