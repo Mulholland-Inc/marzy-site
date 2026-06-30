@@ -21,10 +21,6 @@ class MzPromptStudio extends HTMLElement {
     this._role = "";
     this.innerHTML = `
       <section class="studio-pane">
-        <div class="studio-hd">
-          <h3 class="studio-label">Full prompt</h3>
-          <p class="t-meta">The exact instructions the assistant receives. Only the workspace layer is editable — pick a member to see their role and personal layers fold in.</p>
-        </div>
         <div class="studio-pick">
           <span class="t-meta">Preview as</span>
           <span class="studio-pick-select"></span>
@@ -33,7 +29,7 @@ class MzPromptStudio extends HTMLElement {
           <div class="studio-doc-body">
             <div class="studio-base"></div>
             <div class="studio-layer studio-layer-edit">
-              <span class="studio-layer-tag">Workspace instructions · editable</span>
+              <span class="studio-layer-tag">Workspace instructions</span>
               <textarea class="studio-prompt" placeholder="e.g. We're a dental group — be precise about patient data and never guess at clinical details." aria-label="Workspace instructions"></textarea>
             </div>
             <div class="studio-extra"></div>
@@ -45,10 +41,6 @@ class MzPromptStudio extends HTMLElement {
         </div>
       </section>
       <section class="studio-pane">
-        <div class="studio-hd">
-          <h3 class="studio-label">Preview</h3>
-          <p class="t-meta">Chat the current draft as the selected member. Actions are simulated — nothing is changed.</p>
-        </div>
         <div class="studio-thread">
           <div class="chats-answer studio-empty">
             <span class="chats-mark" aria-hidden="true">${SPARK}</span>

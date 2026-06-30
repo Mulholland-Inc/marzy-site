@@ -3979,15 +3979,6 @@ body.is-dragging-card * {
   gap: var(--space-4);
   min-height: 0;
 }
-.studio-label {
-  margin: 0 0 var(--space-1);
-  font-family: var(--font-display);
-  font-size: var(--text-18);
-  letter-spacing: var(--tracking-tight);
-}
-.studio-hd p {
-  margin: 0;
-}
 /* "preview as" member picker */
 .studio-pick {
   display: flex;
@@ -4016,7 +4007,7 @@ body.is-dragging-card * {
   align-items: center;
   justify-content: flex-end;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-3);
 }
 .studio-layer {
   padding: var(--space-3) var(--space-4);
@@ -4030,8 +4021,6 @@ body.is-dragging-card * {
   margin-bottom: var(--space-2);
   font-size: var(--text-12);
   font-weight: var(--weight-medium);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   color: var(--color-muted);
 }
 .studio-layer-body {
@@ -4076,6 +4065,8 @@ body.is-dragging-card * {
 }
 .studio-composer {
   flex: 0 0 auto;
+  /* match the save button's inset in the editor box */
+  padding: var(--space-3);
 }
 .studio-msg-mark {
   width: 22px;
