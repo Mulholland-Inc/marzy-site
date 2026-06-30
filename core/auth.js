@@ -42,6 +42,7 @@ const FB = "https://www.gstatic.com/firebasejs/10.14.1";
 const HINT = "mz_auth_hint";
 
 let fb = null; // firebase Auth instance (prod)
+let authMod = null; // the firebase-auth module (for building providers on switch)
 let dev = null; // { roles, account } (dev mode)
 let configCache = null;
 let signInImpl = async () => {};
@@ -73,11 +74,12 @@ export async function initAuth(onState = () => {}) {
       import(`${FB}/firebase-app.js`),
       import(`${FB}/firebase-auth.js`),
     ]);
+    authMod = auth;
     const app = initializeApp({ apiKey: cfg.firebase.apiKey, authDomain: cfg.firebase.authDomain });
     fb = auth.getAuth(app);
     if (cfg.firebase.tenantId) fb.tenantId = cfg.firebase.tenantId; // GIP tenant scope
     getTokenImpl = async () => (fb.currentUser ? fb.currentUser.getIdToken() : null);
-    signInImpl = () => auth.signInWithPopup(fb, new auth.GoogleAuthProvider());
+    signInImpl = () => googleSignIn();
     signOutImpl = () => auth.signOut(fb);
     auth.onAuthStateChanged(fb, (u) => tap(u ? { email: u.email || "" } : null));
   } else {
@@ -123,13 +125,33 @@ export async function loadTenants() {
   return [];
 }
 
-// Switch workspaces: re-auth into the target GIP tenant, then reload into it.
+// Google sign-in for the active GIP tenant. login_hint keeps it on the same
+// account (no chooser); silent (prompt=none) re-auths invisibly when switching —
+// the account is already consented, so Google completes it without UI.
+function googleSignIn({ silent } = {}) {
+  const provider = new authMod.GoogleAuthProvider();
+  const params = {};
+  if (user && user.email) params.login_hint = user.email;
+  if (silent) params.prompt = "none";
+  provider.setCustomParameters(params);
+  return authMod.signInWithPopup(fb, provider);
+}
+
+// Switch workspaces: re-auth into the target GIP tenant (silently — same
+// account), then reload into it. GIP tenants are isolated identity pools, so a
+// token from one tenant isn't valid for another; this is the lightest re-auth.
 export async function switchTo(tenant, tenantId) {
   if (tenant === activeTenant()) return;
   if (fb) {
     fb.tenantId = tenantId || null;
-    try { await signInImpl(); }
-    catch (e) { if (e && e.code === "auth/popup-closed-by-user") return; }
+    try {
+      await googleSignIn({ silent: true });
+    } catch (e) {
+      if (e && e.code === "auth/popup-closed-by-user") return;
+      // Silent needs interaction (rare) — fall back to one visible sign-in.
+      try { await googleSignIn(); }
+      catch (e2) { if (e2 && e2.code === "auth/popup-closed-by-user") return; }
+    }
   }
   setActiveTenant(tenant);
   location.assign(HOME);
