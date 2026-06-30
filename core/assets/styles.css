@@ -3991,7 +3991,10 @@ body.is-dragging-card * {
   box-shadow: var(--shadow-lg);
 }
 .ctx-card h3 {
-  margin: 0 0 var(--space-1);
+  margin: 0 0 var(--space-2);
+}
+.ctx-card > p {
+  margin: 0;
 }
 .ctx-input {
   width: 100%;
