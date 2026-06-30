@@ -145,6 +145,10 @@ class MzCollection extends HTMLElement {
   async applyQuery() {
     const view = this._main.firstElementChild;
     if (!view || typeof view.setData !== "function") return;
+    // Presentational display toggles (the rest of the query is applied in objects()).
+    const d = this._query.display || {};
+    this._main.classList.toggle("is-compact", !!d.compact);
+    this._main.classList.toggle("no-avatars", d.avatars === false);
     const ctx = { type: this._type, columns: columns(this._type), mode: this._modes.find((m) => m.id === this._view) };
     try {
       view.setData(await objects(this._type, this._query), ctx);

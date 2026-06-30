@@ -176,7 +176,20 @@ export async function objects(typeName, query = {}) {
       Object.values(r).concat(Object.values(r._links || {})).join(" ").toLowerCase().includes(term)
     );
   }
+  // "Show completed" off → hide rows whose status-like field is in a terminal state.
+  if (query.display && query.display.completed === false) {
+    const sf = statusField(typeName);
+    if (sf) rows = rows.filter((r) => !TERMINAL.has(String(r[sf] ?? "").toLowerCase()));
+  }
   return rows;
+}
+
+// A status-like enum property (status/stage/state) used by the "show completed"
+// toggle, and the values that count as terminal.
+const TERMINAL = new Set(["done", "completed", "complete", "closed", "archived", "dropped", "cancelled", "canceled"]);
+function statusField(typeName) {
+  const p = props(typeName).find((p) => Array.isArray(p.enum) && p.enum.length && /status|stage|state/.test(p.name));
+  return p?.name || null;
 }
 
 export function label(s) {

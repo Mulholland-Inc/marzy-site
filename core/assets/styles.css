@@ -4482,6 +4482,15 @@ body.is-dragging-card * {
 .collection-main {
   min-width: 0;
 }
+/* Display toggles (toolbar → Display): compact rows, hide avatars. */
+.collection-main.is-compact .table td,
+.collection-main.is-compact .table th {
+  padding-top: var(--space-1);
+  padding-bottom: var(--space-1);
+}
+.collection-main.no-avatars .avatar {
+  display: none;
+}
 /* Detail drawer: a hovering rounded pane that floats over the content on the
    right (the content keeps its full width) and slides in when opened. */
 .app-pane {

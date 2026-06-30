@@ -10,7 +10,8 @@ const CAP = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 class MzToolbar extends HTMLElement {
   connectedCallback() {
     this.classList.add("toolbar");
-    this._q = { search: "", status: [], priority: [], assignee: [], sort: null, dir: "asc" };
+    this._q = { search: "", status: [], priority: [], assignee: [], sort: null, dir: "asc",
+      display: { completed: true, compact: false, avatars: true } };
 
     this.innerHTML = `
       <div class="tb-search">
@@ -31,6 +32,13 @@ class MzToolbar extends HTMLElement {
     });
 
     this.addEventListener("click", (e) => this.onClick(e));
+    // Display toggles (show completed / compact / avatars) update the query.
+    this.addEventListener("change", (e) => {
+      const d = e.target.closest("[data-display]");
+      if (!d) return;
+      this._q.display = { ...this._q.display, [d.dataset.display]: d.checked };
+      this.emit();
+    });
     this._onDoc = (e) => {
       if (!this.contains(e.target)) this.closeAll();
     };

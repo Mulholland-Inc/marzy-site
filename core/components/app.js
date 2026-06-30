@@ -279,10 +279,10 @@ class MzApp extends HTMLElement {
     this._pane.innerHTML = `
       <div class="pane-head"><span class="pane-eyebrow t-caption">${esc(catalog.label(type))}</span>${tools}</div>
       ${title}
+      ${editing ? "" : this.actionsHTML(type)}
       <div class="ios-section"><div class="ios-group">${fields
         .map((p) => `<div class="ios-row"><span class="ios-row-label">${esc(catalog.label(p.name))}</span><span class="ios-row-value">${cell(p)}</span></div>`)
         .join("")}</div></div>
-      ${editing ? "" : this.actionsHTML(type)}
       ${editing ? "" : `<div class="ios-section"><ol class="chain"></ol></div>`}`;
   }
 
