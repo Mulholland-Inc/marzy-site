@@ -4,11 +4,9 @@ window.MZ_SITE = {
   brand: "Marzy",
   home: "/",
   // One API host for the whole fleet; the tenant is the gateway's path argument
-  // (api.marzy.com/<tenant>/…), not a subdomain. `tenant` is the workspace this
-  // deployment serves until per-user resolution exists. Override either with
-  // ?api=… / ?tenant=… .
+  // (api.marzy.com/<tenant>/…), not a subdomain. The active tenant now comes from
+  // the WorkOS session (/auth/me); the switcher remembers later choices.
   api: "https://api.marzy.com",
-  tenant: "mulholland",
   routes: {
     signin: "/login",
     contact: "#",

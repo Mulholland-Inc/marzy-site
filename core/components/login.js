@@ -108,20 +108,16 @@ class MzLogin extends HTMLElement {
       setTimeout(() => (window.location.href = next), 420);
     };
 
-    // Real auth: /config decides Firebase (Google popup) vs a dev principal. When
-    // a user is present — already signed in, or just signed in — exit to the app.
+    // Real auth: resolve the WorkOS cookie session. When a user is already
+    // signed in, exit straight to the app.
     initAuth((user) => { if (user) leave(); }).catch(() =>
       say("Can’t reach the workspace API — try again in a moment.")
     );
 
-    this.querySelector(".auth-google").addEventListener("click", async () => {
+    // Top-level redirect into the WorkOS hosted sign-in flow.
+    this.querySelector(".auth-google").addEventListener("click", () => {
       say("");
-      try {
-        await signIn();
-      } catch (e) {
-        if (e && e.code === "auth/popup-closed-by-user") return;
-        say("Sign-in failed. Please try again.");
-      }
+      signIn();
     });
 
     // Email/password isn't wired to the backend yet — Google SSO is the live path.

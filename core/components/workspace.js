@@ -68,8 +68,8 @@ class MzWorkspace extends HTMLElement {
     this._btn.addEventListener("click", () => this.toggle());
     this._menu.addEventListener("click", (e) => {
       const item = e.target.closest(".ws-item");
-      if (item) { switchTo(item.dataset.tenant, item.dataset.tid); return; }
-      if (e.target.closest('[data-act="signout"]')) { signOutUser().finally(() => location.assign("/login")); return; }
+      if (item) { switchTo(item.dataset.tenant); return; }
+      if (e.target.closest('[data-act="signout"]')) { signOutUser(); return; }
     });
   }
 
