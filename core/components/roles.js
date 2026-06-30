@@ -76,11 +76,13 @@ class MzRoles extends HTMLElement {
   }
 
   // The object types whose access a role can hold (concrete types + interfaces),
-  // in a stable order.
+  // in a stable order. Infra projections (the users identity table, the commit
+  // log) aren't workspace records, so they're left out.
   objectTypes() {
-    return [...catalog.types().map((t) => t.name), ...catalog.domainInterfaces().map((i) => i.name)].sort((a, b) =>
-      a.localeCompare(b)
-    );
+    const HIDDEN = new Set(["users", "commit"]);
+    return [...catalog.types().map((t) => t.name), ...catalog.domainInterfaces().map((i) => i.name)]
+      .filter((n) => !HIDDEN.has(n))
+      .sort((a, b) => a.localeCompare(b));
   }
 
   renderTabs() {

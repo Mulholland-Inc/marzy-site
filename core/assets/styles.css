@@ -3893,25 +3893,27 @@ body.is-dragging-card * {
 }
 /* tool / object rows share one look — white panels */
 .roles-rows {
-  border: var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: var(--color-surface);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
 }
 .roles-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  padding: 10px var(--space-3);
-  border-top: var(--border);
-}
-.roles-row:first-child {
-  border-top: 0;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
 }
 .roles-row-name {
   font-size: var(--text-small);
   color: var(--color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 /* object access: a compact None/Read/Edit segmented (reuses .seg) */
 .roles-access {
@@ -4107,6 +4109,9 @@ body.is-dragging-card * {
     gap: var(--space-2);
   }
   .roles-grid {
+    grid-template-columns: 1fr;
+  }
+  .roles-rows {
     grid-template-columns: 1fr;
   }
 }
