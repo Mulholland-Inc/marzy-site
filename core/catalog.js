@@ -123,6 +123,11 @@ export function actionsOn(typeName) {
   return (_catalog?.actions ?? []).filter((a) => a.on === typeName);
 }
 
+// actions returns every registered action (for permission displays).
+export function actions() {
+  return _catalog?.actions ?? [];
+}
+
 // canRunAction mirrors the server's gate: an action with no roles is open to any
 // viewer; otherwise the viewer must hold one of them.
 export function canRunAction(action, roles) {

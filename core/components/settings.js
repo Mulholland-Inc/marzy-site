@@ -24,15 +24,33 @@ class MzSettings extends HTMLElement {
 
   async load() {
     try {
-      const [s, me, cfg] = await Promise.all([api("/settings"), whoami(), api("/config").catch(() => ({}))]);
+      const [s, me, cfg, prompts] = await Promise.all([
+        api("/settings"),
+        whoami(),
+        api("/config").catch(() => ({})),
+        api("/prompts").catch(() => ({})),
+      ]);
       this._settings = s.settings || [];
       this._admin = (me.roles || []).includes("admin");
       this._workspace = cfg?.name || "";
+      this._orgPrompt = prompts?.org; // admin-only; undefined for non-admins
       this._error = false;
     } catch {
       this._error = true;
     }
     this.render();
+  }
+
+  async saveOrgPrompt(body) {
+    const status = this.querySelector(".settings-prompt-status");
+    if (status) status.textContent = "Saving…";
+    try {
+      await api("/prompts/org", { method: "PUT", body: { body } });
+      this._orgPrompt = body;
+      if (status) status.textContent = "Saved.";
+    } catch {
+      if (status) status.textContent = "Couldn’t save.";
+    }
   }
 
   render() {
@@ -50,10 +68,23 @@ class MzSettings extends HTMLElement {
           </div>`
       )
       .join("");
+    // Workspace-wide assistant instructions (admin) — appended to the agent's
+    // system prompt for every member, on top of per-role and personal layers.
+    const orgPrompt =
+      this._orgPrompt === undefined
+        ? ""
+        : `<section class="settings-prompt">
+            <h3>Assistant instructions</h3>
+            <p class="t-meta">Guidance the assistant follows across this workspace.</p>
+            <textarea class="input settings-prompt-input" rows="4" placeholder="e.g. We're a dental group; be precise about patient data.">${esc(this._orgPrompt || "")}</textarea>
+            <div class="settings-actions"><button type="button" class="btn btn-primary btn-sm" data-act="save-prompt">Save instructions</button><span class="settings-prompt-status t-meta" role="status"></span></div>
+          </section>`;
+
     this._bodyEl.innerHTML = `
       <mz-grid cols="2" align="start">${wsField}${settingFields}</mz-grid>
       ${this._settings.length ? "" : `<p class="t-meta settings-empty">No configurable settings for this workspace.</p>`}
-      ${ro || !this._settings.length ? "" : `<div class="settings-actions"><button type="button" class="btn btn-primary" data-act="save">Save changes</button><span class="settings-status t-meta" role="status"></span></div>`}`;
+      ${ro || !this._settings.length ? "" : `<div class="settings-actions"><button type="button" class="btn btn-primary" data-act="save">Save changes</button><span class="settings-status t-meta" role="status"></span></div>`}
+      ${orgPrompt}`;
 
     // The workspace name is read-only branding — show it, but never let it be edited.
     const wsInput = this.querySelector("#s-workspace");
@@ -61,6 +92,8 @@ class MzSettings extends HTMLElement {
 
     const save = this.querySelector('[data-act="save"]');
     if (save) save.addEventListener("click", () => this.save());
+    const savePrompt = this.querySelector('[data-act="save-prompt"]');
+    if (savePrompt) savePrompt.addEventListener("click", () => this.saveOrgPrompt(this.querySelector(".settings-prompt-input").value));
   }
 
   async save() {

@@ -467,7 +467,12 @@ class MzApp extends HTMLElement {
   // actionsHTML renders a button per action bound to `type` that the viewer's
   // roles permit; the server re-checks on invoke.
   actionsHTML(type) {
-    const acts = catalog.actionsOn(type).filter((a) => catalog.canRunAction(a, this._viewerRoles || []));
+    const acts = catalog
+      .actionsOn(type)
+      // Only actions that act ON this object (a uuid param the open record fills);
+      // create-style actions (no target) belong to the agent / collection level.
+      .filter((a) => (a.params || []).some((p) => p.type === "uuid"))
+      .filter((a) => catalog.canRunAction(a, this._viewerRoles || []));
     if (!acts.length) return "";
     const btns = acts
       .map(

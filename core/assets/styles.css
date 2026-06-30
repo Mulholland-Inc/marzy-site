@@ -3949,6 +3949,66 @@ body.is-dragging-card * {
   margin-top: var(--space-3);
 }
 
+/* assistant-instruction editors (settings org prompt, roles per-role prompt) */
+.settings-prompt,
+.roles-sec {
+  margin-top: var(--space-5);
+}
+.settings-prompt h3 {
+  margin: 0 0 var(--space-1);
+}
+.settings-prompt-input,
+.roles-prompt-input {
+  width: 100%;
+  margin-top: var(--space-2);
+  resize: vertical;
+}
+.roles-prompt-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+/* personal-context overlay (from the workspace menu) */
+.ctx-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(0, 0, 0, 0.4);
+}
+.ctx-card {
+  width: 100%;
+  max-width: 520px;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+.ctx-card h3 {
+  margin: 0 0 var(--space-1);
+}
+.ctx-input {
+  width: 100%;
+  margin-top: var(--space-3);
+  resize: vertical;
+}
+.ctx-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+.ctx-bar .ctx-status {
+  margin-right: auto;
+}
+
 @media (max-width: 860px) {
   .roles-head {
     flex-wrap: wrap;
