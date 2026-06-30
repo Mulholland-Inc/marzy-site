@@ -4,7 +4,6 @@
 import { icon } from "./icons.js";
 import { popIn, popOut } from "./motion.js";
 import { loadTenants, onUser, getUser, activeTenant, switchTo, signOutUser } from "../auth.js";
-import { openContextEditor } from "./context-editor.js";
 
 const CHEVRON = icon("chevron-down");
 const CHECK = icon("check");
@@ -61,7 +60,6 @@ class MzWorkspace extends HTMLElement {
           })
           .join("")}
         <div class="ws-menu-div"></div>
-        <button type="button" class="ws-action" data-act="context"><span class="ws-action-ico" aria-hidden="true">${icon("sliders-horizontal")}</span>Your assistant context</button>
         <button type="button" class="ws-action" data-act="signout"><span class="ws-action-ico" aria-hidden="true">${SIGNOUT}</span>Sign out</button>
       </div>`;
 
@@ -71,7 +69,6 @@ class MzWorkspace extends HTMLElement {
     this._menu.addEventListener("click", (e) => {
       const item = e.target.closest(".ws-item");
       if (item) { switchTo(item.dataset.tenant); return; }
-      if (e.target.closest('[data-act="context"]')) { this.close(); openContextEditor(); return; }
       if (e.target.closest('[data-act="signout"]')) { signOutUser(); return; }
     });
   }
