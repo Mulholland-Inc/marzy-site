@@ -7,38 +7,11 @@
 import { SPARK } from "./spark.js";
 import { icon } from "./icons.js";
 import { animate, stagger, reduce, SPRING_SOFT, EASE_OUT } from "./motion.js";
+import { api } from "../auth.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const esc = (s) =>
   String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-
-// Marzy's replies — plain conversational text, lightly keyword-routed so it
-// feels like she read the request. No steps, no embedded cards.
-const REPLIES = [
-  {
-    match: ["payroll", "pay"],
-    text: "June payroll is drafted from all 14 timesheets, with hours matched to every employee and taxes and deductions applied. Totals line up against last month within the usual range, so there's nothing unusual to flag — it's ready for your approval whenever you are.",
-  },
-  {
-    match: ["invoice", "reconcile", "books", "ledger"],
-    text: "I reconciled all 412 transactions for the period against the ledger, and 409 matched cleanly on the first pass. Three are flagged for a second look — a duplicated vendor payment and two charges missing a receipt. Want me to walk you through them?",
-  },
-  {
-    match: ["onboard", "hire", "new hire"],
-    text: "I've kicked off onboarding for the new hire and created their Gusto profile. The offer letter and tax forms are signed, and I've requested the I-9 and direct-deposit details. Accounts and orientation are the last steps — want me to schedule orientation now?",
-  },
-  {
-    match: ["summary", "summar", "week", "status", "standup"],
-    text: "Here's where things stand this week: payroll is on track, onboarding is at 42%, and 412 transactions synced overnight. A couple of items are still in review, but nothing is blocked on you right now. I'll keep moving on the rest and flag anything that needs a decision.",
-  },
-];
-const DEFAULT_REPLY =
-  "Here's what I pulled together. I checked the systems you've connected, gathered the relevant records, and drafted a plan I can run on your say-so. If it looks right, I'll take it from here and only loop you in when something needs your call.";
-
-function replyFor(text) {
-  const t = text.toLowerCase();
-  return (REPLIES.find((p) => p.match.some((m) => t.includes(m))) || { text: DEFAULT_REPLY }).text;
-}
 
 class MzChats extends HTMLElement {
   connectedCallback() {
@@ -118,13 +91,18 @@ class MzChats extends HTMLElement {
 
     if (!this._conversing) this.dockComposer();
 
-    // first reply embeds a data table, the second an image — below the text
-    this._replyCount = (this._replyCount || 0) + 1;
-    const embed = this._replyCount === 1 ? "mz-embed-table" : this._replyCount === 2 ? "mz-embed-image" : null;
-
     this.addUserMessage(text, fileCount); // your message
     await sleep(reduce ? 0 : 240);
-    await this.addMarzyReply(replyFor(text), embed); // her reply, streamed in
+    this._history = this._history || [];
+    let reply;
+    try {
+      const res = await api("/chat", { method: "POST", body: { text, history: this._history } });
+      reply = (res && res.reply) || "…";
+    } catch {
+      reply = "Sorry — I couldn’t reach the assistant just now.";
+    }
+    await this.addMarzyReply(reply, null); // her reply, streamed in
+    this._history.push({ Author: "you", Text: text, FromBot: false }, { Author: "", Text: reply, FromBot: true });
 
     this.setSending(false);
     this._busy = false;

@@ -3,6 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Resolve relative asset paths from root so client routes like /deal/123
+         (served the SPA shell on refresh) load /core/… not /deal/core/…. -->
+    <base href="/" />
     <title>Dashboard — Marzy</title>
     <meta name="description" content="A Marzy workspace dashboard." />
     <meta name="theme-color" content="#ffffff" />

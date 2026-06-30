@@ -1,38 +1,49 @@
-// <mz-view-grid></mz-view-grid>, a Notion-style gallery of cards over the shared
-// data. Renders from this._records (set via setData by mz-collection's toolbar
-// query), defaulting to all RECORDS.
-import { RECORDS, byId, emitSelect, PRIO } from "./data.js";
+// <mz-view-grid></mz-view-grid>, a gallery of cards over a real object type.
+// Fed by setData(rows, { type, columns }); a card click emits mz-select.
+import { display } from "../catalog.js";
+
+const esc = (s) =>
+  String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 class MzViewGrid extends HTMLElement {
   connectedCallback() {
     this.classList.add("view");
     this.addEventListener("click", (e) => {
       const card = e.target.closest(".vcard[data-id]");
-      if (card) emitSelect(this, byId(card.dataset.id));
+      if (!card) return;
+      const row = (this._rows || []).find((r) => String(r.id) === card.dataset.id);
+      if (row) this.dispatchEvent(new CustomEvent("mz-select", { detail: row, bubbles: true }));
     });
     this.render();
   }
-  setData(records) {
-    this._records = records;
+  setData(rows, ctx) {
+    this._rows = rows || [];
+    this._ctx = ctx || {};
     this.render();
   }
   render() {
-    const recs = this._records || RECORDS;
-    this.innerHTML = recs.length
-      ? `<div class="vgrid">${recs
+    const cols = this._ctx?.columns;
+    const rows = this._rows || [];
+    if (!cols) {
+      this.innerHTML = "";
+      return;
+    }
+    this.innerHTML = rows.length
+      ? `<div class="vgrid">${rows
           .map(
-            (r) => `<div class="vcard" data-id="${r.id}">
-        <div class="vcard-title">${r.title}</div>
-        <dl class="vcard-props">
-          <div class="vcard-row"><dt>Status</dt><dd>${r.status}</dd></div>
-          <div class="vcard-row"><dt>Assignee</dt><dd>${r.assignee}</dd></div>
-          <div class="vcard-row"><dt>Priority</dt><dd>${PRIO[r.priority]}</dd></div>
-          <div class="vcard-row"><dt>Due</dt><dd>${r.due}</dd></div>
-        </dl>
+            (r) => `<div class="vcard" data-id="${esc(r.id)}">
+        <div class="vcard-title">${esc(r[cols.title.name])}</div>
+        <dl class="vcard-props">${cols.cols
+          .slice(0, 4)
+          .map((c) => {
+            const v = display(r, c);
+            return `<div class="vcard-row"><dt>${esc(c.label)}</dt><dd>${v ? esc(v) : "—"}</dd></div>`;
+          })
+          .join("")}</dl>
       </div>`
           )
           .join("")}</div>`
-      : `<mz-empty heading="Nothing here">No items match the current filters.</mz-empty>`;
+      : `<mz-empty heading="Nothing here yet">No ${esc(this._ctx.type || "items")} match the current filters.</mz-empty>`;
   }
 }
 customElements.define("mz-view-grid", MzViewGrid);

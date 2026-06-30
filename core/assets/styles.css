@@ -778,6 +778,9 @@ textarea.input {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }
 .sidebar-item {
   display: flex;
@@ -6774,4 +6777,38 @@ body.is-dragging-card * {
 }
 .cd-day.is-selected.is-today {
   color: #fff;
+}
+
+/* Catalog detail-pane edit inputs (write path). */
+.ios-input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  text-align: right;
+  font: inherit;
+  color: var(--color-ink, #111);
+  padding: 2px 0;
+}
+.ios-input:focus {
+  outline: none;
+}
+.pane-title-edit {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border, #e5e5e5);
+  border-radius: var(--radius-sm, 8px);
+  padding: 6px 10px;
+  margin: 2px 0;
+  font: inherit;
+  font-weight: 600;
+}
+.pane-edit-bar {
+  display: flex;
+  gap: var(--space-2, 8px);
+  align-items: center;
+}
+.chain-empty {
+  padding: var(--space-2, 8px) 0;
+  color: var(--color-ink-2, #888);
 }

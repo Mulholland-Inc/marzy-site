@@ -1,38 +1,28 @@
-// <mz-users></mz-users> — the access-management page: who can get into this
-// workspace, their role, and their status. Change a role inline, suspend/
-// reactivate, or remove someone. Self-contained over a sample list.
+// <mz-users></mz-users> — the workspace's people, backed by WorkOS organization
+// memberships (GET /members) with roles from GET /roles. Invite by email, change
+// a member's role inline, or remove them. WorkOS is the source of truth — there's
+// no local users table.
 import { icon } from "./icons.js";
-import { popIn, popOut } from "./motion.js";
-
-const ROLES = ["Admin", "Member", "Viewer"];
-
-// `prompt` is the per-person context Marzy uses when acting on their behalf.
-const USERS = [
-  { id: 1, name: "Dana Reyes", email: "dana@lazarco.com", role: "Admin", last: "2026-06-24", prompt: "Head of Finance. Approves payroll and the monthly close; owns the QuickBooks connection. Prefers a short summary before anything is filed." },
-  { id: 2, name: "Marcus Lin", email: "marcus@lazarco.com", role: "Member", last: "2026-06-23", prompt: "Operations lead. Handles vendor onboarding and the Gusto setup." },
-  { id: 3, name: "Priya Anand", email: "priya@lazarco.com", role: "Member", last: "2026-06-22", prompt: "" },
-  { id: 4, name: "Sam Okafor", email: "sam@lazarco.com", role: "Member", last: "2026-06-20", prompt: "" },
-  { id: 5, name: "Jordan Wu", email: "jordan@lazarco.com", role: "Viewer", last: "2026-06-18", prompt: "" },
-  { id: 6, name: "Alex Stone", email: "alex@lazarco.com", role: "Member", last: "2026-05-12", prompt: "" },
-];
+import { api } from "../auth.js";
 
 const esc = (s) =>
-  String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const initials = (name) => name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
-const fmtDate = (iso) =>
-  iso ? new Date(iso + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—";
-
-const roleSelect = (u) => `
-  <mz-select class="users-role" size="sm" data-role="${u.id}" value="${esc(u.role)}" aria-label="Role for ${esc(u.name)}">
-    ${ROLES.map((r) => `<option>${r}</option>`).join("")}
-  </mz-select>`;
+  String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const initials = (name, email) =>
+  String(name || email || "?")
+    .split(/[\s@.]+/)
+    .map((w) => w[0])
+    .filter(Boolean)
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+const STATUS_LABEL = { active: "Active", inactive: "Inactive", pending: "Invited" };
 
 class MzUsers extends HTMLElement {
   connectedCallback() {
     this.classList.add("users");
-    this._users = USERS.map((u) => ({ ...u }));
     this._search = "";
-    this._seq = 100;
+    this._members = [];
+    this._roles = [];
 
     this.innerHTML = `
       <div class="users-toolbar">
@@ -41,170 +31,106 @@ class MzUsers extends HTMLElement {
           <input type="search" class="search-input" placeholder="Search people" aria-label="Search people" />
         </div>
         <form class="users-add">
-          <input type="email" class="input users-add-email" placeholder="name@company.com" aria-label="Email to add" />
-          <mz-select class="users-role users-add-role" size="sm" value="Member" aria-label="Role">
-            ${ROLES.map((r) => `<option>${r}</option>`).join("")}
-          </mz-select>
-          <button type="submit" class="btn btn-primary btn-sm">${icon("plus")}<span>Add user</span></button>
+          <input type="email" class="input users-add-email" placeholder="name@company.com" aria-label="Email to invite" />
+          <mz-select class="users-role users-add-role" size="sm" aria-label="Role"></mz-select>
+          <button type="submit" class="btn btn-primary btn-sm">${icon("plus")}<span>Invite</span></button>
         </form>
       </div>
       <div class="table-card">
         <div class="table-scroll">
           <table class="table">
-            <thead>
-              <tr>
-                <th>Member</th>
-                <th>Role</th>
-                <th>Last active</th>
-                <th aria-label="Actions"></th>
-              </tr>
-            </thead>
+            <thead><tr><th>Member</th><th>Role</th><th>Status</th><th aria-label="Actions"></th></tr></thead>
             <tbody class="users-body"></tbody>
           </table>
-        </div>
-      </div>
-      <div class="users-prompt-pop" hidden role="dialog" aria-label="Edit person context">
-        <span class="upp-title"></span>
-        <textarea class="upp-text" rows="5" placeholder="Tell Marzy who this person is and how to work with them — their role, what they own, how they like updates…" aria-label="Person context"></textarea>
-        <div class="upp-foot">
-          <button type="button" class="btn btn-primary btn-sm upp-done">Done</button>
         </div>
       </div>`;
 
     this._body = this.querySelector(".users-body");
-    this._pop = this.querySelector(".users-prompt-pop");
-    this._popTitle = this.querySelector(".upp-title");
-    this._popText = this.querySelector(".upp-text");
-    this._promptUser = null;
-
-    this._popText.addEventListener("input", () => {
-      if (this._promptUser) this._promptUser.prompt = this._popText.value;
-    });
-    this.querySelector(".upp-done").addEventListener("click", () => this.closePrompt());
-
     this.querySelector(".search-input").addEventListener("input", (e) => {
       this._search = e.target.value;
       this.render();
     });
     this.querySelector(".users-add").addEventListener("submit", (e) => {
       e.preventDefault();
-      this.addUser();
+      this.invite();
     });
     this._body.addEventListener("change", (e) => {
       const sel = e.target.closest("[data-role]");
-      if (sel) this.byId(sel.dataset.role).role = sel.value;
+      if (sel) this.setRole(sel.dataset.role, sel.value);
     });
     this._body.addEventListener("click", (e) => {
-      const promptBtn = e.target.closest("[data-act='prompt']");
-      if (promptBtn) {
-        this.openPrompt(promptBtn);
-        return;
-      }
       const btn = e.target.closest("[data-act='remove']");
-      if (!btn) return;
-      this._users = this._users.filter((u) => String(u.id) !== btn.dataset.id);
-      this.render();
+      if (btn) this.remove(btn.dataset.id);
     });
 
+    this.load();
+  }
+
+  async load() {
+    try {
+      const [m, r] = await Promise.all([api("/members"), api("/roles")]);
+      this._members = m.members || [];
+      this._roles = r.roles || [];
+      this._error = false;
+    } catch {
+      this._error = true;
+    }
+    const addRole = this.querySelector(".users-add-role");
+    if (addRole) addRole.innerHTML = this.roleOptions();
     this.render();
   }
 
-  byId(id) {
-    return this._users.find((u) => String(u.id) === String(id));
+  roleOptions(selected) {
+    return this._roles.map((r) => `<option value="${esc(r.slug)}"${r.slug === selected ? " selected" : ""}>${esc(r.name)}</option>`).join("");
   }
 
-  // ── Per-person prompt editor (hovering pane) ───────────────────
-  openPrompt(btn) {
-    const u = this.byId(btn.dataset.id);
-    if (!u) return;
-    this.unbindDismiss();
-    this._promptUser = u;
-    this._popTitle.innerHTML = `What should Marzy know about <b>${esc(u.name)}</b>?`;
-    this._popText.value = u.prompt || "";
-    this._pop.hidden = false;
-    this.positionPop(btn);
-    popIn(this._pop, -1);
-    this._popText.focus();
-    this.bindDismiss();
-  }
-
-  positionPop(btn) {
-    const r = btn.getBoundingClientRect();
-    const pop = this._pop;
-    const w = pop.offsetWidth || 320;
-    const h = pop.offsetHeight || 220;
-    let left = Math.max(12, r.right - w); // right-align under the button
-    let top = r.bottom + 8;
-    if (top + h > window.innerHeight - 12) top = Math.max(12, r.top - h - 8); // flip above if tight
-    pop.style.left = `${left}px`;
-    pop.style.top = `${top}px`;
-  }
-
-  closePrompt() {
-    if (this._pop.hidden) return;
-    this.unbindDismiss();
-    this._promptUser = null;
-    Promise.resolve(popOut(this._pop)).then(() => (this._pop.hidden = true));
-  }
-
-  bindDismiss() {
-    this._onDoc = (e) => {
-      if (!this._pop.contains(e.target) && !e.target.closest("[data-act='prompt']")) this.closePrompt();
-    };
-    this._onKey = (e) => {
-      if (e.key === "Escape") this.closePrompt();
-    };
-    this._onScroll = () => this.closePrompt();
-    // defer so the opening click doesn't immediately dismiss it
-    setTimeout(() => document.addEventListener("click", this._onDoc), 0);
-    document.addEventListener("keydown", this._onKey);
-    window.addEventListener("scroll", this._onScroll, true);
-    window.addEventListener("resize", this._onScroll);
-  }
-
-  unbindDismiss() {
-    if (this._onDoc) document.removeEventListener("click", this._onDoc);
-    if (this._onKey) document.removeEventListener("keydown", this._onKey);
-    if (this._onScroll) {
-      window.removeEventListener("scroll", this._onScroll, true);
-      window.removeEventListener("resize", this._onScroll);
-    }
-  }
-
-  addUser() {
+  async invite() {
     const emailEl = this.querySelector(".users-add-email");
     const email = emailEl.value.trim();
     if (!email) return;
     const role = this.querySelector(".users-add-role").value;
-    const name = email
-      .split("@")[0]
-      .split(/[.\-_]/)
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
-    this._users.push({ id: ++this._seq, name, email, role, last: null });
-    emailEl.value = "";
-    this.render();
+    try {
+      await api("/members/invite", { method: "POST", body: { email, role } });
+      emailEl.value = "";
+      this.load();
+    } catch {}
+  }
+
+  async setRole(id, role) {
+    try {
+      await api(`/members/${encodeURIComponent(id)}`, { method: "PATCH", body: { role } });
+    } catch {
+      this.load();
+    }
+  }
+
+  async remove(id) {
+    try {
+      await api(`/members/${encodeURIComponent(id)}`, { method: "DELETE" });
+      this.load();
+    } catch {}
   }
 
   render() {
+    if (this._error) {
+      this._body.innerHTML = `<tr><td colspan="4" class="table-empty">Couldn’t load members.</td></tr>`;
+      return;
+    }
     const term = this._search.trim().toLowerCase();
     const rows = term
-      ? this._users.filter((u) => `${u.name} ${u.email} ${u.role}`.toLowerCase().includes(term))
-      : this._users;
+      ? this._members.filter((u) => `${u.name} ${u.email} ${u.role}`.toLowerCase().includes(term))
+      : this._members;
     if (!rows.length) {
-      this._body.innerHTML = `<tr><td colspan="4" class="table-empty">No people match your search.</td></tr>`;
+      this._body.innerHTML = `<tr><td colspan="4" class="table-empty">${this._members.length ? "No people match your search." : "No members yet."}</td></tr>`;
       return;
     }
     this._body.innerHTML = rows
       .map(
         (u) => `<tr>
-          <td><div class="cell-user"><span class="avatar" aria-hidden="true">${initials(u.name)}</span><span class="cell-user-text"><b>${esc(u.name)}</b><small class="t-caption">${esc(u.email)}</small></span></div></td>
-          <td>${roleSelect(u)}</td>
-          <td class="cell-muted">${fmtDate(u.last)}</td>
-          <td><div class="row-actions">
-            <button class="btn-icon" type="button" data-act="prompt" data-id="${u.id}" title="Edit what Marzy knows about ${esc(u.name)}" aria-label="Edit prompt for ${esc(u.name)}">${icon("message-square")}</button>
-            <button class="btn-icon" type="button" data-act="remove" data-id="${u.id}" title="Remove" aria-label="Remove ${esc(u.name)}">${icon("trash-2")}</button>
-          </div></td>
+          <td><div class="cell-user"><span class="avatar" aria-hidden="true">${initials(u.name, u.email)}</span><span class="cell-user-text"><b>${esc(u.name || u.email)}</b><small class="t-caption">${esc(u.email)}</small></span></div></td>
+          <td><mz-select class="users-role" size="sm" data-role="${esc(u.id)}" value="${esc(u.role)}" aria-label="Role for ${esc(u.name || u.email)}">${this.roleOptions(u.role)}</mz-select></td>
+          <td><span class="badge badge-${u.status === "active" ? "ok" : "neutral"}">${STATUS_LABEL[u.status] || esc(u.status)}</span></td>
+          <td><div class="row-actions"><button class="btn-icon" type="button" data-act="remove" data-id="${esc(u.id)}" title="Remove" aria-label="Remove ${esc(u.name || u.email)}">${icon("trash-2")}</button></div></td>
         </tr>`
       )
       .join("");

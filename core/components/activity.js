@@ -1,35 +1,73 @@
-// <mz-activity></mz-activity>, a detailed activity timeline card (app). Each
-// entry shows the actor (Marzy or a teammate), a rich action line with the
-// subject, an optional detail, and a timestamp — connected as a timeline.
+// <mz-activity></mz-activity>, the workspace activity timeline — the recent
+// commits across every object (GET /activity), newest first. Each entry shows
+// the actor (Marzy when system-driven, else the person), what changed, and when.
 import { SPARK } from "./spark.js";
+import { api } from "../auth.js";
+import { label } from "../catalog.js";
 
-const initials = (n) => n.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+const esc = (s) =>
+  String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const initials = (n) =>
+  String(n || "?")
+    .split(/[\s@.]+/)
+    .map((w) => w[0])
+    .filter(Boolean)
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+const relTime = (iso) => {
+  const t = Date.parse(iso);
+  if (!t) return "";
+  const s = Math.max(1, (Date.now() - t) / 1000);
+  if (s < 60) return "just now";
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  return `${Math.floor(s / 86400)}d ago`;
+};
 
-// [actor, isMarzy, action-html, detail, time]
-const FEED = [
-  ["Marzy", true, "Drafted <b>June payroll</b> from 14 timesheets", "Hours matched to every employee — awaiting your approval.", "2m ago"],
-  ["Dana Reyes", false, "Approved <b>Pay instructions, batch 14</b>", "", "40m ago"],
-  ["Marzy", true, "Reconciled <b>412 transactions</b> in the March books", "Flagged 3 for review; the rest closed clean.", "1h ago"],
-  ["Marzy", true, "Synced <b>QuickBooks</b>", "142 records updated.", "3h ago"],
-  ["Priya Anand", false, "Renewed the <b>QuickBooks</b> connection", "", "5h ago"],
-  ["Marzy", true, "Filed <b>2 prior-auth requests</b> with the payer", "", "Yesterday"],
-];
+const action = (c) => {
+  const t = `<b>${esc(label(c.type))}</b>`;
+  if (c.op === "create") return `Created a ${t}`;
+  if (c.op === "delete") return `Deleted a ${t}`;
+  const fields = Object.keys(c.changes || {})
+    .map(label)
+    .join(", ");
+  return `Updated a ${t}${fields ? ` — ${esc(fields)}` : ""}`;
+};
 
 class MzActivity extends HTMLElement {
   connectedCallback() {
     this.classList.add("card");
-    const items = FEED.map(
-      ([actor, isMarzy, action, detail, time]) => `
-      <li class="feed-item">
-        <span class="feed-avatar ${isMarzy ? "feed-avatar-marzy" : ""}" aria-hidden="true">${isMarzy ? SPARK : initials(actor)}</span>
-        <div class="feed-body">
-          <p class="feed-action"><span class="feed-actor">${actor}</span> ${action}</p>
-          ${detail ? `<p class="feed-detail">${detail}</p>` : ""}
-          <time class="feed-time">${time}</time>
-        </div>
-      </li>`
-    ).join("");
-    this.innerHTML = `<h3>Activity</h3><ol class="feed">${items}</ol>`;
+    this.innerHTML = `<h3>Activity</h3><ol class="feed"></ol>`;
+    this._feed = this.querySelector(".feed");
+    this.load();
+  }
+
+  async load() {
+    let commits;
+    try {
+      commits = await api("/activity");
+    } catch {
+      this._feed.innerHTML = `<mz-empty heading="Couldn’t load activity">Try again in a moment.</mz-empty>`;
+      return;
+    }
+    if (!commits.length) {
+      this._feed.innerHTML = `<mz-empty heading="No activity yet">Changes to objects show up here.</mz-empty>`;
+      return;
+    }
+    this._feed.innerHTML = commits
+      .map((c) => {
+        const who = c.author || "Marzy";
+        const marzy = who === "Marzy";
+        return `<li class="feed-item">
+          <span class="feed-avatar ${marzy ? "feed-avatar-marzy" : ""}" aria-hidden="true">${marzy ? SPARK : initials(who)}</span>
+          <div class="feed-body">
+            <p class="feed-action"><span class="feed-actor">${esc(who)}</span> ${action(c)}</p>
+            <time class="feed-time">${esc(relTime(c.created_at))}</time>
+          </div>
+        </li>`;
+      })
+      .join("");
   }
 }
 customElements.define("mz-activity", MzActivity);

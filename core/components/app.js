@@ -1,142 +1,66 @@
 // <mz-app></mz-app>, a full-screen dashboard application: a left sidebar, a
 // scrollable main area, and a full-height detail pane on the right that appears
 // only when an object is open. On mobile the sidebar becomes a hamburger drawer
-// and the pane becomes an overlay. Object pages render an <mz-collection>; the
-// app owns the pane and fills it from collections' mz-select / mz-new events.
-import { STATUSES, RECORDS, PRIO, TAGS, prioHTML, whoHTML, initials } from "./data.js";
+// and the pane becomes an overlay.
+//
+// It is catalog-driven: the sidebar's object sections come from GET /ontology,
+// each rendering an <mz-collection> over a real object type; the detail pane
+// shows a real record's properties (FKs resolved via _links) and its version
+// history (GET /objects/{type}/{id}/history). The app owns the pane and fills it
+// from collections' mz-select / mz-new events.
 import { SPARK } from "./spark.js";
 import { icon } from "./icons.js";
 import { animate, stagger, SPRING_SOFT, EASE_OUT, EASE_IN, reduce } from "./motion.js";
-import { requireAuth } from "../auth.js";
+import { requireAuth, api } from "../auth.js";
+import * as catalog from "../catalog.js";
 
 const esc = (s) =>
-  String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-const ICON = {
-  chats: icon("message-square"),
-  activity: icon("activity"),
-  tasks: icon("square-kanban"),
-  projects: icon("layout-grid"),
-  calendar: icon("calendar"),
-  connectors: icon("plug"),
-  users: icon("users"),
-  roles: icon("shield"),
-  settings: icon("settings"),
-};
 const BURGER = icon("menu");
 const COLLAPSE = icon("panel-left");
-const PENCIL = icon("pencil");
-const COPY = icon("copy");
 const TRASH = icon("trash-2");
+const PENCIL = icon("pencil");
 
-const people = [...new Set(RECORDS.map((r) => r.assignee))];
+const initials = (name) =>
+  String(name || "")
+    .split(/[\s@.]+/)
+    .map((w) => w[0])
+    .filter(Boolean)
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
-// Editable detail-pane fields. `opts` returns the choices for a select; `text`
-// fields render a plain input. valueHTML/valueText render the read-only view and
-// the plain-text used in the diff.
-const FIELD_DEFS = [
-  { key: "status", label: "Status", opts: () => STATUSES },
-  { key: "priority", label: "Priority", opts: () => ["high", "medium", "low"], optLabel: (o) => PRIO[o] },
-  { key: "assignee", label: "Assignee", opts: () => people },
-  { key: "tag", label: "Team", opts: () => TAGS },
-  { key: "due", label: "Due", date: true },
-];
-const valueHTML = (key, v) =>
-  key === "status" ? `<span class="badge badge-neutral">${esc(v)}</span>`
-  : key === "priority" ? prioHTML(v)
-  : key === "assignee" ? whoHTML(v)
-  : esc(String(v));
-const valueText = (key, v) => (key === "priority" ? PRIO[v] : String(v));
-
-// Due is stored as a short display string ("Jun 28"); the date <input> needs ISO.
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const dueToISO = (due) => {
-  const m = String(due).match(/([A-Za-z]{3})\s+(\d{1,2})/);
-  if (!m) return "";
-  const mi = MONTHS.indexOf(m[1]);
-  return mi < 0 ? "" : `2026-${String(mi + 1).padStart(2, "0")}-${String(Number(m[2])).padStart(2, "0")}`;
-};
-const isoToDue = (iso) => {
-  const m = String(iso).match(/^\d{4}-(\d{2})-(\d{2})$/);
-  return m ? `${MONTHS[Number(m[1]) - 1]} ${Number(m[2])}` : String(iso);
+// A coarse relative time for the version history (the commit's created_at).
+const relTime = (iso) => {
+  const t = Date.parse(iso);
+  if (!t) return "";
+  const s = Math.max(1, (Date.now() - t) / 1000);
+  if (s < 60) return "just now";
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  return `${Math.floor(s / 86400)}d ago`;
 };
 
-// Compact custom controls — searchable dropdown / calendar (read via `.value`).
-const editControl = (f, v) => {
-  if (f.date) return `<mz-datepicker class="ios-edit" size="sm" data-field="${f.key}" value="${dueToISO(v)}"></mz-datepicker>`;
-  return `<mz-select class="ios-edit" size="sm" data-field="${f.key}" value="${esc(String(v))}">${f
-    .opts()
-    .map((o) => `<option value="${esc(o)}">${esc(f.optLabel ? f.optLabel(o) : o)}</option>`)
-    .join("")}</mz-select>`;
-};
-
-const VIEWS = [
-  { id: "chats", label: "Chat", render: () => `<mz-chats></mz-chats>` },
-  { id: "activity", label: "Activity", render: () => `<mz-activity></mz-activity>` },
-  { id: "tasks", label: "Tasks", collection: { singular: "task", view: "board", views: "board,table,files,calendar" } },
-  { id: "projects", label: "Projects", collection: { singular: "project", view: "grid", views: "grid,gallery,table,board,month" } },
-  { id: "calendar", label: "Calendar", render: () => `<mz-calendar></mz-calendar>` },
-  { id: "users", label: "Users", render: () => `<mz-users></mz-users>` },
-  { id: "roles", label: "Access", render: () => `<mz-roles></mz-roles>` },
-  {
-    id: "settings",
-    label: "Settings",
-    render: () => `
-      <mz-tabs>
-        <mz-tab-panel label="Workspace">
-          <mz-grid cols="2" align="start">
-            <mz-field label="Workspace name" placeholder="Lazarco Inc." for="s-name"></mz-field>
-            <mz-field label="Billing email" type="email" placeholder="ops@lazarco.com" for="s-email"></mz-field>
-            <mz-select label="Timezone">
-              <option>Pacific (PT)</option><option>Mountain (MT)</option>
-              <option>Central (CT)</option><option>Eastern (ET)</option>
-            </mz-select>
-            <mz-select label="Default view">
-              <option>Board</option><option>Table</option><option>Grid</option>
-            </mz-select>
-          </mz-grid>
-        </mz-tab-panel>
-        <mz-tab-panel label="Connections">
-          <mz-connectors></mz-connectors>
-        </mz-tab-panel>
-        <mz-tab-panel label="Automation">
-          <mz-stack gap="3">
-            <mz-switch label="Auto-run trusted workflows" checked></mz-switch>
-            <mz-switch label="Require approval over the limit" checked></mz-switch>
-            <mz-switch label="Email me when review is needed"></mz-switch>
-          </mz-stack>
-        </mz-tab-panel>
-        <mz-tab-panel label="Members">
-          <mz-stack gap="3">
-            <mz-switch label="Allow members to invite others"></mz-switch>
-            <mz-switch label="Require 2-factor authentication" checked></mz-switch>
-            <mz-actions><mz-btn variant="outline" size="sm">Manage members</mz-btn></mz-actions>
-          </mz-stack>
-        </mz-tab-panel>
-        <mz-tab-panel label="Plan &amp; billing">
-          <mz-stack gap="3">
-            <p>You're on the <b>Team</b> plan, billed monthly.</p>
-            <mz-actions><mz-btn variant="outline" size="sm">Change plan</mz-btn></mz-actions>
-          </mz-stack>
-        </mz-tab-panel>
-      </mz-tabs>`,
-  },
+// The fixed (non–object-type) sections. Object-type sections are spliced in
+// between Activity and Calendar once the catalog loads.
+const FIXED = [
+  { id: "chats", label: "Chat", ic: "message-square", render: () => `<mz-chats></mz-chats>` },
+  { id: "activity", label: "Activity", ic: "activity", render: () => `<mz-activity></mz-activity>` },
+  { id: "calendar", label: "Calendar", ic: "calendar", render: () => `<mz-calendar></mz-calendar>` },
+  { id: "users", label: "Users", ic: "users", render: () => `<mz-users></mz-users>` },
+  { id: "roles", label: "Access", ic: "shield", render: () => `<mz-roles></mz-roles>` },
+  { id: "settings", label: "Settings", ic: "settings", render: settingsHTML },
 ];
 
 class MzApp extends HTMLElement {
   connectedCallback() {
-    // Gate the dashboard: signed-out visitors are bounced to the login screen.
     requireAuth();
     this.classList.add("app");
-    this._singular = "item";
-    const nav = VIEWS.map(
-      (v, i) =>
-        `<button class="sidebar-item${i === 0 ? " is-active" : ""}" type="button" data-view="${v.id}" title="${v.label}">${ICON[v.id]}<span>${v.label}</span>${v.dot ? `<span class="sidebar-dot"></span>` : ""}</button>`
-    ).join("");
     this.innerHTML = `
       <aside class="sidebar">
         <mz-workspace></mz-workspace>
-        <nav class="sidebar-nav" aria-label="Sidebar">${nav}</nav>
+        <nav class="sidebar-nav" aria-label="Sidebar"></nav>
         <button class="sidebar-item sidebar-collapse" type="button" aria-label="Collapse sidebar" title="Collapse sidebar">${COLLAPSE}<span>Collapse</span></button>
       </aside>
       <div class="app-main">
@@ -168,28 +92,20 @@ class MzApp extends HTMLElement {
     this.querySelector(".sidebar-collapse").addEventListener("click", () => this.toggleRail());
     this._scrim.addEventListener("click", () => {
       this.closeNav();
-      this.hidePane();
+      if (this.classList.contains("pane-open")) this.closeDetail();
     });
-    // collections + views bubble these up to the app, which owns the pane
     this.addEventListener("mz-select", (e) => this.openDetail(e.detail));
     this.addEventListener("mz-new", () => this.openCreate());
     this._pane.addEventListener("click", (e) => {
-      if (e.target.closest(".pane-cancel")) {
-        this.hidePane();
-        return;
-      }
-      const act = e.target.closest("[data-pane-act]");
-      if (!act) return;
-      const a = act.dataset.paneAct;
+      if (e.target.closest(".pane-cancel")) return this.closeDetail();
+      const a = e.target.closest("[data-pane-act]")?.dataset.paneAct;
       if (a === "edit") this.enterEdit();
       else if (a === "save") this.saveEdit();
       else if (a === "cancel") this.cancelEdit();
-      else if (a === "delete") this.hidePane();
+      else if (a === "delete") this.deleteRecord();
+      else if (a === "create") this.submitCreate();
     });
 
-    this.show(VIEWS[0].id);
-
-    // restore the rail preference (desktop only — mobile uses the drawer)
     this._collapsed = false;
     let railPref = null;
     try {
@@ -197,36 +113,362 @@ class MzApp extends HTMLElement {
     } catch {}
     if (railPref === "1" && matchMedia("(min-width: 901px)").matches) this.setRail(true, false);
 
+    this.init();
+  }
+
+  async init() {
+    try {
+      await catalog.load();
+    } catch {
+      this._body.innerHTML = `<mz-empty heading="Couldn’t load the workspace">The catalog failed to load. Try refreshing.</mz-empty>`;
+      return;
+    }
+    // sections: Chat, Activity, <one per browsable type>, Calendar, Users, Access,
+    // Settings. browsable() already hides interface implementers (you reach them
+    // through the interface); we additionally drop infra types: users is the
+    // identity projection and commit is the version-history log.
+    const HIDDEN = new Set(["users", "commit"]);
+    const typeSecs = catalog
+      .browsable()
+      .filter((t) => !HIDDEN.has(t.name))
+      .map((t) => ({ id: "type:" + t.name, label: catalog.label(t.name), ic: t.icon, type: t.name }));
+    this._sections = [...FIXED.slice(0, 2), ...typeSecs, ...FIXED.slice(2)];
+
+    this._nav.innerHTML = this._sections
+      .map(
+        (s, i) =>
+          `<button class="sidebar-item${i === 0 ? " is-active" : ""}" type="button" data-view="${s.id}" title="${esc(s.label)}">${icon(s.ic)}<span>${esc(s.label)}</span></button>`
+      )
+      .join("");
+
+    addEventListener("popstate", () => this.route());
+    this.route();
     this.buildIn();
   }
+
+  // ── routing: URL ⟷ view (so pages are linkable + refresh-safe) ────────────────
+
+  // The URL segment for a section: object types use their name (/deal), fixed
+  // sections a stable slug (/chat, /access, …).
+  sectionPath(sec) {
+    if (sec.type) return "/" + sec.type;
+    return { chats: "/chat", activity: "/activity", calendar: "/calendar", users: "/users", roles: "/access", settings: "/settings" }[sec.id] || "/" + sec.id;
+  }
+
+  sectionForSeg(seg) {
+    return (this._sections || []).find((s) => this.sectionPath(s) === "/" + seg);
+  }
+
+  navigate(path) {
+    if (location.pathname !== path) history.pushState({}, "", path);
+  }
+
+  // route renders the view named by the current URL (on load + back/forward),
+  // without pushing a new history entry.
+  route() {
+    const parts = location.pathname.replace(/^\/+|\/+$/g, "").split("/");
+    const sec = (parts[0] && this.sectionForSeg(parts[0])) || this._sections[0];
+    this._nav.querySelectorAll(".sidebar-item").forEach((b) => b.classList.toggle("is-active", b.dataset.view === sec.id));
+    this.show(sec.id, false);
+    if (sec.type && parts[1]) this.openDetailById(sec.type, parts[1]);
+  }
+
+  async openDetailById(type, id) {
+    try {
+      const row = await api(`/objects/${type}/${id}`);
+      if (row) this.openDetail(row, false);
+    } catch {}
+  }
+
+  closeDetail() {
+    this.hidePane();
+    if (this._view) this.navigate(this.sectionPath(this._view));
+  }
+
+  section(id) {
+    return (this._sections || []).find((s) => s.id === id) || this._sections?.[0];
+  }
+
+  // ── view rendering ────────────────────────────────────────────────────────────
+
+  show(id, push = true) {
+    const sec = this.section(id);
+    if (!sec) return;
+    this._view = sec;
+    this._barTitle.textContent = sec.label;
+    const head = `<header class="app-head">
+        <nav class="crumbs" aria-label="Breadcrumb">${this.crumbsHTML(sec, null)}</nav>
+        <mz-notifications></mz-notifications>
+      </header>`;
+    this._body.innerHTML = sec.type
+      ? head + `<mz-collection type="${sec.type}" view="table" views="table"></mz-collection>`
+      : head + sec.render();
+    this._body.scrollTop = 0;
+    this.hidePane();
+    if (push) this.navigate(this.sectionPath(sec));
+  }
+
+  crumbsHTML(sec, extra) {
+    const sep = `<span class="crumb-sep" aria-hidden="true">${icon("chevron-right")}</span>`;
+    let html = `<span class="crumb crumb-muted">Mulholland</span>${sep}`;
+    html += `<span class="crumb ${extra ? "crumb-muted" : "crumb-current"}"><span class="crumb-ico" aria-hidden="true">${icon(sec.ic)}</span>${esc(sec.label)}</span>`;
+    if (extra) html += `${sep}<span class="crumb crumb-current">${esc(extra)}</span>`;
+    return html;
+  }
+
+  setCrumb(extra) {
+    const c = this._body.querySelector(".crumbs");
+    if (c && this._view) c.innerHTML = this.crumbsHTML(this._view, extra || null);
+  }
+
+  collection() {
+    return this._body.querySelector("mz-collection");
+  }
+
+  // ── detail pane (read-only; edit/create land in the write-path task) ───────────
+
+  async openDetail(row, push = true) {
+    if (!row) return;
+    this._record = row;
+    this._type = row._type;
+    this.renderDetail(row);
+    this.setCrumb(row[catalog.titleField(row._type)]);
+    this.showPane();
+    if (push && this._view) this.navigate(this.sectionPath(this._view) + "/" + row.id);
+    // Re-fetch the full record by its concrete type — an interface listing only
+    // carries the interface's columns, so a client browsed under "Organization"
+    // would otherwise miss its own fields.
+    const full = await api(`/objects/${row._type}/${row.id}`).catch(() => null);
+    if (full && this._record === row) {
+      this._record = full;
+      this.renderDetail(full);
+    }
+    const cur = this._record;
+    const hist = await api(`/objects/${cur._type}/${cur.id}/history`).catch(() => []);
+    if (this._record === cur) this.renderChain(hist || []);
+  }
+
+  renderDetail(row, editing = false) {
+    const type = row._type;
+    const tf = catalog.titleField(type);
+    const fields = catalog.props(type).filter((p) => !p.managed && p.name !== tf);
+    const cell = (p) =>
+      editing
+        ? this.editControl(type, p, row[p.name])
+        : (() => {
+            const v = catalog.display(row, { name: p.name, kind: catalog.kind(type, p), link: !!catalog.linkOf(type, p.name) });
+            return v ? esc(v) : "—";
+          })();
+    const tools = editing
+      ? `<div class="pane-edit-bar"><button type="button" class="btn btn-ghost btn-sm" data-pane-act="cancel">Cancel</button><button type="button" class="btn btn-primary btn-sm" data-pane-act="save">Save</button></div>`
+      : `<div class="pane-tools"><button type="button" class="btn-icon" data-pane-act="edit" title="Edit" aria-label="Edit">${PENCIL}</button><button type="button" class="btn-icon" data-pane-act="delete" title="Delete" aria-label="Delete">${TRASH}</button></div>`;
+    const title = editing
+      ? `<input class="pane-title pane-title-edit" data-field="${esc(tf)}" value="${esc(row[tf] ?? "")}" />`
+      : `<h3 class="pane-title">${esc(row[tf])}</h3>`;
+    this._pane.innerHTML = `
+      <div class="pane-head"><span class="pane-eyebrow t-caption">${esc(catalog.label(type))}</span>${tools}</div>
+      ${title}
+      <div class="ios-section"><div class="ios-group">${fields
+        .map((p) => `<div class="ios-row"><span class="ios-row-label">${esc(catalog.label(p.name))}</span><span class="ios-row-value">${cell(p)}</span></div>`)
+        .join("")}</div></div>
+      ${editing ? "" : `<div class="ios-section"><ol class="chain"></ol></div>`}`;
+  }
+
+  // editControl renders the right input for a property's kind. Links/enums are
+  // selects; their options come from p.enum (catalog) and, for links, the target
+  // type's rows fetched into _linkOpts on enterEdit/openCreate.
+  editControl(type, p, value) {
+    const f = esc(p.name);
+    const k = catalog.kind(type, p);
+    if (k === "enum")
+      return `<mz-select class="ios-edit" size="sm" data-field="${f}" value="${esc(value ?? "")}"><option value=""></option>${(p.enum || [])
+        .map((o) => `<option value="${esc(o)}">${esc(catalog.label(o))}</option>`)
+        .join("")}</mz-select>`;
+    if (k === "link") {
+      const opts = this._linkOpts?.[p.name] || [];
+      return `<mz-select class="ios-edit" size="sm" data-field="${f}" value="${esc(value ?? "")}"><option value=""></option>${opts
+        .map((o) => `<option value="${esc(o.id)}">${esc(o.title)}</option>`)
+        .join("")}</mz-select>`;
+    }
+    if (k === "date")
+      return `<mz-datepicker class="ios-edit" size="sm" data-field="${f}" value="${esc(String(value ?? "").slice(0, 10))}"></mz-datepicker>`;
+    if (k === "bool") return `<mz-switch class="ios-edit" data-field="${f}"${value ? " checked" : ""}></mz-switch>`;
+    return `<input class="ios-edit ios-input" data-field="${f}" value="${esc(value ?? "")}" placeholder="—" />`;
+  }
+
+  // fetchLinkOpts loads the option rows ({id,title}) for a type's link fields.
+  async fetchLinkOpts(type) {
+    this._linkOpts = {};
+    const links = catalog.props(type).filter((p) => catalog.linkOf(type, p.name));
+    await Promise.all(
+      links.map(async (p) => {
+        const link = catalog.linkOf(type, p.name);
+        try {
+          const rows = await api(`/objects/${link.to}`);
+          this._linkOpts[p.name] = rows.map((r) => ({ id: r.id, title: r[catalog.titleField(r._type)] || r.id }));
+        } catch {
+          this._linkOpts[p.name] = [];
+        }
+      })
+    );
+  }
+
+  async enterEdit() {
+    if (!this._record) return;
+    await this.fetchLinkOpts(this._record._type);
+    this.renderDetail(this._record, true);
+    this._pane.querySelector(".ios-edit, .pane-title-edit")?.focus();
+  }
+
+  cancelEdit() {
+    this.renderDetail(this._record, false);
+    api(`/objects/${this._record._type}/${this._record.id}/history`)
+      .then((h) => this.renderChain(h || []))
+      .catch(() => this.renderChain([]));
+  }
+
+  fieldValue(p, type) {
+    const el = this._pane.querySelector(`[data-field="${p.name}"]`);
+    if (!el) return undefined;
+    if (el.tagName === "MZ-SWITCH") return el.hasAttribute("checked") || !!el.checked;
+    return el.value;
+  }
+
+  async saveEdit() {
+    const type = this._record._type;
+    const tf = catalog.titleField(type);
+    const changed = {};
+    [...catalog.props(type).filter((p) => !p.managed && p.name !== tf), { name: tf }].forEach((p) => {
+      const nv = this.fieldValue(p, type);
+      if (nv === undefined) return;
+      const ov = this._record[p.name];
+      if (String(nv ?? "") !== String(ov ?? "")) changed[p.name] = nv === "" ? null : nv;
+    });
+    if (Object.keys(changed).length) {
+      try {
+        await api(`/objects/${type}/${this._record.id}`, { method: "PATCH", body: changed });
+      } catch {
+        return;
+      }
+    }
+    const full = await api(`/objects/${type}/${this._record.id}`).catch(() => this._record);
+    this._record = full;
+    this.renderDetail(full, false);
+    const hist = await api(`/objects/${type}/${full.id}/history`).catch(() => []);
+    this.renderChain(hist || []);
+    this.collection()?.reload();
+  }
+
+  renderChain(commits) {
+    const ol = this._pane.querySelector(".chain");
+    if (!ol) return;
+    ol.innerHTML = commits.length
+      ? commits.map((c) => this.chainItem(c)).join("")
+      : `<li class="chain-empty t-meta">No history yet.</li>`;
+  }
+
+  chainItem(c) {
+    const who = c.author || "Marzy";
+    const diff = (from, to) =>
+      `<span class="chain-diff"><span class="chain-from">${esc(from)}</span>→<span class="chain-to">${esc(to)}</span></span>`;
+    let body;
+    if (c.op === "create") body = `<div class="chain-change"><span class="chain-field">Created</span></div>`;
+    else if (c.op === "delete") body = `<div class="chain-change"><span class="chain-field">Deleted</span></div>`;
+    else
+      body = Object.entries(c.changes || {})
+        .map(
+          ([field, d]) =>
+            `<div class="chain-change"><span class="chain-field">${esc(catalog.label(field))}</span>${diff(d?.from ?? "", d?.to ?? "")}</div>`
+        )
+        .join("");
+    const avatar =
+      who === "Marzy"
+        ? `<span class="chain-av chain-av-marzy" aria-hidden="true">${SPARK}</span>`
+        : `<span class="chain-av" aria-hidden="true">${initials(who)}</span>`;
+    return `<li class="chain-item" data-cid="${esc(c.id)}">
+        ${avatar}
+        <div class="chain-content">
+          <div class="chain-head"><span class="chain-name">${esc(who)}</span><time>${esc(relTime(c.created_at))}</time></div>
+          <div class="chain-card"><div class="chain-changes">${body}</div></div>
+        </div>
+      </li>`;
+  }
+
+  async deleteRecord() {
+    if (!this._record) return;
+    try {
+      await api(`/objects/${this._type}/${this._record.id}`, { method: "DELETE" });
+    } catch {
+      return;
+    }
+    this.closeDetail();
+    this.collection()?.reload();
+  }
+
+  async openCreate() {
+    const type = this._view?.type;
+    if (!type) return;
+    this._creating = type;
+    await this.fetchLinkOpts(type);
+    const fields = catalog.props(type).filter((p) => !p.managed);
+    this._pane.innerHTML = `
+      <div class="pane-head">
+        <span class="pane-eyebrow t-caption">New ${esc(catalog.label(type))}</span>
+        <div class="pane-edit-bar">
+          <button type="button" class="btn btn-ghost btn-sm pane-cancel">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm" data-pane-act="create">Create</button>
+        </div>
+      </div>
+      <div class="ios-section"><div class="ios-group">${fields
+        .map(
+          (p) =>
+            `<div class="ios-row"><span class="ios-row-label">${esc(catalog.label(p.name))}${p.required ? " *" : ""}</span><span class="ios-row-value">${this.editControl(type, p, "")}</span></div>`
+        )
+        .join("")}</div></div>`;
+    this.setCrumb("New " + catalog.label(type));
+    this.showPane();
+  }
+
+  async submitCreate() {
+    const type = this._creating;
+    if (!type) return;
+    const body = {};
+    catalog.props(type)
+      .filter((p) => !p.managed)
+      .forEach((p) => {
+        const v = this.fieldValue(p, type);
+        if (v !== undefined && v !== "") body[p.name] = v;
+      });
+    let created;
+    try {
+      created = await api(`/objects/${type}`, { method: "POST", body });
+    } catch {
+      return;
+    }
+    this.hidePane();
+    this.collection()?.reload();
+    if (created) this.openDetail(created);
+  }
+
+  // ── chrome (sidebar rail, nav drawer, pane slide) — unchanged behavior ──────────
 
   toggleRail() {
     this.setRail(!this._collapsed);
   }
 
-  // Collapse the sidebar to an icon-only rail (or expand it back). The width
-  // springs via motion.js while the labels fade; paddings keep the icons fixed
-  // in x so only the text moves. `animateIt=false` applies the state instantly
-  // (used to restore the saved preference on load).
   setRail(collapsed, animateIt = true) {
     if (this._collapsed === collapsed) return;
     this._collapsed = collapsed;
     try {
       localStorage.setItem("mz-rail", collapsed ? "1" : "0");
     } catch {}
-
     const sb = this._sidebar;
     const labels = sb.querySelectorAll(".sidebar-item > span:not(.sidebar-dot), .ws-meta, .ws-caret");
-
     if (reduce || !animateIt) {
       this.classList.toggle("nav-collapsed", collapsed);
       return;
     }
-
-    // a tween (not a spring) — a spring overshoots past 64px and momentarily
-    // clips the icons, which reads as a glitch at the end of the collapse
     const WIDTH_ANIM = { duration: 0.34, ease: EASE_OUT };
-
     if (collapsed) {
       animate(labels, { opacity: 0 }, { duration: 0.1, ease: EASE_IN });
       animate(sb, { width: ["208px", "64px"] }, WIDTH_ANIM).finished.then(() => {
@@ -245,21 +487,15 @@ class MzApp extends HTMLElement {
     }
   }
 
-  // On first load, the workspace "builds": the sidebar (workspace switcher + nav
-  // items) staggers in, then the main content settles up. The body is hidden
-  // (opacity 0) until index.js adds `mz-ready`, so we pre-hide the pieces now and
-  // only play the stagger once the page is actually revealed — otherwise it runs
-  // while invisible.
   buildIn() {
     if (reduce) return;
     const nodes = [this.querySelector("mz-workspace"), ...this.querySelectorAll(".sidebar-item")].filter(Boolean);
     nodes.forEach((el) => (el.style.opacity = "0"));
     if (this._body) this._body.style.opacity = "0";
-
     const play = () =>
       requestAnimationFrame(() => {
-        animate(nodes, { opacity: [0, 1], x: [-12, 0] }, { delay: stagger(0.06), duration: 0.36, ease: EASE_OUT }).finished.then(
-          () => nodes.forEach((el) => (el.style.opacity = ""))
+        animate(nodes, { opacity: [0, 1], x: [-12, 0] }, { delay: stagger(0.06), duration: 0.36, ease: EASE_OUT }).finished.then(() =>
+          nodes.forEach((el) => (el.style.opacity = ""))
         );
         if (this._body) {
           animate(this._body, { opacity: [0, 1], y: [10, 0] }, { duration: 0.42, delay: 0.2, ease: EASE_OUT }).finished.then(
@@ -267,10 +503,8 @@ class MzApp extends HTMLElement {
           );
         }
       });
-
-    if (document.body.classList.contains("mz-ready")) {
-      play();
-    } else {
+    if (document.body.classList.contains("mz-ready")) play();
+    else {
       const mo = new MutationObserver(() => {
         if (document.body.classList.contains("mz-ready")) {
           mo.disconnect();
@@ -290,7 +524,6 @@ class MzApp extends HTMLElement {
     this.syncScrim();
   }
   hidePane() {
-    // keep the element rendered (transform handles hide) so it can slide out
     const wasOpen = this.classList.contains("pane-open");
     this.classList.remove("pane-open");
     this.setCrumb(null);
@@ -313,198 +546,20 @@ class MzApp extends HTMLElement {
   syncScrim() {
     this._scrim.hidden = !(this.classList.contains("nav-open") || this.classList.contains("pane-open"));
   }
-
-  // Breadcrumb: Mulholland › View, plus an optional trailing segment (e.g. the
-  // open object's title) — when present, the View crumb steps back to muted.
-  crumbsHTML(view, extra) {
-    const sep = `<span class="crumb-sep" aria-hidden="true">${icon("chevron-right")}</span>`;
-    let html = `<span class="crumb crumb-muted">Mulholland</span>${sep}`;
-    html += `<span class="crumb ${extra ? "crumb-muted" : "crumb-current"}"><span class="crumb-ico" aria-hidden="true">${ICON[view.id]}</span>${view.label}</span>`;
-    if (extra) html += `${sep}<span class="crumb crumb-current">${extra}</span>`;
-    return html;
-  }
-
-  // Update the trailing breadcrumb segment (the open object's title).
-  setCrumb(extra) {
-    const c = this._body.querySelector(".crumbs");
-    if (c && this._view) c.innerHTML = this.crumbsHTML(this._view, extra || null);
-  }
-
-  show(id) {
-    const view = VIEWS.find((v) => v.id === id) || VIEWS[0];
-    this._view = view;
-    this._barTitle.textContent = view.label;
-    const head = `<header class="app-head">
-        <nav class="crumbs" aria-label="Breadcrumb">${this.crumbsHTML(view, null)}</nav>
-        <mz-notifications></mz-notifications>
-      </header>`;
-    this._singular = view.collection ? view.collection.singular : "item";
-    this._body.innerHTML = view.collection
-      ? head + `<mz-collection singular="${view.collection.singular}" view="${view.collection.view}" views="${view.collection.views}"></mz-collection>`
-      : head + view.render();
-    this._body.scrollTop = 0;
-    this.hidePane(); // nothing open yet
-  }
-
-  openDetail(r) {
-    this._record = r; // the live record (mutated on save)
-    this._detail = { ...r }; // working copy while editing
-    this._editing = false;
-    this._cid = 0;
-    this._chain = this.seedChain(r);
-    this.renderDetail();
-    this.setCrumb(r.title);
-    this.showPane();
-  }
-
-  // The starting commit history for a record.
-  seedChain(r) {
-    const cid = () => `c${++this._cid}`;
-    return [
-      { id: cid(), diffs: [{ label: "Status", from: "In progress", to: r.status }], who: "Marzy", time: "2h ago" },
-      { id: cid(), diffs: [{ label: "Assignee", from: "Unassigned", to: r.assignee }], who: "Marzy", time: "1d ago" },
-      { id: cid(), diffs: [{ label: "Priority", from: "Low", to: PRIO[r.priority] }], who: r.assignee, time: "3d ago" },
-      { id: cid(), label: "Created", text: r.title, who: r.assignee, time: r.due },
-    ];
-  }
-
-  chainItem(c) {
-    const diff = (from, to) =>
-      `<span class="chain-diff"><span class="chain-from">${esc(String(from))}</span>→<span class="chain-to">${esc(String(to))}</span></span>`;
-    const rows = c.diffs
-      ? c.diffs.map((d) => `<div class="chain-change"><span class="chain-field">${esc(d.label)}</span>${diff(d.from, d.to)}</div>`).join("")
-      : `<div class="chain-change">${c.label ? `<span class="chain-field">${esc(c.label)}</span>` : ""}<span class="chain-diff">${esc(c.text)}</span></div>`;
-    // the timeline node IS the person's avatar (Marzy gets the spark)
-    const avatar =
-      c.who === "Marzy"
-        ? `<span class="chain-av chain-av-marzy" aria-hidden="true">${SPARK}</span>`
-        : `<span class="chain-av" aria-hidden="true">${initials(c.who)}</span>`;
-    return `<li class="chain-item${c.fresh ? " is-fresh" : ""}" data-cid="${c.id}">
-        ${avatar}
-        <div class="chain-content">
-          <div class="chain-head"><span class="chain-name">${esc(c.who)}</span><time>${esc(c.time)}</time></div>
-          <div class="chain-card"><div class="chain-changes">${rows}</div></div>
-        </div>
-      </li>`;
-  }
-
-  renderDetail() {
-    const d = this._detail;
-    const editing = this._editing;
-    const tools = editing
-      ? `<div class="pane-edit-bar">
-          <button type="button" class="btn btn-ghost btn-sm" data-pane-act="cancel">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm" data-pane-act="save">Save changes</button>
-        </div>`
-      : `<div class="pane-tools">
-          <button type="button" class="btn-icon" data-pane-act="edit" title="Edit ${this._singular}" aria-label="Edit">${PENCIL}</button>
-          <button type="button" class="btn-icon" data-pane-act="duplicate" title="Duplicate" aria-label="Duplicate">${COPY}</button>
-          <button type="button" class="btn-icon" data-pane-act="delete" title="Delete" aria-label="Delete">${TRASH}</button>
-        </div>`;
-    const rows = FIELD_DEFS.map(
-      (f) => `
-        <div class="ios-row">
-          <span class="ios-row-label">${f.label}</span>
-          <span class="ios-row-value">${editing ? editControl(f, d[f.key]) : valueHTML(f.key, d[f.key])}</span>
-        </div>`
-    ).join("");
-    this._pane.innerHTML = `
-      <div class="pane-head">
-        <span class="pane-eyebrow t-caption">${esc(d.tag)}</span>
-        ${tools}
-      </div>
-      <h3 class="pane-title">${esc(d.title)}</h3>
-      <div class="ios-section"><div class="ios-group">${rows}</div></div>
-      <div class="ios-section"><ol class="chain">${this._chain.map((c) => this.chainItem(c)).join("")}</ol></div>`;
-  }
-
-  enterEdit() {
-    this._editing = true;
-    this.renderDetail();
-    const first = this._pane.querySelector(".ios-edit");
-    if (first) first.focus();
-  }
-
-  cancelEdit() {
-    this._editing = false;
-    this._detail = { ...this._record };
-    this.renderDetail();
-  }
-
-  saveEdit() {
-    // diff every field; all the changes from this save become ONE commit
-    const diffs = [];
-    FIELD_DEFS.forEach((f) => {
-      const el = this._pane.querySelector(`[data-field="${f.key}"]`);
-      if (!el) return;
-      const nv = f.date ? isoToDue(el.value) : el.value;
-      const ov = this._detail[f.key];
-      if (String(nv) !== String(ov)) {
-        diffs.push({ label: f.label, from: valueText(f.key, ov), to: valueText(f.key, nv) });
-        this._detail[f.key] = nv;
-      }
-    });
-
-    // nothing changed → just leave edit mode
-    if (!diffs.length) {
-      this._editing = false;
-      this.renderDetail();
-      return;
-    }
-
-    Object.assign(this._record, this._detail); // persist to the live record
-    const commit = { id: `c${++this._cid}`, diffs, who: "You", time: "just now", fresh: true };
-
-    // capture chain positions before the re-render so survivors can slide down (FLIP)
-    const oldRects = new Map();
-    this._pane.querySelectorAll(".chain-item").forEach((li) => oldRects.set(li.dataset.cid, li.getBoundingClientRect()));
-
-    this._chain = [commit, ...this._chain];
-    this._editing = false;
-    this.renderDetail();
-    this.animateChainAppend(oldRects);
-  }
-
-  // New commits drop in at the top while the existing ones slide down to make room.
-  animateChainAppend(oldRects) {
-    if (reduce) return;
-    let i = 0;
-    this._pane.querySelectorAll(".chain-item").forEach((li) => {
-      if (li.classList.contains("is-fresh")) {
-        li.style.opacity = "0";
-        animate(li, { opacity: [0, 1], y: [-14, 0], scale: [0.97, 1] }, { ...SPRING_SOFT, delay: i * 0.06 }).finished.then(
-          () => (li.style.opacity = "")
-        );
-        i++;
-      } else {
-        const prev = oldRects.get(li.dataset.cid);
-        if (!prev) return;
-        const now = li.getBoundingClientRect();
-        const dy = prev.top - now.top;
-        if (!dy) return;
-        li.style.transform = `translateY(${dy}px)`;
-        animate(li, { y: [dy, 0] }, SPRING_SOFT).finished.then(() => (li.style.transform = ""));
-      }
-    });
-  }
-
-  openCreate() {
-    this._pane.innerHTML = `
-      <div class="pane-head"><span class="pane-eyebrow t-caption">New ${this._singular}</span></div>
-      <form class="pane-form" onsubmit="return false">
-        <mz-field label="Title" placeholder="Untitled ${this._singular}" for="nc-title"></mz-field>
-        <mz-select label="Status">${STATUSES.map((s) => `<option>${s}</option>`).join("")}</mz-select>
-        <mz-select label="Assignee">${people.map((p) => `<option>${p}</option>`).join("")}</mz-select>
-        <mz-select label="Priority">${Object.values(PRIO).map((p) => `<option>${p}</option>`).join("")}</mz-select>
-        <mz-field label="Due date" type="date" for="nc-due"></mz-field>
-        <mz-field label="Notes" type="textarea" placeholder="Anything worth noting…" for="nc-notes"></mz-field>
-        <mz-actions align="end">
-          <mz-btn variant="ghost" class="pane-cancel">Cancel</mz-btn>
-          <mz-btn variant="primary">Create ${this._singular}</mz-btn>
-        </mz-actions>
-      </form>`;
-    this.setCrumb("New " + this._singular);
-    this.showPane();
-  }
 }
 customElements.define("mz-app", MzApp);
+
+function settingsHTML() {
+  return `
+    <mz-tabs>
+      <mz-tab-panel label="Workspace">
+        <mz-grid cols="2" align="start">
+          <mz-field label="Workspace name" placeholder="Mulholland Inc." for="s-name"></mz-field>
+          <mz-field label="Billing email" type="email" placeholder="ops@mulholland.inc" for="s-email"></mz-field>
+        </mz-grid>
+      </mz-tab-panel>
+      <mz-tab-panel label="Connections">
+        <mz-connectors></mz-connectors>
+      </mz-tab-panel>
+    </mz-tabs>`;
+}

@@ -1,10 +1,9 @@
-// <mz-collection view="board" views="board,table,grid,gallery,todo,calendar"
-//                singular="task"></mz-collection>
-// The archive: a view-switcher (with a sliding highlight) over the shared data.
-// Selecting an object emits mz-select and "New" emits mz-new; <mz-app> owns the
-// detail pane and responds to both.
+// <mz-collection type="task" views="table"></mz-collection>
+// A view-switcher over a real object type's rows (GET /objects/{type}). Selecting
+// a row emits mz-select and "New" emits mz-new; <mz-app> owns the detail pane and
+// responds to both.
 import { icon } from "./icons.js";
-import { queryRecords } from "./data.js";
+import { objects, columns, label, viewModes } from "../catalog.js";
 import { fadeIn, animate, EASE_OUT, reduce } from "./motion.js";
 
 const VIEW_TAG = {
@@ -38,8 +37,10 @@ const VICON = {
 class MzCollection extends HTMLElement {
   connectedCallback() {
     this.classList.add("collection");
-    this._singular = this.getAttribute("singular") || "item";
-    this._views = (this.getAttribute("views") || "board,table,grid").split(",").map((s) => s.trim());
+    this._type = this.getAttribute("type") || "";
+    this._singular = this.getAttribute("singular") || label(this._type).toLowerCase();
+    this._modes = viewModes(this._type);
+    this._views = this._modes.map((m) => m.id);
     this._view = this.getAttribute("view") || this._views[0];
 
     const seg = this._views
@@ -73,7 +74,6 @@ class MzCollection extends HTMLElement {
     this.querySelector(".collection-new").addEventListener("click", () =>
       this.dispatchEvent(new CustomEvent("mz-new", { bubbles: true }))
     );
-    // toolbar drives filtering/sorting of the active view
     this.addEventListener("mz-query", (e) => {
       this._query = e.detail;
       this.applyQuery();
@@ -91,6 +91,11 @@ class MzCollection extends HTMLElement {
 
   disconnectedCallback() {
     this._ro?.disconnect();
+  }
+
+  // reload re-fetches the current view (e.g. after a create/edit/delete).
+  reload() {
+    this.applyQuery();
   }
 
   moveThumb(btn, animateIt = true) {
@@ -115,10 +120,14 @@ class MzCollection extends HTMLElement {
     fadeIn(this._main.firstElementChild);
   }
 
-  applyQuery() {
+  async applyQuery() {
     const view = this._main.firstElementChild;
-    if (view && typeof view.setData === "function") {
-      view.setData(queryRecords(this._query));
+    if (!view || typeof view.setData !== "function") return;
+    const ctx = { type: this._type, columns: columns(this._type), mode: this._modes.find((m) => m.id === this._view) };
+    try {
+      view.setData(await objects(this._type, this._query), ctx);
+    } catch {
+      view.setData([], { ...ctx, error: true });
     }
   }
 }
