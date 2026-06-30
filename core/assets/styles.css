@@ -3987,16 +3987,63 @@ body.is-dragging-card * {
 .studio-hd p {
   margin: 0;
 }
-/* the prompt editor reuses the composer chrome but fills the column height */
-.studio-editor {
-  flex: 1;
+/* "preview as" member picker */
+.studio-pick {
   display: flex;
-  flex-direction: column;
-  cursor: auto;
+  align-items: center;
+  gap: var(--space-2);
+}
+/* the full-prompt document: base · workspace (editable) · role · personal, one
+   soft box with only the workspace layer editable */
+.studio-doc {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  border: var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+.studio-layer {
+  padding: var(--space-3) var(--space-4);
+}
+.studio-layer + .studio-layer,
+.studio-extra .studio-layer {
+  border-top: var(--border);
+}
+.studio-layer-tag {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-12);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+.studio-layer-body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: var(--text-14);
+  line-height: var(--leading-relaxed);
+  color: var(--color-muted);
+}
+.studio-layer-edit .studio-layer-tag {
+  color: var(--color-volt);
 }
 .studio-prompt {
-  flex: 1;
-  max-height: none;
+  display: block;
+  width: 100%;
+  min-height: 120px;
+  border: 0;
+  background: none;
+  resize: vertical;
+  font: inherit;
+  font-size: var(--text-14);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink);
+}
+.studio-prompt:focus {
+  outline: none;
 }
 /* preview thread + its centered spark greeting when empty */
 .studio-thread {
