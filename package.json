@@ -2,9 +2,13 @@
   "name": "marzy-site",
   "version": "0.1.0",
   "private": true,
-  "description": "Marzy site — pure static HTML/CSS/JS, no build step. Wrangler (Cloudflare deploy) runs via npx.",
+  "description": "Marzy site — static HTML/CSS/JS dashboard (no UI build step). A small TypeScript Cloudflare Worker serves the assets; wrangler bundles it. WorkOS/Pipes live in the Go backend.",
   "scripts": {
     "dev": "python3 -m http.server 8000",
     "deploy": "npx wrangler@4 deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250501.0",
+    "typescript": "^5.6.0"
   }
 }

@@ -1,7 +1,11 @@
-// <mz-connectors></mz-connectors>, the integrations directory. Structured:
-// a search + connected count, then one section per category, each a list of
-// connector rows (logo, name, kind, Connect/Manage). Search filters live.
+// <mz-connectors></mz-connectors>, the integrations directory backed by WorkOS
+// Pipes. It lists the providers configured for the workspace with this member's
+// connection state (GET /pipes/providers) and a Connect/Reconnect button that
+// opens the WorkOS OAuth flow in a new tab (POST /pipes/connect → { url }).
+// Linking, token refresh and disconnect all live in WorkOS; we just show state
+// and hand off the authorize URL, then re-check when the member returns.
 import { icon } from "./icons.js";
+import { api } from "../auth.js";
 
 // Full-colour brand logos via DuckDuckGo's favicon service; letter fallback.
 const LOGO = (domain) => `https://icons.duckduckgo.com/ip3/${domain}.ico`;
@@ -9,48 +13,32 @@ const mono = (n) => n.replace(/[^A-Za-z]/g, "").slice(0, 1).toUpperCase();
 const esc = (s) =>
   String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-// [name, domain, kind, category, description, connected]
-const CONNECTORS = [
-  ["Gusto", "gusto.com", "App", "Finance", "Payroll & benefits", true],
-  ["QuickBooks", "quickbooks.intuit.com", "App", "Finance", "Billing & ledger", true],
-  ["Xero", "xero.com", "App", "Finance", "Accounting", false],
-  ["Plaid", "plaid.com", "API", "Finance", "Bank connections", false],
-  ["Gmail", "gmail.com", "App", "Comms", "Inbox & email", true],
-  ["Slack", "slack.com", "App", "Comms", "Notifications & alerts", true],
-  ["Twilio", "twilio.com", "API", "Comms", "SMS & voice", false],
-  ["Google Drive", "drive.google.com", "App", "Productivity", "Files & storage", true],
-  ["Notion", "notion.so", "MCP", "Productivity", "Docs, wikis & databases", false],
-  ["Stripe", "stripe.com", "API", "Payments", "Payments & payouts", false],
-  ["Salesforce", "salesforce.com", "App", "Records", "Customer relationships", false],
-  ["HubSpot", "hubspot.com", "App", "Records", "Marketing & CRM", false],
-  ["Airtable", "airtable.com", "App", "Records", "Records & bases", false],
-  ["GitHub", "github.com", "MCP", "Dev", "Repos, issues & PRs", false],
-  ["Linear", "linear.app", "MCP", "Dev", "Issues & projects", false],
-  ["Snowflake", "snowflake.com", "API", "Data", "Warehouse & queries", false],
-];
+// Best-effort brand domain for a provider's logo (slug first, then name); the
+// letter fallback covers anything not listed.
+const DOMAINS = {
+  gusto: "gusto.com",
+  linkedin: "linkedin.com",
+  slack: "slack.com",
+  "slack-user": "slack.com",
+  discord: "discord.com",
+  "google-drive": "drive.google.com",
+  gmail: "gmail.com",
+  "google-calendar": "calendar.google.com",
+};
+const domainFor = (slug, name) => DOMAINS[slug] || `${name.toLowerCase().replace(/[^a-z0-9]/g, "")}.com`;
 
-// Identity is a category of its own: your linked accounts on external platforms
-// (OIDC) so Marzy can verify who it's talking to. [name, domain, handle, as]
-const IDENTITY = [
-  ["Slack", "slack.com", "@marijn", "@marijn"],
-  ["Discord", "discord.com", null, "marijn"],
-  ["Google", "google.com", "marijn@mulholland.inc", "marijn@mulholland.inc"],
-  ["Microsoft", "microsoft.com", null, "marijn@mulholland.inc"],
-  ["GitHub", "github.com", "ietsnut", "ietsnut"],
-  ["Apple", "apple.com", null, "marijn@icloud.com"],
-];
-
-const CATS = ["Finance", "Comms", "Productivity", "Payments", "Records", "Dev", "Data", "Identity"];
+const LABEL = { connected: "Reconnect", needs_reauthorization: "Reconnect", not_connected: "Connect" };
+const STATUS = {
+  connected: "Connected",
+  needs_reauthorization: "Needs reauthorization",
+  not_connected: "Not connected",
+};
 
 class MzConnectors extends HTMLElement {
   connectedCallback() {
     this.classList.add("cnx");
-    this._items = [
-      ...CONNECTORS.map(([name, domain, kind, cat, desc, connected]) => ({ name, domain, kind, cat, desc, connected })),
-      // identity accounts: `connected` mirrors "linked"; the button links/unlinks
-      ...IDENTITY.map(([name, domain, handle, as]) => ({ name, domain, cat: "Identity", identity: true, handle, as })),
-    ];
     this._q = "";
+    this._items = [];
 
     this.innerHTML = `
       <div class="cnx-toolbar">
@@ -68,49 +56,81 @@ class MzConnectors extends HTMLElement {
       this.render();
     });
     this._sections.addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-i]");
-      if (!btn) return;
-      const it = this._items[Number(btn.dataset.i)];
-      if (it.identity) it.handle = it.handle ? null : it.as; // link / unlink
-      else it.connected = !it.connected;
-      this.render();
+      const btn = e.target.closest("[data-slug]");
+      if (btn) this.connect(btn.dataset.slug);
     });
 
+    // Connecting happens in a new tab; re-check state when the member returns.
+    this._onFocus = () => this.load();
+    window.addEventListener("focus", this._onFocus);
+
+    this.render(); // loading state
+    this.load();
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener("focus", this._onFocus);
+  }
+
+  async load() {
+    try {
+      const { providers } = await api("/pipes/providers");
+      this._items = providers || [];
+      this._error = null;
+    } catch (err) {
+      this._error = err;
+    }
+    this._loaded = true;
     this.render();
   }
 
+  async connect(slug) {
+    try {
+      const { url } = await api(`/pipes/connect?provider=${encodeURIComponent(slug)}`, { method: "POST" });
+      if (url) window.open(url, "_blank", "noopener");
+    } catch (err) {
+      console.error("connect", slug, err); // focus refresh re-reads state on return
+    }
+  }
+
   render() {
+    if (!this._loaded) {
+      this._sections.innerHTML = `<mz-empty heading="Loading connectors">One moment.</mz-empty>`;
+      return;
+    }
+    if (this._error) {
+      this._sections.innerHTML = `<mz-empty heading="Couldn't load connectors">Try again in a moment.</mz-empty>`;
+      return;
+    }
+
     const term = this._q.trim().toLowerCase();
-    const text = (it) =>
-      it.identity ? `${it.name} ${it.cat} ${it.handle || ""} ${it.as}` : `${it.name} ${it.kind} ${it.cat} ${it.desc}`;
-    const match = (it) => !term || text(it).toLowerCase().includes(term);
+    const match = (it) => !term || `${it.name} ${it.slug} ${it.type || ""}`.toLowerCase().includes(term);
+    const items = this._items.filter(match);
+
+    if (!items.length) {
+      this._sections.innerHTML = this._items.length
+        ? `<mz-empty heading="No connectors found">Try a different search.</mz-empty>`
+        : `<mz-empty heading="No connectors yet">Connectors appear here once they're configured for the workspace.</mz-empty>`;
+      return;
+    }
 
     const row = (it) => {
-      const i = this._items.indexOf(it);
-      const on = it.identity ? !!it.handle : it.connected;
-      const desc = it.identity ? (it.handle ? esc(it.handle) : "Not linked") : esc(it.desc);
-      const label = it.identity ? (on ? "Unlink" : "Link account") : on ? "Manage" : "Connect";
+      const state = it.state || "not_connected";
+      const on = !!it.connected;
+      const label = LABEL[state] || "Connect";
+      const domain = domainFor(it.slug, it.name);
       return `<div class="cnx-row${on ? " is-connected" : ""}">
-        <img class="cnx-logo" src="${LOGO(it.domain)}" alt="" loading="lazy"
+        <img class="cnx-logo" src="${LOGO(domain)}" alt="" loading="lazy"
           onerror="this.outerHTML='<span class=&quot;cnx-logo cnx-mono&quot;>${mono(it.name)}</span>'" />
         <div class="cnx-main">
           <div class="cnx-name">${esc(it.name)}</div>
-          <div class="cnx-desc t-meta">${desc}</div>
+          <div class="cnx-desc t-meta">${esc(STATUS[state] || state)}</div>
         </div>
-        <button type="button" class="btn ${on ? "btn-ghost" : "btn-primary"} btn-sm" data-i="${i}">${label}</button>
+        <button type="button" class="btn ${on ? "btn-ghost" : "btn-primary"} btn-sm" data-slug="${esc(it.slug)}">${label}</button>
       </div>`;
     };
 
-    const sections = CATS.map((cat) => {
-      const items = this._items.filter((it) => it.cat === cat && match(it));
-      if (!items.length) return "";
-      return `<section class="cnx-cat-sec">
-        <h3 class="cnx-cat">${cat}</h3>
-        <div class="cnx-list">${items.map(row).join("")}</div>
-      </section>`;
-    }).join("");
-
-    this._sections.innerHTML = sections || `<mz-empty heading="No connectors found">Try a different search.</mz-empty>`;
+    this._sections.innerHTML = `<section class="cnx-cat-sec"><div class="cnx-list">${items.map(row).join("")}</div></section>`;
   }
 }
 customElements.define("mz-connectors", MzConnectors);

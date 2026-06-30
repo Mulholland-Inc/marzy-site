@@ -5,7 +5,9 @@ README.md
 .assetsignore
 .wrangler
 wrangler.jsonc
-worker.js
+worker.ts
+tsconfig.json
 node_modules
 package.json
 package-lock.json
+pnpm-lock.yaml

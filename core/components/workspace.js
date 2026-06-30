@@ -1,6 +1,6 @@
 // <mz-workspace></mz-workspace>, a Slack-style tenant switcher for the top of the
 // app sidebar: shows the active tenant + signed-in user, and a dropdown to switch
-// tenants. Switching re-auths into that tenant's GIP tenant (see core/auth.js).
+// tenants. Switching re-auths into that tenant's WorkOS organization (see core/auth.js).
 import { icon } from "./icons.js";
 import { popIn, popOut } from "./motion.js";
 import { loadTenants, onUser, getUser, activeTenant, switchTo, signOutUser } from "../auth.js";

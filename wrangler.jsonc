@@ -3,7 +3,9 @@
   "name": "marzy-site",
   "account_id": "6c076286f15a83422c0820534c5464e8",
   "compatibility_date": "2025-05-01",
-  "main": "worker.js",
+  // workos-node ships a workerd build but still pulls in a few Node built-ins.
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "worker.ts",
   "observability": {
     "enabled": true
   },
