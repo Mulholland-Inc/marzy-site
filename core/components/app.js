@@ -542,8 +542,8 @@ class MzApp extends HTMLElement {
         if (this._record === cur) this.renderChain(hist || []);
       }
       this.collection()?.reload();
-    } catch {
-      if (status) status.textContent = `${catalog.label(a.name)} failed.`;
+    } catch (e) {
+      if (status) status.textContent = e?.message || `${catalog.label(a.name)} failed.`;
     }
   }
 

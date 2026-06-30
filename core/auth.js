@@ -109,7 +109,16 @@ export async function api(path, { method = "GET", body } = {}) {
     headers: await authHeaders(),
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
-  if (!r.ok) throw new Error(`${method} ${path} → ${r.status}`);
+  if (!r.ok) {
+    // Surface the server's error message (e.g. "connect Google Drive first")
+    // instead of a bare status, so callers can show it.
+    let msg = `${method} ${path} → ${r.status}`;
+    try {
+      const j = await r.json();
+      if (j && j.error) msg = j.error;
+    } catch {}
+    throw new Error(msg);
+  }
   return r.status === 204 ? undefined : r.json();
 }
 
