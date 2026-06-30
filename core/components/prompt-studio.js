@@ -23,15 +23,14 @@ class MzPromptStudio extends HTMLElement {
       <section class="studio-pane">
         <div class="studio-doc">
           <div class="studio-doc-head">
-            <span class="t-meta">Preview as</span>
+            <span class="studio-layer-tag studio-head-tag">Workspace instructions</span>
             <span class="studio-pick-select"></span>
           </div>
           <div class="studio-doc-body">
-            <div class="studio-base"></div>
             <div class="studio-layer studio-layer-edit">
-              <span class="studio-layer-tag">Workspace instructions</span>
               <textarea class="studio-prompt" placeholder="e.g. We're a dental group — be precise about patient data and never guess at clinical details." aria-label="Workspace instructions"></textarea>
             </div>
+            <div class="studio-base"></div>
             <div class="studio-extra"></div>
           </div>
           <div class="studio-doc-foot">
@@ -102,7 +101,7 @@ class MzPromptStudio extends HTMLElement {
     const opts = this._members
       .map((x) => `<option value="${esc(x.email)}"${x.email === this._account ? " selected" : ""}>${esc(x.name || x.email)}</option>`)
       .join("");
-    this.querySelector(".studio-pick-select").innerHTML = `<mz-select size="sm" data-pick value="${esc(this._account)}" aria-label="Preview as">${opts}</mz-select>`;
+    this.querySelector(".studio-pick-select").innerHTML = `<mz-select size="sm" search data-pick value="${esc(this._account)}" aria-label="Preview as">${opts}</mz-select>`;
   }
 
   pick(account) {
