@@ -21,11 +21,11 @@ class MzPromptStudio extends HTMLElement {
     this._role = "";
     this.innerHTML = `
       <section class="studio-pane">
-        <div class="studio-pick">
-          <span class="t-meta">Preview as</span>
-          <span class="studio-pick-select"></span>
-        </div>
         <div class="studio-doc">
+          <div class="studio-doc-head">
+            <span class="t-meta">Preview as</span>
+            <span class="studio-pick-select"></span>
+          </div>
           <div class="studio-doc-body">
             <div class="studio-base"></div>
             <div class="studio-layer studio-layer-edit">
