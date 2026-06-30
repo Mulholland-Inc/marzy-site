@@ -117,9 +117,9 @@ export function requireAuth() {
   initAuth((u) => { if (!u) location.replace(LOGIN); }).catch(() => location.replace(LOGIN));
 }
 
-// The tenants the switcher offers (id, display name, GIP tenant id).
+// The tenants the switcher offers — the gateway's GIP-listed directory.
 export async function loadTenants() {
-  try { const r = await fetch("/tenants"); if (r.ok) return await r.json(); } catch {}
+  try { const r = await fetch(`${apiHost.replace(/\/+$/, "")}/tenants`); if (r.ok) return await r.json(); } catch {}
   return [];
 }
 

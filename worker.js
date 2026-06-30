@@ -6,16 +6,8 @@
 const HSTS = "max-age=31536000; includeSubDomains";
 const AUTH_ORIGIN = "https://marzy-agent.firebaseapp.com"; // Firebase project hosting the GIP handler
 const API_ORIGIN = "https://api.marzy.com"; // single API; the gateway resolves the tenant
-
-// The tenant directory for the workspace switcher: id (the gateway path arg),
-// display name, and GIP tenant id (sign-in is scoped to it — Identity Platform
-// multi-tenancy is the per-tenant isolation boundary we keep). Static for now;
-// should be generated from terraform's tenants map + GIP tenant ids.
-const TENANTS = [
-  { tenant: "mulholland", name: "Mulholland", tenantId: "mulholland-c6rx0" },
-  { tenant: "lulu", name: "Lulu & Georgia", tenantId: "lulu-mav92" },
-  { tenant: "lazarco", name: "Lazar & Company", tenantId: "lazarco-9g8e7" },
-];
+// The switcher's tenant list is served by the gateway's directory service
+// (api.marzy.com/tenants), which lists the GIP tenants — see directory/ in marzy.
 
 export default {
   async fetch(request, env) {
@@ -35,11 +27,6 @@ export default {
       const tenant = state.slice(state.lastIndexOf(".") + 1);
       if (!tenant || tenant === state) return new Response("missing tenant in state", { status: 400 });
       return Response.redirect(`${API_ORIGIN}/${tenant}/connect/callback${url.search}`, 302);
-    }
-
-    // The tenant directory the switcher reads (same-origin, no CORS).
-    if (p === "/tenants") {
-      return Response.json(TENANTS);
     }
 
     // Everything else is a static asset: / = dashboard (guards to /login when
