@@ -4055,29 +4055,15 @@ body.is-dragging-card * {
 .studio-prompt:focus {
   outline: none;
 }
-/* preview thread + its centered spark greeting when empty */
-.studio-thread {
+/* preview pane: the Chat component, sized to fill the column instead of the
+   viewport, with a greeting scaled for the narrower space */
+.studio-pane > .chats {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-}
-.studio-empty {
-  margin: auto 0;
+  padding: 0;
 }
 .studio .chats-greeting {
   font-size: var(--text-24);
-}
-.studio-composer {
-  flex: 0 0 auto;
-  /* match the save button's inset in the editor box */
-  padding: var(--space-3);
-}
-.studio-msg-mark {
-  width: 22px;
-  margin-bottom: var(--space-1);
 }
 @media (max-width: 860px) {
   .studio {

@@ -5,9 +5,9 @@
 // chats the draft as the selected member (POST /chat/preview — a dry run, so
 // write actions are simulated and nothing is saved or changed). Admin-only.
 import { api, whoami } from "../auth.js";
-import { SPARK } from "./spark.js";
 import { icon } from "./icons.js";
 import { label } from "../catalog.js";
+import "./chats.js"; // the preview reuses the Chat component
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -15,7 +15,6 @@ const esc = (s) =>
 class MzPromptStudio extends HTMLElement {
   connectedCallback() {
     this.classList.add("studio");
-    this._history = [];
     this._members = [];
     this._account = "";
     this._role = "";
@@ -39,25 +38,11 @@ class MzPromptStudio extends HTMLElement {
           </div>
         </div>
       </section>
-      <section class="studio-pane">
-        <div class="studio-thread">
-          <div class="chats-answer studio-empty">
-            <span class="chats-mark" aria-hidden="true">${SPARK}</span>
-            <h2 class="chats-greeting">Try your draft</h2>
-          </div>
-        </div>
-        <form class="chats-composer studio-composer">
-          <textarea class="chats-input studio-msg" rows="1" placeholder="Ask the assistant…" aria-label="Message the assistant"></textarea>
-          <div class="chats-composer-foot">
-            <span></span>
-            <button type="submit" class="chats-send" aria-label="Send">${icon("send")}</button>
-          </div>
-        </form>
+      <section class="studio-pane studio-preview">
+        <mz-chats no-attach greeting="Try your draft" placeholder="Ask the assistant…"></mz-chats>
       </section>`;
 
     this._prompt = this.querySelector(".studio-prompt");
-    this._thread = this.querySelector(".studio-thread");
-    this._msg = this.querySelector(".studio-msg");
     this._base = this.querySelector(".studio-base");
     this._extra = this.querySelector(".studio-extra");
 
@@ -68,16 +53,17 @@ class MzPromptStudio extends HTMLElement {
       const sel = e.target.closest("[data-pick]");
       if (sel) this.pick(sel.value);
     });
-    this.querySelector(".studio-composer").addEventListener("submit", (e) => {
-      e.preventDefault();
-      this.send();
-    });
-    this._msg.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        this.send();
-      }
-    });
+
+    // Reuse the Chat component for the preview — same composer, dock animation,
+    // and word-by-word streaming — pointed at the draft (/chat/preview) and run
+    // as the selected member.
+    this.querySelector("mz-chats").responder = async (text, history) => {
+      const res = await api("/chat/preview", {
+        method: "POST",
+        body: { text, org: this._prompt.value, account: this._account, roles: this._role ? [this._role] : [], history },
+      });
+      return (res && res.reply) || "…";
+    };
 
     this.load();
   }
@@ -137,39 +123,5 @@ class MzPromptStudio extends HTMLElement {
     }
   }
 
-  bubble(text, bot) {
-    this._thread.querySelector(".studio-empty")?.remove();
-    const el = document.createElement("div");
-    el.className = "chats-msg " + (bot ? "chats-msg-marzy" : "chats-msg-user");
-    el.innerHTML = bot
-      ? `<div class="chats-msg-bubble"><span class="chats-mark studio-msg-mark" aria-hidden="true">${SPARK}</span><p class="chats-msg-text">${esc(text)}</p></div>`
-      : `<div class="chats-msg-bubble"><p class="chats-msg-text">${esc(text)}</p></div>`;
-    this._thread.appendChild(el);
-    this._thread.scrollTop = this._thread.scrollHeight;
-    return el;
-  }
-
-  async send() {
-    const text = this._msg.value.trim();
-    if (!text || this._busy) return;
-    this._busy = true;
-    this._msg.value = "";
-    this.bubble(text, false);
-    const pending = this.bubble("…", true);
-    let reply;
-    try {
-      const res = await api("/chat/preview", {
-        method: "POST",
-        body: { text, org: this._prompt.value, account: this._account, roles: this._role ? [this._role] : [], history: this._history },
-      });
-      reply = (res && res.reply) || "…";
-    } catch {
-      reply = "Couldn’t reach the assistant.";
-    }
-    pending.querySelector(".chats-msg-text").textContent = reply;
-    this._history.push({ Author: "you", Text: text, FromBot: false }, { Author: "", Text: reply, FromBot: true });
-    this._thread.scrollTop = this._thread.scrollHeight;
-    this._busy = false;
-  }
 }
 customElements.define("mz-prompt-studio", MzPromptStudio);

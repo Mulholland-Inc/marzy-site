@@ -23,30 +23,33 @@ class MzChats extends HTMLElement {
     this._composer = this.querySelector(".chats-composer");
     this._input = this.querySelector(".chats-input");
 
-    // Attachments
+    // Attachments (optional — `no-attach` drops them, e.g. the prompt preview).
     this._files = [];
     this._fid = 0;
-    this._filesRow = this.querySelector(".chats-files");
-    this._fileInput = this.querySelector(".chats-file-input");
-    this.querySelector(".chats-attach").addEventListener("click", () => this._fileInput.click());
-    this._fileInput.addEventListener("change", (e) => {
-      this.addFiles(e.target.files);
-      this._fileInput.value = ""; // let the same file be picked again later
-    });
-    // Click (or Enter/Space) a card to remove it — it flies up and out.
-    this._filesRow.addEventListener("click", (e) => {
-      const card = e.target.closest(".chats-file");
-      if (card) this.flyAway(card);
-    });
-    this._filesRow.addEventListener("keydown", (e) => {
-      if (e.key !== "Enter" && e.key !== " ") return;
-      const card = e.target.closest(".chats-file");
-      if (card) {
-        e.preventDefault();
-        this.flyAway(card);
-      }
-    });
-    this.wireDrop();
+    this._attachBtn = this.querySelector(".chats-attach");
+    if (this._attachBtn) {
+      this._filesRow = this.querySelector(".chats-files");
+      this._fileInput = this.querySelector(".chats-file-input");
+      this._attachBtn.addEventListener("click", () => this._fileInput.click());
+      this._fileInput.addEventListener("change", (e) => {
+        this.addFiles(e.target.files);
+        this._fileInput.value = ""; // let the same file be picked again later
+      });
+      // Click (or Enter/Space) a card to remove it — it flies up and out.
+      this._filesRow.addEventListener("click", (e) => {
+        const card = e.target.closest(".chats-file");
+        if (card) this.flyAway(card);
+      });
+      this._filesRow.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        const card = e.target.closest(".chats-file");
+        if (card) {
+          e.preventDefault();
+          this.flyAway(card);
+        }
+      });
+      this.wireDrop();
+    }
 
     this._input.addEventListener("input", () => this.grow());
     // Enter sends, Shift+Enter makes a newline (chat convention).
@@ -96,8 +99,7 @@ class MzChats extends HTMLElement {
     this._history = this._history || [];
     let reply;
     try {
-      const res = await api("/chat", { method: "POST", body: { text, history: this._history } });
-      reply = (res && res.reply) || "…";
+      reply = await this.respond(text, this._history);
     } catch {
       reply = "Sorry — I couldn’t reach the assistant just now.";
     }
@@ -106,6 +108,15 @@ class MzChats extends HTMLElement {
 
     this.setSending(false);
     this._busy = false;
+  }
+
+  // How a turn gets its reply. Defaults to the workspace assistant (POST /chat);
+  // a host can set `.responder = async (text, history) => replyText` to drive the
+  // same conversation UI against a different endpoint (e.g. the prompt preview).
+  async respond(text, history) {
+    if (this.responder) return (await this.responder(text, history)) || "…";
+    const res = await api("/chat", { method: "POST", body: { text, history } });
+    return (res && res.reply) || "…";
   }
 
   // First send: the composer glides down from the centered landing to the
@@ -320,21 +331,24 @@ class MzChats extends HTMLElement {
   }
 
   render() {
+    const greeting = this.getAttribute("greeting") || "What can Marzy do for you?";
+    const placeholder = this.getAttribute("placeholder") || "Ask Marzy to run a task, reconcile the books, draft payroll…";
+    const attach = !this.hasAttribute("no-attach");
     this.innerHTML = `
       <div class="chats-stage">
         <div class="chats-answer">
           <span class="chats-mark" aria-hidden="true">${SPARK}</span>
-          <h2 class="chats-greeting">What can Marzy do for you?</h2>
+          <h2 class="chats-greeting">${esc(greeting)}</h2>
         </div>
         <form class="chats-composer">
-          <div class="chats-files" hidden></div>
-          <textarea class="chats-input" rows="1" placeholder="Ask Marzy to run a task, reconcile the books, draft payroll…" aria-label="Message Marzy"></textarea>
+          ${attach ? `<div class="chats-files" hidden></div>` : ""}
+          <textarea class="chats-input" rows="1" placeholder="${esc(placeholder)}" aria-label="Message"></textarea>
           <div class="chats-composer-foot">
-            <button type="button" class="chats-attach" aria-label="Add attachment">${icon("paperclip")}</button>
+            ${attach ? `<button type="button" class="chats-attach" aria-label="Add attachment">${icon("paperclip")}</button>` : `<span></span>`}
             <button type="submit" class="chats-send" aria-label="Send">${icon("send")}</button>
           </div>
-          <input type="file" class="chats-file-input" multiple hidden aria-hidden="true" />
-          <div class="chats-drop-hint" aria-hidden="true">${icon("paperclip")}<span>Drop files to attach</span></div>
+          ${attach ? `<input type="file" class="chats-file-input" multiple hidden aria-hidden="true" />
+          <div class="chats-drop-hint" aria-hidden="true">${icon("paperclip")}<span>Drop files to attach</span></div>` : ""}
         </form>
       </div>`;
   }
