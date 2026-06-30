@@ -3961,40 +3961,27 @@ body.is-dragging-card * {
   resize: vertical;
 }
 
-/* prompt studio: two columns — edit the org prompt | preview the draft live */
+/* Prompt studio — composed from mz-grid + mz-card; only the column flex and the
+   scrollable thread need bespoke rules (the rest is design-system tokens). */
 .studio {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
-  height: calc(100dvh - 240px);
-  min-height: 420px;
+  min-height: calc(100dvh - 220px);
 }
-.studio-col {
+.studio-card {
   display: flex;
   flex-direction: column;
+  gap: var(--space-4);
   min-height: 0;
-  padding: var(--space-4);
-  border: var(--border);
-  border-radius: var(--radius);
-  background: var(--color-surface);
 }
-.studio-head h3 {
+.studio-hd h3 {
   margin: 0 0 var(--space-1);
 }
-.studio-head p {
-  margin: 0 0 var(--space-3);
+.studio-hd p {
+  margin: 0;
 }
 .studio-prompt {
   flex: 1;
-  min-height: 0;
+  min-height: 200px;
   resize: none;
-  border-radius: var(--radius);
-}
-.studio-bar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-top: var(--space-3);
 }
 .studio-thread {
   flex: 1;
@@ -4002,43 +3989,17 @@ body.is-dragging-card * {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-2) 0;
+  gap: var(--space-5);
 }
-.studio-row {
+.studio-foot {
   display: flex;
-  gap: var(--space-2);
-  align-items: flex-start;
-}
-.studio-row.is-you {
-  flex-direction: row-reverse;
-}
-.studio-avatar {
-  flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-pill);
-  background: var(--color-surface-2);
-  font-size: 11px;
-}
-.studio-bubble {
-  max-width: 80%;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius);
-  background: var(--color-surface-2);
-  white-space: pre-wrap;
-}
-.studio-row.is-you .studio-bubble {
-  background: var(--color-volt);
-  color: #fff;
+  gap: var(--space-3);
 }
 .studio-compose {
   display: flex;
   gap: var(--space-2);
-  margin-top: var(--space-2);
+  align-items: flex-end;
 }
 .studio-msg {
   flex: 1;
@@ -4046,10 +4007,9 @@ body.is-dragging-card * {
 }
 @media (max-width: 860px) {
   .studio {
-    grid-template-columns: 1fr;
-    height: auto;
+    min-height: 0;
   }
-  .studio-col {
+  .studio-card {
     height: 60vh;
   }
 }
