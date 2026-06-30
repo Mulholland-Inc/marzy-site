@@ -3961,28 +3961,41 @@ body.is-dragging-card * {
   resize: vertical;
 }
 
-/* Prompt studio — composed from mz-grid + mz-card; only the column flex and the
-   scrollable thread need bespoke rules (the rest is design-system tokens). */
+/* Prompt studio — built in the Chat tab's language: the soft composer, the spark
+   greeting, and the chat's message bubbles. Two borderless panes side by side. */
 .studio {
-  min-height: calc(100dvh - 220px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-8);
+  min-height: calc(100dvh - 150px);
 }
-.studio-card {
+.studio-pane {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
   min-height: 0;
 }
-.studio-hd h3 {
+.studio-label {
   margin: 0 0 var(--space-1);
+  font-family: var(--font-display);
+  font-size: var(--text-18);
+  letter-spacing: var(--tracking-tight);
 }
 .studio-hd p {
   margin: 0;
 }
+/* the prompt editor reuses the composer chrome but fills the column height */
+.studio-editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  cursor: auto;
+}
 .studio-prompt {
   flex: 1;
-  min-height: 200px;
-  resize: none;
+  max-height: none;
 }
+/* preview thread + its centered spark greeting when empty */
 .studio-thread {
   flex: 1;
   min-height: 0;
@@ -3991,26 +4004,26 @@ body.is-dragging-card * {
   flex-direction: column;
   gap: var(--space-5);
 }
-.studio-foot {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
+.studio-empty {
+  margin: auto 0;
 }
-.studio-compose {
-  display: flex;
-  gap: var(--space-2);
-  align-items: flex-end;
+.studio .chats-greeting {
+  font-size: var(--text-24);
 }
-.studio-msg {
-  flex: 1;
-  resize: none;
+.studio-composer {
+  flex: 0 0 auto;
+}
+.studio-msg-mark {
+  width: 22px;
+  margin-bottom: var(--space-1);
 }
 @media (max-width: 860px) {
   .studio {
+    grid-template-columns: 1fr;
     min-height: 0;
   }
-  .studio-card {
-    height: 60vh;
+  .studio-pane {
+    height: 70vh;
   }
 }
 .roles-prompt-bar {
