@@ -7,6 +7,7 @@ import { STATUSES, RECORDS, PRIO, TAGS, prioHTML, whoHTML, initials } from "./da
 import { SPARK } from "./spark.js";
 import { icon } from "./icons.js";
 import { animate, stagger, SPRING_SOFT, EASE_OUT, EASE_IN, reduce } from "./motion.js";
+import { requireAuth } from "../auth.js";
 
 const esc = (s) =>
   String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -124,6 +125,8 @@ const VIEWS = [
 
 class MzApp extends HTMLElement {
   connectedCallback() {
+    // Gate the dashboard: signed-out visitors are bounced to the login screen.
+    requireAuth();
     this.classList.add("app");
     this._singular = "item";
     const nav = VIEWS.map(

@@ -4,6 +4,7 @@ import { SPARK } from "./spark.js";
 import { buildPipes } from "./pipe.js";
 import { ROUTES } from "./site-config.js";
 import { animate, reduce, EASE_IN } from "./motion.js";
+import { initAuth, signIn } from "../auth.js";
 
 // Background is a single Hilbert curve — a space-filling curve that threads
 // one continuous, non-crossing pipe through the whole area, bending at nearly
@@ -80,13 +81,20 @@ class MzLogin extends HTMLElement {
           <button class="btn btn-primary" type="submit">Sign in</button>
         </form>
         <button class="btn btn-outline auth-google" type="button">Continue with Google</button>
+        <p class="auth-note" role="alert" hidden style="margin-top:10px;font-size:14px;color:#b42318;"></p>
         <p class="auth-foot">New to Marzy? <a class="link" href="${ROUTES.contact || "#"}">Request access</a></p>
       </div>`;
 
-    // mock auth: any submit (or Google) plays the exit, then proceeds to the app —
-    // the card fades up and out, then the pipes dissolve.
-    const go = (e) => {
-      e.preventDefault();
+    // Inline status line under the Google button.
+    const say = (m) => {
+      const note = this.querySelector(".auth-note");
+      if (!note) return;
+      note.hidden = !m;
+      note.textContent = m || "";
+    };
+
+    // The exit: card fades up and out, then the pipes dissolve, then into the app.
+    const leave = () => {
       if (this._leaving) return;
       this._leaving = true;
       if (reduce) {
@@ -94,13 +102,33 @@ class MzLogin extends HTMLElement {
         return;
       }
       const card = this.querySelector(".auth-card");
-      const bg = this.querySelector(".auth-bg");
+      const bgEl = this.querySelector(".auth-bg");
       animate(card, { opacity: [1, 0], y: [0, -56] }, { duration: 0.28, ease: EASE_IN });
-      animate(bg, { opacity: [1, 0] }, { duration: 0.32, delay: 0.06, ease: EASE_IN });
+      animate(bgEl, { opacity: [1, 0] }, { duration: 0.32, delay: 0.06, ease: EASE_IN });
       setTimeout(() => (window.location.href = next), 420);
     };
-    this.querySelector(".auth-form").addEventListener("submit", go);
-    this.querySelector(".auth-google").addEventListener("click", go);
+
+    // Real auth: /config decides Firebase (Google popup) vs a dev principal. When
+    // a user is present — already signed in, or just signed in — exit to the app.
+    initAuth((user) => { if (user) leave(); }).catch(() =>
+      say("Can’t reach the workspace API — try again in a moment.")
+    );
+
+    this.querySelector(".auth-google").addEventListener("click", async () => {
+      say("");
+      try {
+        await signIn();
+      } catch (e) {
+        if (e && e.code === "auth/popup-closed-by-user") return;
+        say("Sign-in failed. Please try again.");
+      }
+    });
+
+    // Email/password isn't wired to the backend yet — Google SSO is the live path.
+    this.querySelector(".auth-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      say("Email sign-in isn’t enabled yet — continue with Google.");
+    });
 
     const bg = this.querySelector(".auth-bg");
     let lw = 0, lh = 0;
