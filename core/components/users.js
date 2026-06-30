@@ -3,7 +3,7 @@
 // a member's role inline, or remove them. WorkOS is the source of truth — there's
 // no local users table.
 import { icon } from "./icons.js";
-import { api } from "../auth.js";
+import { api, whoami } from "../auth.js";
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -23,6 +23,7 @@ class MzUsers extends HTMLElement {
     this._search = "";
     this._members = [];
     this._roles = [];
+    this._admin = false;
 
     this.innerHTML = `
       <div class="users-toolbar">
@@ -68,13 +69,18 @@ class MzUsers extends HTMLElement {
 
   async load() {
     try {
-      const [m, r] = await Promise.all([api("/members"), api("/roles")]);
+      const [m, r, me] = await Promise.all([api("/members"), api("/roles"), whoami()]);
       this._members = m.members || [];
       this._roles = r.roles || [];
+      this._admin = (me.roles || []).includes("admin");
       this._error = false;
     } catch {
       this._error = true;
     }
+    // Inviting and removing members is admin-only (the backend enforces it too);
+    // hide the invite form for everyone else.
+    const form = this.querySelector(".users-add");
+    if (form) form.hidden = !this._admin;
     // Re-create the invite-role select now that the roles are loaded, so the
     // mz-select picks up its <option>s at connect time (it reads them once).
     const holder = this.querySelector(".users-add-role-holder");
@@ -126,17 +132,26 @@ class MzUsers extends HTMLElement {
       this._body.innerHTML = `<tr><td colspan="4" class="table-empty">${this._members.length ? "No people match your search." : "No members yet."}</td></tr>`;
       return;
     }
+    const roleName = (slug) => this._roles.find((r) => r.slug === slug)?.name || slug;
     this._body.innerHTML = rows
       .map(
         (u) => `<tr>
           <td><div class="cell-user"><span class="avatar" aria-hidden="true">${initials(u.name, u.email)}</span><span class="cell-user-text"><b>${esc(u.name || u.email)}</b><small class="t-caption">${esc(u.email)}</small></span></div></td>
-          <td><mz-select class="users-role" size="sm" data-role="${esc(u.id)}" value="${esc(u.role)}" aria-label="Role for ${esc(u.name || u.email)}">${this.roleOptions(u.role)}</mz-select></td>
+          <td>${
+            this._admin
+              ? `<mz-select class="users-role" size="sm" data-role="${esc(u.id)}" value="${esc(u.role)}" aria-label="Role for ${esc(u.name || u.email)}">${this.roleOptions(u.role)}</mz-select>`
+              : `<span class="t-body">${esc(roleName(u.role))}</span>`
+          }</td>
           <td>${
             u.status === "active"
               ? `<span class="status-ok" title="Active">${icon("check")}</span>`
               : `<span class="status-muted" title="${esc(STATUS_LABEL[u.status] || u.status)}">${icon("clock")}</span>`
           }</td>
-          <td><div class="row-actions"><button class="btn-icon" type="button" data-act="remove" data-id="${esc(u.id)}" title="Remove" aria-label="Remove ${esc(u.name || u.email)}">${icon("trash-2")}</button></div></td>
+          <td>${
+            this._admin
+              ? `<div class="row-actions"><button class="btn-icon" type="button" data-act="remove" data-id="${esc(u.id)}" title="Remove" aria-label="Remove ${esc(u.name || u.email)}">${icon("trash-2")}</button></div>`
+              : ""
+          }</td>
         </tr>`
       )
       .join("");

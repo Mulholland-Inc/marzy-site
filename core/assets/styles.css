@@ -4124,6 +4124,16 @@ body.is-dragging-card * {
   background: var(--color-danger-soft);
 }
 
+.settings-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+.settings-empty {
+  margin-top: var(--space-3);
+}
+
 @media (max-width: 860px) {
   .roles-head {
     flex-wrap: wrap;

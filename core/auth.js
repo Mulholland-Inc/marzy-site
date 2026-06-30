@@ -77,6 +77,14 @@ export async function getToken() {
   }
 }
 
+// GET /whoami → the active tenant's viewer ({ account, roles }). Roles drive the
+// UI's admin gating (e.g. who can administer members). Cached per page load.
+let whoamiPromise = null;
+export function whoami() {
+  if (!whoamiPromise) whoamiPromise = api("/whoami").catch(() => ({ roles: [] }));
+  return whoamiPromise;
+}
+
 export async function authHeaders() {
   const h = { "Content-Type": "application/json" };
   const t = await getToken();

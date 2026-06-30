@@ -406,7 +406,14 @@ class MzApp extends HTMLElement {
     try {
       const { members } = await api("/members");
       this._membersMap = {};
-      (members || []).forEach((mm) => (this._membersMap[mm.userId] = mm.name || mm.email || mm.userId));
+      // A commit's author is the viewer's Account: the WorkOS user id when the
+      // access token carries no email, the email once the JWT template adds it.
+      // Key the map by both so history resolves to a name across the transition.
+      (members || []).forEach((mm) => {
+        const name = mm.name || mm.email || mm.userId;
+        if (mm.userId) this._membersMap[mm.userId] = name;
+        if (mm.email) this._membersMap[mm.email.toLowerCase()] = name;
+      });
     } catch {
       this._membersMap = {};
     }
@@ -607,10 +614,7 @@ function settingsHTML() {
   return `
     <mz-tabs>
       <mz-tab-panel label="Workspace">
-        <mz-grid cols="2" align="start">
-          <mz-field label="Workspace name" placeholder="Mulholland Inc." for="s-name"></mz-field>
-          <mz-field label="Billing email" type="email" placeholder="ops@mulholland.inc" for="s-email"></mz-field>
-        </mz-grid>
+        <mz-settings></mz-settings>
       </mz-tab-panel>
       <mz-tab-panel label="Connections">
         <mz-connectors></mz-connectors>

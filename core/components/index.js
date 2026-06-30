@@ -68,6 +68,7 @@ import "./view-files.js";
 import "./view-month.js";
 import "./users.js";
 import "./roles.js";
+import "./settings.js";
 import "./workspace.js";
 import "./notifications.js";
 import "./toolbar.js";

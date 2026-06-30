@@ -95,6 +95,24 @@ export function can(roles, typeName, priv) {
   return (roles ?? []).some((r) => (defs.find((d) => d.name === r)?.grants?.[typeName] ?? []).includes(priv));
 }
 
+// ── calendar (date-bearing objects) ─────────────────────────────────────────────
+
+// Infra projections that are object types but not real workspace records.
+const NOT_EVENTS = new Set(["users", "commit"]);
+
+// calendarProps returns a type's user-facing date/timestamp properties — the
+// columns a row can be placed on a calendar by. Managed columns (created_at,
+// updated_at) are excluded: they're audit metadata, not scheduled events.
+export function calendarProps(typeName) {
+  return props(typeName).filter((p) => !p.managed && kind(typeName, p) === "date");
+}
+
+// calendarTypes are the concrete object types carrying at least one date
+// property, so the calendar knows which types to fetch and place.
+export function calendarTypes() {
+  return types().filter((t) => !NOT_EVENTS.has(t.name) && calendarProps(t.name).length);
+}
+
 // ── property kinds (how to render/edit a property) ─────────────────────────────
 
 // kind maps a property to a UI control family. Enums (a fixed value set) come
