@@ -532,8 +532,18 @@ class MzApp extends HTMLElement {
     const status = this._pane.querySelector(".pane-actions-status");
     if (status) status.textContent = `Running ${catalog.label(a.name)}…`;
     try {
-      await api(`/actions/${encodeURIComponent(a.name)}`, { method: "POST", body });
-      if (status) status.textContent = `${catalog.label(a.name)} done.`;
+      const res = await api(`/actions/${encodeURIComponent(a.name)}`, { method: "POST", body });
+      // If the action produced a file/link (e.g. an export), open it in a new
+      // tab and leave a clickable fallback (popup blockers may swallow the open).
+      const url = res && (res.file_url || res.url || res.link);
+      if (status) {
+        if (url) {
+          status.innerHTML = `${esc(catalog.label(a.name))} done — <a href="${esc(url)}" target="_blank" rel="noopener">open</a>`;
+          window.open(url, "_blank", "noopener");
+        } else {
+          status.textContent = `${catalog.label(a.name)} done.`;
+        }
+      }
       // The action recorded an audit commit (and may have changed the object);
       // refresh the history trail and the underlying collection.
       const cur = this._record;
