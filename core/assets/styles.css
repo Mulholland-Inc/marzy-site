@@ -2635,169 +2635,6 @@ mz-tab-panel:not([hidden]) {
   opacity: 0.7;
 }
 
-/* ── Calendar: timezone filter + week time-grid (switcher reuses .viewseg) ── */
-.cal-tz {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: var(--control-h-sm);
-  padding: 0 var(--space-2) 0 var(--space-3);
-  background: var(--color-surface);
-  border: var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-xs);
-  color: var(--color-muted);
-}
-.cal-tz-ico {
-  display: inline-flex;
-  width: var(--icon-sm);
-  height: var(--icon-sm);
-}
-.cal-tz-ico svg {
-  width: 100%;
-  height: 100%;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.75;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.cal-tz-select {
-  border: 0;
-  background: none;
-  font: inherit;
-  font-size: var(--text-13);
-  font-weight: var(--weight-medium);
-  color: var(--color-ink);
-  cursor: pointer;
-}
-.cal-tz-select:focus {
-  outline: none;
-}
-.cal-week {
-  display: flex;
-  flex-direction: column;
-  /* fit the viewport (leaving room for the breadcrumb + calendar header) so
-     the grid scrolls inside rather than running off the bottom of the screen */
-  max-height: calc(100dvh - 220px);
-}
-.cal-week-head {
-  display: grid;
-  grid-template-columns: 56px repeat(7, 1fr);
-  border-bottom: var(--border);
-}
-.cal-week-gutter {
-  border-right: var(--border);
-}
-.cal-wday {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 6px;
-  padding: var(--space-2) 0;
-  border-right: var(--border);
-  font-size: var(--text-12);
-  color: var(--color-muted);
-}
-.cal-wday:last-child {
-  border-right: 0;
-}
-.cal-wday b {
-  font-family: var(--font-display);
-  font-size: var(--text-15);
-  font-weight: var(--weight-semibold);
-  color: var(--color-ink);
-}
-.cal-wday.today b {
-  color: var(--color-volt);
-}
-.cal-week-body {
-  display: grid;
-  grid-template-columns: 56px repeat(7, 1fr);
-  min-height: 0;
-  overflow-y: auto;
-}
-.cal-week-times {
-  display: flex;
-  flex-direction: column;
-  border-right: var(--border);
-}
-.cal-hour {
-  height: var(--hour-h);
-  padding: 2px var(--space-2) 0;
-  text-align: right;
-  font-size: var(--text-12);
-  color: var(--color-muted);
-  transform: translateY(-7px); /* sit the label on the hour line */
-}
-.cal-col {
-  position: relative;
-  border-right: var(--border);
-}
-.cal-col:last-child {
-  border-right: 0;
-}
-.cal-slot {
-  height: var(--hour-h);
-  border-bottom: var(--border);
-}
-.cal-slot:last-child {
-  border-bottom: 0;
-}
-/* live current-time line in the today column */
-.cal-now {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 0;
-  border-top: 2px solid var(--color-volt);
-  z-index: 2;
-  pointer-events: none;
-}
-.cal-now::before {
-  content: "";
-  position: absolute;
-  left: -3px;
-  top: -4px;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--color-volt);
-}
-.cal-block {
-  position: absolute;
-  left: 3px;
-  right: 3px;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  overflow: hidden;
-  padding: 4px 6px;
-  border: 0;
-  border-radius: 6px;
-  background: var(--color-volt);
-  color: #fff;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.cal-block-muted {
-  background: var(--color-surface-2);
-  color: var(--color-ink-2);
-}
-.cal-block-title {
-  font-size: var(--text-12);
-  font-weight: var(--weight-semibold);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.cal-block-time {
-  font-size: 11px;
-  opacity: 0.75;
-  font-variant-numeric: tabular-nums;
-}
-
 /* let month cells shrink so chips ellipsis instead of forcing overflow */
 .cal-cell {
   min-width: 0;
@@ -2814,9 +2651,6 @@ mz-tab-panel:not([hidden]) {
   .cal-nav {
     flex-wrap: wrap;
   }
-  .cal-tz {
-    flex: 1 1 auto;
-  }
   /* tighter month cells + smaller event chips */
   .cal-cell {
     min-height: 64px;
@@ -2824,25 +2658,6 @@ mz-tab-panel:not([hidden]) {
   }
   .cal-weekdays span {
     font-size: 11px;
-  }
-  /* fixed, readable columns + horizontal scroll (headers mirror the body via JS) */
-  .cal-week-body,
-  .cal-week-head {
-    grid-template-columns: 44px repeat(7, 96px);
-  }
-  .cal-week-body {
-    overflow-x: auto;
-  }
-  .cal-week-head {
-    overflow-x: hidden;
-  }
-  .cal-hour {
-    font-size: 11px;
-    padding-inline: 4px;
-  }
-  .cal-wday {
-    flex-direction: column;
-    gap: 0;
   }
 }
 
@@ -6622,24 +6437,6 @@ body.is-dragging-card * {
   text-align: center;
   font-size: var(--text-13);
   color: var(--color-muted);
-}
-
-/* timezone picker in the calendar: borderless trigger inside the pill */
-.cal-tz .cal-tz-select {
-  width: auto;
-}
-.cal-tz .cs-trigger {
-  height: auto;
-  padding: 0;
-  border: 0;
-  background: none;
-  box-shadow: none;
-  gap: 6px;
-  font-size: var(--text-13);
-  font-weight: var(--weight-medium);
-}
-.cal-tz .cs-trigger[aria-expanded="true"] {
-  box-shadow: none;
 }
 
 /* ─────────────────────────────────────── Custom date picker (mz-datepicker) ── */
