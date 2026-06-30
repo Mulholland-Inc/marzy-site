@@ -3949,19 +3949,106 @@ body.is-dragging-card * {
   margin-top: var(--space-3);
 }
 
-/* assistant-instruction editors (settings org prompt, roles per-role prompt) */
-.settings-prompt,
+/* assistant-instruction editor (roles per-role prompt) */
 .roles-sec {
   margin-top: var(--space-5);
 }
-.settings-prompt h3 {
-  margin: 0 0 var(--space-1);
-}
-.settings-prompt-input,
 .roles-prompt-input {
   width: 100%;
   margin-top: var(--space-2);
   resize: vertical;
+}
+
+/* prompt studio: two columns — edit the org prompt | preview the draft live */
+.studio {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  height: calc(100dvh - 240px);
+  min-height: 420px;
+}
+.studio-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: var(--space-4);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+.studio-head h3 {
+  margin: 0 0 var(--space-1);
+}
+.studio-head p {
+  margin: 0 0 var(--space-3);
+}
+.studio-prompt {
+  flex: 1;
+  min-height: 0;
+  resize: none;
+}
+.studio-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+.studio-thread {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+.studio-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+.studio-row.is-you {
+  flex-direction: row-reverse;
+}
+.studio-avatar {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+  font-size: 11px;
+}
+.studio-bubble {
+  max-width: 80%;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  white-space: pre-wrap;
+}
+.studio-row.is-you .studio-bubble {
+  background: var(--color-volt);
+  color: #fff;
+}
+.studio-compose {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+.studio-msg {
+  flex: 1;
+  resize: none;
+}
+@media (max-width: 860px) {
+  .studio {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .studio-col {
+    height: 60vh;
+  }
 }
 .roles-prompt-bar {
   display: flex;

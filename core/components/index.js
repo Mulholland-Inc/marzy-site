@@ -69,6 +69,7 @@ import "./view-month.js";
 import "./users.js";
 import "./roles.js";
 import "./settings.js";
+import "./prompt-studio.js";
 import "./workspace.js";
 import "./notifications.js";
 import "./toolbar.js";
