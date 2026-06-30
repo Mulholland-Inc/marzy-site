@@ -62,19 +62,30 @@ async function fetchMe() {
 // GET /auth/token → access_token (cached briefly in memory) or null.
 let tokenCache = null;
 let tokenAt = 0;
+let tokenInFlight = null;
 export async function getToken() {
   if (tokenCache && Date.now() - tokenAt < 30000) return tokenCache;
-  try {
-    const r = await fetch(`${apiHost}/auth/token`, { credentials: "include" });
-    if (!r.ok) { tokenCache = null; return null; }
-    const j = await r.json();
-    tokenCache = j.access_token || null;
-    tokenAt = Date.now();
-    return tokenCache;
-  } catch {
-    tokenCache = null;
-    return null;
-  }
+  // Dedupe concurrent refreshes. WorkOS rotates the refresh token on every
+  // /auth/token call, so parallel callers (several components booting at once)
+  // would race: the first rotates it and the rest 401 on the consumed token,
+  // breaking the session. Share one in-flight request instead.
+  if (tokenInFlight) return tokenInFlight;
+  tokenInFlight = (async () => {
+    try {
+      const r = await fetch(`${apiHost}/auth/token`, { credentials: "include" });
+      if (!r.ok) { tokenCache = null; return null; }
+      const j = await r.json();
+      tokenCache = j.access_token || null;
+      tokenAt = Date.now();
+      return tokenCache;
+    } catch {
+      tokenCache = null;
+      return null;
+    } finally {
+      tokenInFlight = null;
+    }
+  })();
+  return tokenInFlight;
 }
 
 // GET /whoami → the active tenant's viewer ({ account, roles }). Roles drive the
