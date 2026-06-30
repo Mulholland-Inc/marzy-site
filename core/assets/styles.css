@@ -6812,3 +6812,38 @@ body.is-dragging-card * {
   padding: var(--space-2, 8px) 0;
   color: var(--color-ink-2, #888);
 }
+
+/* Read-only Access (roles) tab. */
+.roles-static {
+  padding: 6px 0;
+  font-size: var(--text-14, 14px);
+  color: var(--color-ink, #111);
+}
+.roles-acc-opt[disabled] {
+  cursor: default;
+  opacity: 1;
+}
+.roles-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-ink-2, #888);
+}
+.roles-note svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Users page status icons. */
+.status-ok svg {
+  width: 18px;
+  height: 18px;
+  color: var(--color-volt);
+  display: block;
+}
+.status-muted svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-ink-3, #aaa);
+  display: block;
+}

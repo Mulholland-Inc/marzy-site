@@ -156,12 +156,19 @@ const PROSE = new Set([
 // enum's values); calendar when there's a date field. Each mode carries the
 // config the view component needs.
 export function viewModes(typeName) {
+  const t = type(typeName);
   const ps = props(typeName);
-  const enumField = ps.find((p) => !p.managed && !linkOf(typeName, p.name) && Array.isArray(p.enum) && p.enum.length);
   const modes = [{ id: "table" }, { id: "grid" }];
-  // board groups by the type's first enum (e.g. a deal's stage). calendar/gallery/
-  // files views are not generalized yet — added here once their components are.
-  if (enumField) modes.push({ id: "board", groupBy: enumField.name, order: enumField.enum });
+  // Board columns: for an interface, group by the implementer subtype (the
+  // "category" — e.g. lulu's product → lighting/seating); for a concrete type,
+  // by its first enum (e.g. a deal's stage). calendar/gallery/files come later.
+  const iface = domainInterfaces().some((i) => i.name === typeName);
+  const enumField = ps.find((p) => !p.managed && !linkOf(typeName, p.name) && Array.isArray(p.enum) && p.enum.length);
+  if (iface && (t?.implementers || []).length) {
+    modes.push({ id: "board", groupBy: "_type", order: t.implementers, groupLabel: "Category" });
+  } else if (enumField) {
+    modes.push({ id: "board", groupBy: enumField.name, order: enumField.enum, groupLabel: label(enumField.name) });
+  }
   return modes;
 }
 

@@ -123,6 +123,13 @@ class MzApp extends HTMLElement {
       this._body.innerHTML = `<mz-empty heading="Couldn’t load the workspace">The catalog failed to load. Try refreshing.</mz-empty>`;
       return;
     }
+    // The workspace's display name (for the breadcrumb) — best-effort.
+    try {
+      const cfg = await api("/config");
+      this._workspace = cfg?.name || "";
+    } catch {}
+    // A userId → name map so the version history shows people, not raw ids.
+    this.loadMembers();
     // sections: Chat, Activity, <one per browsable type>, Calendar, Users, Access,
     // Settings. browsable() already hides interface implementers (you reach them
     // through the interface); we additionally drop infra types: users is the
@@ -210,7 +217,7 @@ class MzApp extends HTMLElement {
 
   crumbsHTML(sec, extra) {
     const sep = `<span class="crumb-sep" aria-hidden="true">${icon("chevron-right")}</span>`;
-    let html = `<span class="crumb crumb-muted">Mulholland</span>${sep}`;
+    let html = `<span class="crumb crumb-muted">${esc(this._workspace || "Workspace")}</span>${sep}`;
     html += `<span class="crumb ${extra ? "crumb-muted" : "crumb-current"}"><span class="crumb-ico" aria-hidden="true">${icon(sec.ic)}</span>${esc(sec.label)}</span>`;
     if (extra) html += `${sep}<span class="crumb crumb-current">${esc(extra)}</span>`;
     return html;
@@ -359,18 +366,65 @@ class MzApp extends HTMLElement {
     this.collection()?.reload();
   }
 
-  renderChain(commits) {
+  async renderChain(commits) {
     const ol = this._pane.querySelector(".chain");
     if (!ol) return;
+    await this.resolveLinks(commits);
+    if (!this._pane.contains(ol)) return; // pane changed while resolving
     ol.innerHTML = commits.length
       ? commits.map((c) => this.chainItem(c)).join("")
       : `<li class="chain-empty t-meta">No history yet.</li>`;
   }
 
+  // resolveLinks builds a uuid→name map for the FK fields that appear in the
+  // history's diffs, so "client: <uuid> → <uuid>" reads as names. It fetches each
+  // referenced target type's rows once (cached for the session).
+  async resolveLinks(commits) {
+    const type = this._record?._type;
+    if (!type) return;
+    this._uuidNames = this._uuidNames || {};
+    this._fetchedTargets = this._fetchedTargets || new Set();
+    const targets = new Set();
+    commits.forEach((c) =>
+      Object.keys(c.changes || {}).forEach((field) => {
+        const link = catalog.linkOf(type, field);
+        if (link && !this._fetchedTargets.has(link.to)) targets.add(link.to);
+      })
+    );
+    await Promise.all(
+      [...targets].map(async (tt) => {
+        try {
+          const rows = await api(`/objects/${tt}`);
+          rows.forEach((r) => (this._uuidNames[r.id] = r[catalog.titleField(r._type)] || r.id));
+        } catch {}
+        this._fetchedTargets.add(tt);
+      })
+    );
+  }
+
+  async loadMembers() {
+    try {
+      const { members } = await api("/members");
+      this._membersMap = {};
+      (members || []).forEach((mm) => (this._membersMap[mm.userId] = mm.name || mm.email || mm.userId));
+    } catch {
+      this._membersMap = {};
+    }
+  }
+
   chainItem(c) {
-    const who = c.author || "Marzy";
+    const m = this._membersMap || {};
+    const who = m[c.author] || (c.author ? (c.author.startsWith("user_") ? "Member" : c.author) : "Marzy");
+    // FK values are raw uuids in the diff — resolve to the referenced object's
+    // name (resolveLinks), falling back to a short form for unknowns.
+    const names = this._uuidNames || {};
+    const fmt = (v) => {
+      const s = String(v ?? "");
+      if (names[s]) return names[s];
+      return /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(s) ? s.slice(0, 8) + "…" : s || "—";
+    };
     const diff = (from, to) =>
-      `<span class="chain-diff"><span class="chain-from">${esc(from)}</span>→<span class="chain-to">${esc(to)}</span></span>`;
+      `<span class="chain-diff"><span class="chain-from">${esc(fmt(from))}</span>→<span class="chain-to">${esc(fmt(to))}</span></span>`;
     let body;
     if (c.op === "create") body = `<div class="chain-change"><span class="chain-field">Created</span></div>`;
     else if (c.op === "delete") body = `<div class="chain-change"><span class="chain-field">Deleted</span></div>`;

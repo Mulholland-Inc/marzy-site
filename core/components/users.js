@@ -32,7 +32,7 @@ class MzUsers extends HTMLElement {
         </div>
         <form class="users-add">
           <input type="email" class="input users-add-email" placeholder="name@company.com" aria-label="Email to invite" />
-          <mz-select class="users-role users-add-role" size="sm" aria-label="Role"></mz-select>
+          <span class="users-add-role-holder"></span>
           <button type="submit" class="btn btn-primary btn-sm">${icon("plus")}<span>Invite</span></button>
         </form>
       </div>
@@ -75,8 +75,10 @@ class MzUsers extends HTMLElement {
     } catch {
       this._error = true;
     }
-    const addRole = this.querySelector(".users-add-role");
-    if (addRole) addRole.innerHTML = this.roleOptions();
+    // Re-create the invite-role select now that the roles are loaded, so the
+    // mz-select picks up its <option>s at connect time (it reads them once).
+    const holder = this.querySelector(".users-add-role-holder");
+    if (holder) holder.innerHTML = `<mz-select class="users-role users-add-role" size="sm" aria-label="Role">${this.roleOptions()}</mz-select>`;
     this.render();
   }
 
@@ -129,7 +131,11 @@ class MzUsers extends HTMLElement {
         (u) => `<tr>
           <td><div class="cell-user"><span class="avatar" aria-hidden="true">${initials(u.name, u.email)}</span><span class="cell-user-text"><b>${esc(u.name || u.email)}</b><small class="t-caption">${esc(u.email)}</small></span></div></td>
           <td><mz-select class="users-role" size="sm" data-role="${esc(u.id)}" value="${esc(u.role)}" aria-label="Role for ${esc(u.name || u.email)}">${this.roleOptions(u.role)}</mz-select></td>
-          <td><span class="badge badge-${u.status === "active" ? "ok" : "neutral"}">${STATUS_LABEL[u.status] || esc(u.status)}</span></td>
+          <td>${
+            u.status === "active"
+              ? `<span class="status-ok" title="Active">${icon("check")}</span>`
+              : `<span class="status-muted" title="${esc(STATUS_LABEL[u.status] || u.status)}">${icon("clock")}</span>`
+          }</td>
           <td><div class="row-actions"><button class="btn-icon" type="button" data-act="remove" data-id="${esc(u.id)}" title="Remove" aria-label="Remove ${esc(u.name || u.email)}">${icon("trash-2")}</button></div></td>
         </tr>`
       )
