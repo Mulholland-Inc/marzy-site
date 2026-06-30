@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Marzy — design system &amp; sites</title>
-    <meta name="description" content="The Marzy design system and the websites built on it." />
+    <title>Dashboard — Marzy</title>
+    <meta name="description" content="A Marzy workspace dashboard." />
     <meta name="theme-color" content="#ffffff" />
     <link rel="icon" type="image/svg+xml" href="core/assets/favicon/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -15,41 +15,10 @@
     />
     <link href="core/assets/tokens.css" rel="stylesheet" />
     <link href="core/assets/styles.css" rel="stylesheet" />
+    <script src="site.config.js"></script>
     <script src="core/components/index.js" type="module"></script>
   </head>
   <body>
-    <main>
-      <mz-section>
-        <mz-stack center gap="6">
-          <mz-spark></mz-spark>
-          <h1>One system, many sites.</h1>
-          <mz-lead
-            >A single token + component library powers everything here. Pick a destination — or
-            browse the components it's all built from.</mz-lead
-          >
-        </mz-stack>
-      </mz-section>
-
-      <mz-section size="sm">
-        <mz-grid cols="2">
-          <mz-card hover>
-            <mz-spark></mz-spark>
-            <h3>Dashboard</h3>
-            <p>The Marzy workspace — sidebar, status cards, and a live activity feed.</p>
-            <mz-actions>
-              <mz-btn variant="primary" href="sites/dashboard/index.html" arrow>Open the dashboard</mz-btn>
-            </mz-actions>
-          </mz-card>
-          <mz-card hover>
-            <mz-spark></mz-spark>
-            <h3>Design system</h3>
-            <p>The component gallery — tokens, type, controls, and every component in context.</p>
-            <mz-actions>
-              <mz-btn variant="outline" href="sites/gallery/index.html" arrow>Open the gallery</mz-btn>
-            </mz-actions>
-          </mz-card>
-        </mz-grid>
-      </mz-section>
-    </main>
+    <mz-app></mz-app>
   </body>
 </html>

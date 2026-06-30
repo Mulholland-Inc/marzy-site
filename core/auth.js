@@ -36,8 +36,8 @@ export const API_BASE = override
     : apiHost;
 
 // Where the dashboard sends signed-out visitors, and where login returns them.
-const LOGIN = (C.routes && C.routes.signin) || "login.html";
-const HOME = C.home || "index.html";
+const LOGIN = (C.routes && C.routes.signin) || "/login";
+const HOME = C.home || "/";
 
 // Firebase modular SDK over the gstatic ESM CDN — keeps the site build-step-free.
 const FB = "https://www.gstatic.com/firebasejs/10.14.1";

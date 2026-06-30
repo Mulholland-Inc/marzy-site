@@ -27,11 +27,8 @@ export default {
       return Response.redirect(`${API_ORIGIN}/${tenant}/connect/callback${url.search}`, 302);
     }
 
-    // Everyone lands in the app; the dashboard guards to the login screen.
-    if (p === "/") {
-      return Response.redirect(`${url.origin}/sites/dashboard`, 302);
-    }
-
+    // Everything else is a static asset: / = dashboard (guards to /login when
+    // signed out), /login = login screen.
     const response = await env.ASSETS.fetch(request);
     const res = new Response(response.body, response);
     res.headers.set("Strict-Transport-Security", HSTS);
