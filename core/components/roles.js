@@ -119,10 +119,6 @@ class MzRoles extends HTMLElement {
     this._cfg.innerHTML = `
       <div class="roles-grid">
         <div class="roles-field">
-          <label>Role</label>
-          <div class="roles-static">${esc(r.name)}</div>
-        </div>
-        <div class="roles-field">
           <label>Description</label>
           <div class="roles-static">${esc(r.description || "—")}</div>
         </div>
