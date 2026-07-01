@@ -117,12 +117,7 @@ class MzRoles extends HTMLElement {
       .join("");
 
     this._cfg.innerHTML = `
-      <div class="roles-grid">
-        <div class="roles-field">
-          <label>Description</label>
-          <div class="roles-static">${esc(r.description || "—")}</div>
-        </div>
-      </div>
+      ${this.promptHTML(r)}
 
       <section class="roles-sec">
         <div class="roles-sec-head">
@@ -138,9 +133,7 @@ class MzRoles extends HTMLElement {
           <p class="roles-sec-desc t-meta">The capabilities this role can run — as buttons on an object and as chat tools.</p>
         </div>
         <div class="roles-rows">${this.actionsHTML(r)}</div>
-      </section>
-
-      ${this.promptHTML(r)}`;
+      </section>`;
 
     const ta = this._cfg.querySelector(".roles-prompt-input");
     if (ta) {
@@ -167,12 +160,10 @@ class MzRoles extends HTMLElement {
   promptHTML(r) {
     if (!this._prompts?.roles) return "";
     const body = this._prompts.roles[r.slug] || "";
+    const ph = r.description || "e.g. Prefer concise answers; always confirm before scheduling.";
     return `<section class="roles-sec">
-        <div class="roles-sec-head">
-          <h3>Assistant instructions</h3>
-          <p class="roles-sec-desc t-meta">Extra guidance the assistant follows for ${esc(r.name)} — added on top of the workspace and personal instructions.</p>
-        </div>
-        <textarea class="input roles-prompt-input" rows="4" placeholder="e.g. Prefer concise answers; always confirm before scheduling.">${esc(body)}</textarea>
+        <div class="roles-sec-head"><h3>Assistant instructions</h3></div>
+        <textarea class="input roles-prompt-input" rows="4" placeholder="${esc(ph)}">${esc(body)}</textarea>
         <div class="roles-prompt-bar"><button type="button" class="btn btn-primary btn-sm" data-act="save-prompt">Save</button><span class="roles-prompt-status t-meta" role="status"></span></div>
       </section>`;
   }
