@@ -29,7 +29,6 @@ class MzPromptStudio extends HTMLElement {
             <div class="studio-layer studio-layer-edit">
               <textarea class="studio-prompt" placeholder="e.g. We're a dental group — be precise about patient data and never guess at clinical details." aria-label="Workspace instructions"></textarea>
             </div>
-            <div class="studio-base"></div>
             <div class="studio-extra"></div>
           </div>
           <div class="studio-doc-foot">
@@ -43,7 +42,6 @@ class MzPromptStudio extends HTMLElement {
       </section>`;
 
     this._prompt = this.querySelector(".studio-prompt");
-    this._base = this.querySelector(".studio-base");
     this._extra = this.querySelector(".studio-extra");
 
     this.addEventListener("click", (e) => {
@@ -96,12 +94,11 @@ class MzPromptStudio extends HTMLElement {
     this.compose();
   }
 
-  // Fetch and render the read-only layers (base + that member's role + personal)
-  // around the editable org layer.
+  // Fetch and render the read-only layers (the selected member's role + personal)
+  // beneath the editable org layer.
   async compose() {
     const q = `?account=${encodeURIComponent(this._account)}&role=${encodeURIComponent(this._role)}`;
     const c = await api("/prompts/compose" + q).catch(() => ({}));
-    this._base.innerHTML = c.base ? this.layer("System base", c.base) : "";
     const extra = [];
     if (c.role && c.role.trim()) extra.push(this.layer(`${label(this._role || "role")} role`, c.role));
     if (c.user && c.user.trim()) extra.push(this.layer("Personal context", c.user));

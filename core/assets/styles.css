@@ -4019,7 +4019,6 @@ body.is-dragging-card * {
   padding: var(--space-3) var(--space-4);
 }
 .studio-layer + .studio-layer,
-.studio-base .studio-layer,
 .studio-extra .studio-layer {
   border-top: var(--border);
 }
