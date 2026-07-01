@@ -4037,8 +4037,8 @@ body.is-dragging-card * {
   line-height: var(--leading-relaxed);
   color: var(--color-muted);
 }
-.studio-layer-edit .studio-layer-tag {
-  color: var(--color-volt);
+.studio-layer-edit {
+  padding-block: var(--space-1) var(--space-2);
 }
 .studio-prompt {
   display: block;
