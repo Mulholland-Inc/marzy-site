@@ -5,6 +5,7 @@
 // assignment happens on the Users page.
 import { api } from "../auth.js";
 import * as catalog from "../catalog.js";
+import { icon } from "./icons.js";
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -163,8 +164,13 @@ class MzRoles extends HTMLElement {
     const ph = r.description || "e.g. Prefer concise answers; always confirm before scheduling.";
     return `<section class="roles-sec">
         <div class="roles-sec-head"><h3>Assistant instructions</h3></div>
-        <textarea class="input roles-prompt-input" rows="4" placeholder="${esc(ph)}">${esc(body)}</textarea>
-        <div class="roles-prompt-bar"><button type="button" class="btn btn-primary btn-sm" data-act="save-prompt">Save</button><span class="roles-prompt-status t-meta" role="status"></span></div>
+        <div class="roles-prompt-box">
+          <textarea class="roles-prompt-input" rows="4" placeholder="${esc(ph)}">${esc(body)}</textarea>
+          <div class="roles-prompt-foot">
+            <span class="roles-prompt-status t-meta" role="status"></span>
+            <button type="button" class="chats-send" data-act="save-prompt" aria-label="Save instructions">${icon("check")}</button>
+          </div>
+        </div>
       </section>`;
   }
 }

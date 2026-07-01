@@ -3958,10 +3958,38 @@ body.is-dragging-card * {
 .roles-sec {
   margin-top: var(--space-5);
 }
+/* boxed prompt editor: borderless textarea + the save button tucked inside,
+   matching the prompt studio */
+.roles-prompt-box {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-2);
+  border: var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
 .roles-prompt-input {
   width: 100%;
-  margin-top: var(--space-2);
+  min-height: 120px;
+  padding: var(--space-3) var(--space-4);
+  border: 0;
+  background: none;
   resize: vertical;
+  font: inherit;
+  font-size: var(--text-14);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink);
+}
+.roles-prompt-input:focus {
+  outline: none;
+}
+.roles-prompt-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-3);
 }
 
 /* Prompt studio — built in the Chat tab's language: the soft composer, the spark
@@ -4081,13 +4109,6 @@ body.is-dragging-card * {
     height: 70vh;
   }
 }
-.roles-prompt-bar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-top: var(--space-2);
-}
-
 /* personal-context editor — a small popover anchored to the Users-table button */
 .ctx-pop-wrap {
   position: fixed;
