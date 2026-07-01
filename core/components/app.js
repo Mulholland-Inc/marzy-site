@@ -721,6 +721,9 @@ function settingsHTML() {
       <mz-tab-panel label="Assistant">
         <mz-prompt-studio></mz-prompt-studio>
       </mz-tab-panel>
+      <mz-tab-panel label="Integrations">
+        <mz-connectors mode="workspace"></mz-connectors>
+      </mz-tab-panel>
       <mz-tab-panel label="Connections">
         <mz-connectors></mz-connectors>
       </mz-tab-panel>

@@ -42,8 +42,13 @@ class MzConnectors extends HTMLElement {
     this.classList.add("cnx");
     this._q = "";
     this._items = [];
+    // mode="workspace" → the company-level integrations (Integrations tab);
+    // default → the member's own data sources (Connections tab).
+    this._workspace = this.getAttribute("mode") === "workspace";
 
-    this.innerHTML = `
+    this.innerHTML = this._workspace
+      ? `<div class="cnx-sections"></div>`
+      : `
       <div class="cnx-toolbar">
         <div class="search cnx-search">
           ${icon("search")}
@@ -54,7 +59,7 @@ class MzConnectors extends HTMLElement {
 
     this._sections = this.querySelector(".cnx-sections");
 
-    this.querySelector(".search-input").addEventListener("input", (e) => {
+    this.querySelector(".search-input")?.addEventListener("input", (e) => {
       this._q = e.target.value;
       this.render();
     });
@@ -87,21 +92,25 @@ class MzConnectors extends HTMLElement {
   }
 
   async load() {
-    try {
-      const { providers } = await api("/pipes/providers");
-      this._items = providers || [];
+    if (this._workspace) {
+      // The company-level integrations: the shared GitHub App (installing it
+      // on the org IS the link), the shared Slack app ("Add to Slack"), and
+      // the Discord server link.
+      this._github = await api("/github").catch(() => null);
+      this._slack = await api("/secrets").catch(() => null); // admin-only; null hides state
+      this._discord = await fetch(`${API_HOST}/auth/discord/status?tenant=${encodeURIComponent(activeTenant())}`, { credentials: "include" })
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null);
       this._error = null;
-    } catch (err) {
-      this._error = err;
+    } else {
+      try {
+        const { providers } = await api("/pipes/providers");
+        this._items = providers || [];
+        this._error = null;
+      } catch (err) {
+        this._error = err;
+      }
     }
-    // Workspace-level connectors, separate from the member's Pipes accounts:
-    // the shared GitHub App (installing it on the org IS the link) and the
-    // shared Slack app ("Add to Slack" runs the OAuth install for this tenant).
-    this._github = await api("/github").catch(() => null);
-    this._slack = await api("/secrets").catch(() => null); // admin-only; null hides state
-    this._discord = await fetch(`${API_HOST}/auth/discord/status?tenant=${encodeURIComponent(activeTenant())}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : null))
-      .catch(() => null);
     this._loaded = true;
     this.render();
   }
@@ -125,6 +134,10 @@ class MzConnectors extends HTMLElement {
       return;
     }
 
+    if (this._workspace) {
+      this.renderWorkspace();
+      return;
+    }
     const term = this._q.trim().toLowerCase();
     const match = (it) => !term || `${it.name} ${it.slug} ${it.type || ""}`.toLowerCase().includes(term);
     // slack-user/discord are identity-only providers (bot recognition, not
@@ -156,8 +169,13 @@ class MzConnectors extends HTMLElement {
       </div>`;
     };
 
-    // Workspace integrations: one per workspace, admin-installed, each with a
-    // plain line about what connecting it actually does.
+    const memberHead = `<p class="t-meta">Data sources you connect as yourself, used by the assistant on your behalf. Company-level integrations live on the Integrations tab; sign-in identities on the Identity tab.</p>`;
+    this._sections.innerHTML = `<section class="cnx-cat-sec">${memberHead}<div class="cnx-list">${items.map(row).join("")}</div></section>`;
+  }
+
+  // renderWorkspace draws the company-level integrations: one per workspace,
+  // admin-installed, each with a plain line about what connecting does.
+  renderWorkspace() {
     const wsRow = (key, name, domain, blurb, status, cta, ready) => `<div class="cnx-row${status.startsWith("Connected") ? " is-connected" : ""}">
         <img class="cnx-logo" src="${LOGO(domain)}" alt="" loading="lazy"
           onerror="this.outerHTML='<span class=&quot;cnx-logo cnx-mono&quot;>${mono(name)}</span>'" />
@@ -168,33 +186,26 @@ class MzConnectors extends HTMLElement {
         <button type="button" class="btn ${status.startsWith("Connected") ? "btn-ghost" : "btn-primary"} btn-sm" data-ws="${key}"${ready ? "" : " disabled"}>${esc(cta)}</button>
       </div>`;
     const workspace = [];
-    const wsMatch = (words) => !term || words.includes(term);
-    if (wsMatch("slack workspace bot chat")) {
-      const botSet = (this._slack?.secrets || []).some((x) => x.key === "slack_bot_token" && x.set);
-      workspace.push(wsRow("slack", "Slack", "slack.com",
-        "The workspace assistant in your Slack — mention or DM it",
-        botSet ? "Connected" : "Not connected", botSet ? "Reinstall" : "Add to Slack", true));
-    }
-    if (this._github?.configured && wsMatch(`github repos tasks ${this._github.org || ""}`)) {
+    const botSet = (this._slack?.secrets || []).some((x) => x.key === "slack_bot_token" && x.set);
+    workspace.push(wsRow("slack", "Slack", "slack.com",
+      "The workspace assistant in your Slack — mention or DM it",
+      botSet ? "Connected" : "Not connected", botSet ? "Reinstall" : "Add to Slack", true));
+    if (this._github?.configured) {
       const gh = this._github;
       workspace.push(wsRow("github", "GitHub", "github.com",
         "Pull requests and issues drive the task board",
         gh.installed ? `Connected — ${gh.org}` : "Not connected",
         gh.installed ? "Reinstall" : "Install", !!gh.install_url));
     }
-    if (this._discord?.configured && wsMatch("discord server commands notifications")) {
+    if (this._discord?.configured) {
       workspace.push(wsRow("discord", "Discord", "discord.com",
         "Slash commands in your server (try /tasks)",
         this._discord.linked ? "Connected" : "Not connected",
         this._discord.linked ? "Reconnect" : "Connect server", true));
     }
-    const wsSection = workspace.length
-      ? `<section class="cnx-cat-sec"><h2 class="cnx-cat t-caption">Workspace integrations</h2><div class="cnx-list">${workspace.join("")}</div></section>`
-      : "";
-    const memberHead = `<h2 class="cnx-cat t-caption">Your accounts</h2>
-      <p class="t-meta">Data sources you connect as yourself, used by the assistant on your behalf. Sign-in identities live on the Identity tab.</p>`;
-
-    this._sections.innerHTML = `${wsSection}<section class="cnx-cat-sec">${memberHead}<div class="cnx-list">${items.map(row).join("")}</div></section>`;
+    this._sections.innerHTML = `<section class="cnx-cat-sec">
+      <p class="t-meta">Company-level services, connected once for the whole workspace by an admin.</p>
+      <div class="cnx-list">${workspace.join("")}</div></section>`;
   }
 }
 customElements.define("mz-connectors", MzConnectors);
