@@ -5,7 +5,10 @@
 // Linking, token refresh and disconnect all live in WorkOS; we just show state
 // and hand off the authorize URL, then re-check when the member returns.
 import { icon } from "./icons.js";
-import { api } from "../auth.js";
+import { api, activeTenant } from "../auth.js";
+
+const API_HOST = (window.MZ_SITE && window.MZ_SITE.api) ||
+  (/(localhost|127\.0\.0\.1)/.test(location.hostname) ? "http://localhost:8080" : "https://api.marzy.com");
 
 // Full-colour brand logos via DuckDuckGo's favicon service; letter fallback.
 const LOGO = (domain) => `https://icons.duckduckgo.com/ip3/${domain}.ico`;
@@ -56,6 +59,15 @@ class MzConnectors extends HTMLElement {
       this.render();
     });
     this._sections.addEventListener("click", (e) => {
+      const ws = e.target.closest("[data-ws]");
+      if (ws) {
+        if (ws.dataset.ws === "github" && this._github?.install_url) {
+          window.open(this._github.install_url, "_blank", "noopener");
+        } else if (ws.dataset.ws === "slack") {
+          window.open(`${API_HOST}/auth/slack/install?tenant=${encodeURIComponent(activeTenant())}`, "_blank", "noopener");
+        }
+        return;
+      }
       const btn = e.target.closest("[data-slug]");
       if (btn) this.connect(btn.dataset.slug);
     });
@@ -80,6 +92,11 @@ class MzConnectors extends HTMLElement {
     } catch (err) {
       this._error = err;
     }
+    // Workspace-level connectors, separate from the member's Pipes accounts:
+    // the shared GitHub App (installing it on the org IS the link) and the
+    // shared Slack app ("Add to Slack" runs the OAuth install for this tenant).
+    this._github = await api("/github").catch(() => null);
+    this._slack = await api("/secrets").catch(() => null); // admin-only; null hides state
     this._loaded = true;
     this.render();
   }
@@ -130,7 +147,34 @@ class MzConnectors extends HTMLElement {
       </div>`;
     };
 
-    this._sections.innerHTML = `<section class="cnx-cat-sec"><div class="cnx-list">${items.map(row).join("")}</div></section>`;
+    const wsRow = (key, name, domain, status, cta, ready) => `<div class="cnx-row${status === "Connected" ? " is-connected" : ""}">
+        <img class="cnx-logo" src="${LOGO(domain)}" alt="" loading="lazy"
+          onerror="this.outerHTML='<span class=&quot;cnx-logo cnx-mono&quot;>${mono(name)}</span>'" />
+        <div class="cnx-main">
+          <div class="cnx-name">${esc(name)}</div>
+          <div class="cnx-desc t-meta">${esc(status)}</div>
+        </div>
+        <button type="button" class="btn ${status === "Connected" ? "btn-ghost" : "btn-primary"} btn-sm" data-ws="${key}"${ready ? "" : " disabled"}>${esc(cta)}</button>
+      </div>`;
+    const workspace = [];
+    if (this._github?.configured) {
+      const gh = this._github;
+      if (!term || `github ${gh.org || ""}`.includes(term)) {
+        workspace.push(wsRow("github", "GitHub", "github.com",
+          gh.installed ? `Connected — ${gh.org}` : "Not connected",
+          gh.installed ? "Reinstall" : "Install", !!gh.install_url));
+      }
+    }
+    if (!term || "slack workspace".includes(term)) {
+      const botSet = (this._slack?.secrets || []).some((s) => s.key === "slack_bot_token" && s.set);
+      workspace.push(wsRow("slack", "Slack workspace", "slack.com",
+        botSet ? "Connected" : "Not connected", botSet ? "Reinstall" : "Add to Slack", true));
+    }
+    const wsSection = workspace.length
+      ? `<section class="cnx-cat-sec"><h2 class="cnx-cat t-caption">Workspace</h2><div class="cnx-list">${workspace.join("")}</div></section>`
+      : "";
+
+    this._sections.innerHTML = `${wsSection}<section class="cnx-cat-sec"><div class="cnx-list">${items.map(row).join("")}</div></section>`;
   }
 }
 customElements.define("mz-connectors", MzConnectors);
