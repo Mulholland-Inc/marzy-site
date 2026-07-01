@@ -75,6 +75,7 @@ import "./notifications.js";
 import "./toolbar.js";
 import "./collection.js";
 import "./connectors.js";
+import "./identity.js";
 import "./app.js";
 import "./login.js";
 import { initCheckmarks } from "./motion.js";

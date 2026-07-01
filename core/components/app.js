@@ -724,5 +724,8 @@ function settingsHTML() {
       <mz-tab-panel label="Connections">
         <mz-connectors></mz-connectors>
       </mz-tab-panel>
+      <mz-tab-panel label="Identity">
+        <mz-identity></mz-identity>
+      </mz-tab-panel>
     </mz-tabs>`;
 }
