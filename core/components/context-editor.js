@@ -2,6 +2,7 @@
 // (PUT /prompts/user), anchored to the trigger. `ref` is the member's
 // account/email; `anchor` is the element it points at (a Users-table button).
 import { api } from "../auth.js";
+import { popIn, popOut } from "./motion.js";
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -11,7 +12,7 @@ export async function openContextEditor({ ref = "", name = "", anchor = null } =
   const wrap = document.createElement("div");
   wrap.className = "ctx-pop-wrap";
   wrap.innerHTML = `<div class="ctx-pop" role="dialog" aria-label="Assistant context for ${esc(name || "member")}">
-      <div class="ctx-pop-head t-meta">${esc(name || "Member")} · assistant context</div>
+      <div class="ctx-pop-head t-meta">Assistant context</div>
       <textarea class="input ctx-input" rows="4" placeholder="e.g. In finance — numbers-first, flag anything over $10k.">${esc(data.user || "")}</textarea>
       <div class="ctx-bar"><span class="ctx-status t-meta" role="status"></span><button type="button" class="btn btn-ghost btn-sm" data-ctx="close">Cancel</button><button type="button" class="btn btn-primary btn-sm" data-ctx="save">Save</button></div>
     </div>`;
@@ -20,19 +21,22 @@ export async function openContextEditor({ ref = "", name = "", anchor = null } =
   // Anchor the popover under the trigger, right-aligned; flip above if it would
   // overflow the viewport bottom, and clamp to the edges.
   const pop = wrap.querySelector(".ctx-pop");
+  let above = false;
   if (anchor) {
     const r = anchor.getBoundingClientRect();
     const w = pop.offsetWidth || 320;
     const h = pop.offsetHeight || 200;
+    above = r.bottom + h + 8 > window.innerHeight;
     const left = Math.max(8, Math.min(r.right - w, window.innerWidth - w - 8));
-    const top = r.bottom + h + 8 > window.innerHeight ? Math.max(8, r.top - h - 6) : r.bottom + 6;
+    const top = above ? Math.max(8, r.top - h - 6) : r.bottom + 6;
     pop.style.left = `${left}px`;
     pop.style.top = `${top}px`;
   }
+  popIn(pop, above ? 1 : -1); // the house popover entrance
 
   const close = () => {
-    wrap.remove();
     document.removeEventListener("keydown", onKey);
+    popOut(pop).then(() => wrap.remove());
   };
   const onKey = (e) => {
     if (e.key === "Escape") close();
