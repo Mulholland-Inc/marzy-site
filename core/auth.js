@@ -45,26 +45,40 @@ export function loadMe() {
   return mePromise;
 }
 async function fetchMe() {
-  try {
-    const r = await fetch(`${apiHost}/auth/me`, { credentials: "include" });
-    if (!r.ok) { report(null); return null; }
-    const me = await r.json();
-    const u = { ...(me.user || {}), tenants: me.tenants || [], active: me.active };
-    if (me.active && !ls(TKEY)) setActiveTenant(me.active);
-    report(u);
-    return u;
-  } catch {
-    report(null);
-    return null;
+  // One retry on a 5xx or network failure: a cold-started or hiccuping auth
+  // service must read as "slow", never as "signed out" (the old behavior
+  // bounced a valid session to the login screen).
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const r = await fetch(`${apiHost}/auth/me`, { credentials: "include" });
+      if (r.status >= 500 && attempt === 0) throw new Error(`auth/me ${r.status}`);
+      if (!r.ok) { report(null); return null; }
+      const me = await r.json();
+      const u = { ...(me.user || {}), tenants: me.tenants || [], active: me.active };
+      if (me.active && !ls(TKEY)) setActiveTenant(me.active);
+      report(u);
+      return u;
+    } catch {
+      if (attempt === 0) { await new Promise((res) => setTimeout(res, 700)); continue; }
+      report(null);
+      return null;
+    }
   }
 }
 
-// GET /auth/token → access_token (cached briefly in memory) or null.
+// GET /auth/token → access_token (cached until just before its exp) or null.
+const jwtExpMs = (t) => {
+  try {
+    return JSON.parse(atob(t.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))).exp * 1000;
+  } catch {
+    return 0;
+  }
+};
 let tokenCache = null;
-let tokenAt = 0;
+let tokenExp = 0;
 let tokenInFlight = null;
 export async function getToken() {
-  if (tokenCache && Date.now() - tokenAt < 30000) return tokenCache;
+  if (tokenCache && Date.now() < tokenExp - 60000) return tokenCache;
   // Dedupe concurrent refreshes. WorkOS rotates the refresh token on every
   // /auth/token call, so parallel callers (several components booting at once)
   // would race: the first rotates it and the rest 401 on the consumed token,
@@ -76,7 +90,9 @@ export async function getToken() {
       if (!r.ok) { tokenCache = null; return null; }
       const j = await r.json();
       tokenCache = j.access_token || null;
-      tokenAt = Date.now();
+      // Reuse the token for its real lifetime (the 60s margin matches the
+      // server's), falling back to 90s when the exp doesn't parse.
+      tokenExp = tokenCache ? jwtExpMs(tokenCache) || Date.now() + 90000 : 0;
       return tokenCache;
     } catch {
       tokenCache = null;
@@ -96,8 +112,8 @@ export function whoami() {
   return whoamiPromise;
 }
 
-export async function authHeaders() {
-  const h = { "Content-Type": "application/json" };
+export async function authHeaders(withBody = true) {
+  const h = withBody ? { "Content-Type": "application/json" } : {};
   const t = await getToken();
   if (t) h.Authorization = `Bearer ${t}`;
   return h;
@@ -106,7 +122,7 @@ export async function authHeaders() {
 export async function api(path, { method = "GET", body } = {}) {
   const r = await fetch(API_BASE + path, {
     method,
-    headers: await authHeaders(),
+    headers: await authHeaders(body !== undefined),
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
   if (!r.ok) {
