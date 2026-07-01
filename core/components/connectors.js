@@ -127,7 +127,11 @@ class MzConnectors extends HTMLElement {
 
     const term = this._q.trim().toLowerCase();
     const match = (it) => !term || `${it.name} ${it.slug} ${it.type || ""}`.toLowerCase().includes(term);
-    const items = this._items.filter(match);
+    // slack-user/discord are identity-only providers (bot recognition, not
+    // data) — they live on the Identity tab, listing them here reads as three
+    // different Slacks/Discords.
+    const IDENTITY_ONLY = new Set(["slack-user", "discord"]);
+    const items = this._items.filter((it) => !IDENTITY_ONLY.has(it.slug)).filter(match);
 
     if (!items.length) {
       this._sections.innerHTML = this._items.length
