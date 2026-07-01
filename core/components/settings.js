@@ -42,11 +42,19 @@ class MzSettings extends HTMLElement {
     }
     const ro = !this._admin;
     const wsField = `<mz-field label="Workspace name" hint="Set at deployment." for="s-workspace"></mz-field>`;
+    // Every field explains itself — bare key/value inputs read as a debug
+    // screen, not a product (unknown keys just show without a hint).
+    const HINTS = {
+      discord_webhook_url: "A Discord channel webhook (channel settings \u2192 Integrations \u2192 Webhooks). Task notifications post there; blank turns them off.",
+      github_org: "The GitHub organization this workspace acts for. Filled automatically when the GitHub App is installed from Connections.",
+      github_repo: "Where task issues are opened (owner/name), for tasks that don't name their own repo. Blank turns issue mirroring off.",
+    };
     const settingFields = this._settings
       .map(
         (s) =>
           `<div class="field"><label class="field-label" for="set-${esc(s.key)}">${esc(label(s.key))}</label>
             <input class="input" id="set-${esc(s.key)}" data-key="${esc(s.key)}" value="${esc(s.value)}"${ro ? " disabled" : ""} />
+            ${HINTS[s.key] ? `<p class="t-meta">${esc(HINTS[s.key])}</p>` : ""}
           </div>`
       )
       .join("");
