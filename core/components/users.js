@@ -62,7 +62,7 @@ class MzUsers extends HTMLElement {
     });
     this._body.addEventListener("click", (e) => {
       const ctx = e.target.closest("[data-act='context']");
-      if (ctx) { openContextEditor({ ref: ctx.dataset.email, name: ctx.dataset.name }); return; }
+      if (ctx) { openContextEditor({ ref: ctx.dataset.email, name: ctx.dataset.name, anchor: ctx }); return; }
       const btn = e.target.closest("[data-act='remove']");
       if (btn) this.remove(btn.dataset.id);
     });

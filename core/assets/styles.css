@@ -4080,44 +4080,38 @@ body.is-dragging-card * {
   margin-top: var(--space-2);
 }
 
-/* personal-context overlay (from the workspace menu) */
-.ctx-overlay {
+/* personal-context editor — a small popover anchored to the Users-table button */
+.ctx-pop-wrap {
   position: fixed;
   inset: 0;
   z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-4);
-  background: rgba(0, 0, 0, 0.4);
 }
-.ctx-card {
-  width: 100%;
-  max-width: 520px;
-  padding: var(--space-5);
+.ctx-pop {
+  position: fixed;
+  width: 320px;
+  max-width: calc(100vw - 16px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
   background: var(--color-surface);
   border: var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
 }
-.ctx-card h3 {
-  margin: 0 0 var(--space-2);
-}
-.ctx-card > p {
-  margin: 0;
+.ctx-pop-head {
+  color: var(--color-ink);
+  font-weight: var(--weight-medium);
 }
 .ctx-input {
   width: 100%;
-  margin-top: var(--space-3);
   resize: vertical;
-  border-radius: var(--radius);
 }
 .ctx-bar {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: var(--space-2);
-  margin-top: var(--space-3);
 }
 .ctx-bar .ctx-status {
   margin-right: auto;
