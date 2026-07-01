@@ -169,8 +169,7 @@ class MzConnectors extends HTMLElement {
       </div>`;
     };
 
-    const memberHead = `<p class="t-meta">Data sources you connect as yourself, used by the assistant on your behalf. Company-level integrations live on the Integrations tab; sign-in identities on the Identity tab.</p>`;
-    this._sections.innerHTML = `<section class="cnx-cat-sec">${memberHead}<div class="cnx-list">${items.map(row).join("")}</div></section>`;
+    this._sections.innerHTML = `<section class="cnx-cat-sec"><div class="cnx-list">${items.map(row).join("")}</div></section>`;
   }
 
   // renderWorkspace draws the company-level integrations: one per workspace,
@@ -203,9 +202,7 @@ class MzConnectors extends HTMLElement {
         this._discord.linked ? "Connected" : "Not connected",
         this._discord.linked ? "Reconnect" : "Connect server", true));
     }
-    this._sections.innerHTML = `<section class="cnx-cat-sec">
-      <p class="t-meta">Company-level services, connected once for the whole workspace by an admin.</p>
-      <div class="cnx-list">${workspace.join("")}</div></section>`;
+    this._sections.innerHTML = `<section class="cnx-cat-sec"><div class="cnx-list">${workspace.join("")}</div></section>`;
   }
 }
 customElements.define("mz-connectors", MzConnectors);

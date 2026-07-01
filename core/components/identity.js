@@ -101,13 +101,11 @@ class MzIdentity extends HTMLElement {
 
     this._body.innerHTML = `
       <section class="cnx-cat-sec">
-        <h2 class="cnx-cat t-caption">Sign-in identities</h2>
-        <p class="t-meta">Ways to sign in to this workspace. Linking is a quick round-trip through the provider; the account attaches by your verified email.</p>
+        <h2 class="cnx-cat t-caption">Sign-in</h2>
         <div class="cnx-list">${signin}</div>
       </section>
       <section class="cnx-cat-sec">
-        <h2 class="cnx-cat t-caption">Chat accounts</h2>
-        <p class="t-meta">So the workspace assistant knows who you are in chat.</p>
+        <h2 class="cnx-cat t-caption">Chat</h2>
         <div class="cnx-list">${chat}</div>
       </section>`;
   }
