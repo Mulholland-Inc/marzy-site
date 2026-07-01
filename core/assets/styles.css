@@ -3991,6 +3991,14 @@ body.is-dragging-card * {
   margin-bottom: 0;
   color: var(--color-volt);
 }
+/* the member picker reads as text next to the label — no pill, aligned tight to
+   the edge so the row's left and right spacing match */
+.studio-doc-head .cs-trigger {
+  border: 0;
+  background: none;
+  box-shadow: none;
+  padding-right: 0;
+}
 /* the full-prompt document: base · workspace (editable) · role · personal, one
    soft box with only the workspace layer editable */
 .studio-doc {
